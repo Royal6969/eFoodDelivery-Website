@@ -67,7 +67,79 @@ Tras definir todos los paquetes que utilizaremos durante el desarrollo de esta a
 npm install
 ```
 
-**Nota:** aunque a medida que avance en el desarrollo de la app, iré especificando cómo se instalarían cada uno de los paquetes por separado e independientemente, con sus respectivos comandos de *npm install ...*.
+![](./img/3.png)
+
+**Nota:** aunque a medida que avance en el desarrollo de la app, iré especificando cómo se instalarían cada uno de los paquetes por separado e independientemente, con sus respectivos comandos de *npm install ...*, así como los usos y diferentes funciones que desempeñarán en el desarrollo.
+
+## 0.2. Limpiar y reorganizar la arquitectura inicial por defecto del proyecto
+
+### Eliminar
+
+Antes de empezar con el desarrollo de esta parte del proyecto, vamos a eliminar los siguientes archivos que se han creado por defecto:
+
+• carpeta *public*:
+- logo192.png
+- logo512.png
+- manifest.json
+- robots.txt
+
+• carpeta *src*:
+- App.css
+- App.test.tsx
+- logo.svg
+- react-app-env.tsx
+- reportWebVital.ts
+- setupTest.ts
+
+### Reorganizar
+
+• carpeta *src*:
+- creamos una nueva carpeta llamada *app*, y en ella metemos el archivo del App.tsx, el cual es básicamente el principal contenedor de nuestra aplicación
+- el archivo index.tsx contiene a su vez el App.tsx y es el esqueleto original de toda la aplicación de React
+- para sustituir las imágenes de los logos que hemos eliminado antes, vamos a crear una nueva carpeta llamada *assets*, y a su vez, dentro de ella crearemos otra nueva carpeta para las imágenes llamada *images* (no le ponemos img porque podría confundirse con la misma del root folder del proyecto para las imágenes del readme.md), y en esta nueva carpeta metemos la imagen del logo de nuestra aplicación
+
+### Limpiar
+
+Por último, vamos a limpiar un poco el código de los archivo del *App.tsx* y el *index.tsx*
+
+#### App.tsx
+
+```tsx
+import React from 'react';
+import './App.css';
+
+function App() {
+  return (
+    <div className="App">
+      eFoodDelivery
+    </div>
+  );
+}
+
+export default App;
+```
+
+#### index.tsx
+
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './app/App';
+
+
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
+
+root.render(
+  <App />
+);
+```
+
+Y en estos momentos, la arquitectura del proyecto con la que partiremos de base debería de verse tal que así:
+
+![](./img/4.png)
 
 # Webgrafía y Enlaces de Interés
 
