@@ -100,13 +100,12 @@ Antes de empezar con el desarrollo de esta parte del proyecto, vamos a eliminar 
 
 ### Limpiar
 
-Por último, vamos a limpiar un poco el código de los archivo del *App.tsx* y el *index.tsx*
+Por último, vamos a limpiar un poco el código de los archivo del *App.tsx* y el *index.tsx* de la carpeta *src*, y el *index.html* de la carpeta *public*
 
 #### App.tsx
 
 ```tsx
 import React from 'react';
-import './App.css';
 
 function App() {
   return (
@@ -137,9 +136,70 @@ root.render(
 );
 ```
 
+### index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Web site created using create-react-app" />
+    <title>React App</title>
+  </head>
+
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+
+</html>
+```
+
 Y en estos momentos, la arquitectura del proyecto con la que partiremos de base debería de verse tal que así:
 
 ![](./img/4.png)
+
+## 0.3. Instalar Bootstrap y Bootstrap Icons
+
+Como framework de CSS básico e inicial utilizaré Bootstrap.
+
+Para implementar Bootstrap en nuestra aplicación, si bien es cierto que a través de su misma web oficial, podemos coger el CDN del CSS y del JS, y pegarlo en nuestro *index.html* de la carpeta *public*, como estoy trabajando en React, lo suyo es instalarlo, y para ello voy a ejecutar el comando de *npm* que podemos encontrar en el mismo home de la web de Bootstrap:
+
+```bash
+npm i bootstrap@5.3.0-alpha3
+```
+
+Si navegamos a su sección de *Icons*, igualmente encontraremos el comando para instalar los iconos de Bootstrap:
+
+```bash
+npm i bootstrap-icons
+```
+
+### src --> index.tsx
+
+Vamos a añadir las importaciones de Bootstrap aquí para que funcione en todo la aplicación
+
+```tsx
+...
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap/dist/js/bootstrap.js";
+import "bootstrap-icons/font/bootstrap-icons.css";
+...
+```
+
+## 0.4 Primera prueba de ejecución del proyecto
+
+Para lanzar nuestro proyecto y ver en local cómo llevamos el desarrollo del mismo, tan sólo necesitamos ejecutar el siguiente comando:
+
+```bash
+npm start
+```
+
+[Primera ejecución incial del proyecto](#primera-ejecución-incial-del-proyecto)
 
 # Webgrafía y Enlaces de Interés
 
@@ -147,5 +207,15 @@ Y en estos momentos, la arquitectura del proyecto con la que partiremos de base 
 
 # Pruebas de Ejecución
 
+## Primera ejecución incial del proyecto
+
+![](./img/5.png)
+![](./img/6.png)
 
 # Extras
+
+## Enlace al espacio de trabajo y al tablero del proyecto en Trello
+
+### [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](https://trello.com/invite/b/jhJydRkf/ATTI1474acfddb1880c784b2467f19f42a7a387BB064/efooddelivery-website)
+
+### [Enlace a Bootstrap-Icons](https://icons.getbootstrap.com/)
