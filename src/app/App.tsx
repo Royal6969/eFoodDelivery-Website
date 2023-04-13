@@ -1,9 +1,13 @@
 import React from 'react';
+import { Footer, Header } from '../components/layout';
+
 
 function App() {
   return (
-    <div className="text-success">
-      eFoodDelivery
+    <div>
+      <Header />
+        eFoodDelivery
+      <Footer />
     </div>
   );
 }

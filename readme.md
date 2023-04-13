@@ -201,9 +201,120 @@ npm start
 
 [Primera ejecución incial del proyecto](#primera-ejecución-incial-del-proyecto)
 
+# 1. Header y Footer
+
+En la carpeta de *src* vamos a crear a su vez dos subcarpetas más, una llamada *components* y otra llamada *pages* (las páginas estrán compuestas de componentes).
+
+Para el caso de este apartado, el Header y el Footer serán componentes, ya que no constituyen ninguna página en sí mismos.
+
+Pero sí serán estructuras fijas y estáticas que y estarán presentes en todas las páginas, lo cual es un elemento que popularmente se conoce como "layout".
+
+Así que dentro de la carpeta de *components* creamos otra carpeta más llamada *layout*.
+
+Y ahora sí, dentro de esta carpeta creamos los componentes del Header.tsx y el Footer.tsx.
+
+**Nota:** cada vez que creamos un nuevo componente, con la extensión de VScode de "ES7+ React/Redux/React-Native snippets" podemos snipear el esqueleto inicial básico de partida escribiendo simplemente *rfce* (react functional export component) y pulsando *intro*
+
+## 1.1. Header.tsx
+
+```tsx
+import React from 'react'
+
+let appLogo = require("../../assets/images/eFoodDeliveryLogo.png");
+
+function Header() {
+  return (
+    <div>
+      <nav style={{background:'#ffbd40'}} className="navbar navbar-expand-lg text-black">
+        <div className="container-fluid">
+          <img src={appLogo} style={{height:'40px'}} className='m-1' />
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              <li className="nav-item">
+                <a className="nav-link" aria-current="page" href="#">Home</a>
+              </li>
+
+              <li className="nav-item dropdown">
+                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Admin
+                </a>
+                <ul className="dropdown-menu">
+                  <li><a className="dropdown-item" href="#">Action</a></li>
+                  <li><a className="dropdown-item" href="#">Another action</a></li>
+                  <li><a className="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+  )
+}
+
+export default Header
+```
+
+**Nota:** para la cabecera he copiado y pegado el primer componente de ejemplo de Bootstrap y lo he retocado básicamente.
+
+## 1.2. Footer.tsx
+
+```tsx
+import React from 'react'
+
+function Footer() {
+  return (
+    <div style={{background:'#ffbd40'}} className='footer fixed-bottom text-center p-3 text-black'>
+      Copyright<i className="bi bi-c-circle"></i>2023&nbsp;-&nbsp;
+      <i className="bi bi-mortarboard"></i>&nbsp;Trabajo de Fin de Grado realizado por Sergio Díaz Campos&nbsp;
+      <i className="bi bi-person-check"></i>
+    </div>
+  )
+}
+
+export default Footer
+```
+
+## 1.3. index.tsx
+
+Es una buena práctica y muy recomendable que, dentro de cada carpeta de componentes creemos un *index.tsx* para importar todos los componentes de esa misma carpeta para después importarlos todos en una sóla línea.
+
+```tsx
+import Header from "./Header";
+import Footer from "./Footer";
+
+export {Header, Footer}
+```
+
+## 1.4. App.tsx
+
+Ahora ya tan sólo tenemos que llamar al Header y al Footer en el *App.tsx*
+
+```tsx
+function App() {
+  return (
+    <div>
+      <Header />
+        eFoodDelivery
+      <Footer />
+    </div>
+  );
+}
+```
+
+### Prueba inicial del Layout
+
+[Prueba inicial del Header y el Footer](#prueba-inicial-del-header-y-el-footer)
+
+
 # Webgrafía y Enlaces de Interés
 
 [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
+
+[2. Bootstrap components](https://getbootstrap.com/docs/5.3/components/)
 
 # Pruebas de Ejecución
 
@@ -211,6 +322,10 @@ npm start
 
 ![](./img/5.png)
 ![](./img/6.png)
+
+## Prueba inicial del Header y el Footer
+
+![](./img/7.png)
 
 # Extras
 
