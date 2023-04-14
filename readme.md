@@ -309,6 +309,77 @@ function App() {
 
 [Prueba inicial del Header y el Footer](#prueba-inicial-del-header-y-el-footer)
 
+## 1.5. Obtener los productos a través de la API
+
+Ahora ha llegado el momento de empezar a consumir la API que ya había desarrollado en la primera parte de este TFG.
+
+Comenzaremos haciendo una prueba para obtener los productos de la BBDD en el mismo *App.tsx* (aunque después lo moveremos a un componente propio).
+
+Vamos a utilizar un par de hooks de React. Para traer los productos de la BBDD usaremos el *UseEffect* y para almacenarlos localmente usaremos el *UseState*.
+
+**Nota:** toda la lógica del componente va dentro de la función, pero antes del return. En el return solo va el frontend, y antes de él, va el backend.
+
+```tsx
+...
+function App() {
+  // I will create a local state here with the name of my products and the function that will set it will be setProducts
+  // and it will be equal to an empty array
+  const [products, setProducts] = useState<ProductInterface[]>([]); // we can define the type here for ProductInterface
+
+  // after that we will use the useEffect hook and we will load that
+  // we will have the arrow function here and right now we can use the default fetch function and there we have to pass the URL
+  useEffect(() => {
+    fetch("https://localhost:7240/api/Product") // we can get this URL from the API response when we execute the GET produt's endpoint
+      // we have a promise here so we use then(), and when the fetch completes, we will be getting a response here,
+      .then((response) => response.json()) // so we add the arrow function and we want to convert that to JSON
+        // after that. we can add another then block here and we can get the data that is being retrieved
+        .then((data) => { // and write a console.log to test if we're getting the products correctly
+          console.log(data);
+          setProducts(data.result); // setting the data with the useState
+        })
+  }, []); // when this useEffect needs to be executed, we will keep that empty. That way it will be executed evedry time the component renders
+
+  return (
+    <div>
+      <Header />
+        eFoodDelivery
+      <Footer />
+    </div>
+  );
+}
+...
+```
+
+![](./img/8.png)
+
+Como podemos apreciar hasta ahora, estamos guardando los productos con el useState localmente en un array vacío. Pero recordando las buenas prácticas que aprendí en la asignatura de Angular, las entidades (como el producto en este caso) deben partir de una interfaz de origen donde se define el objeto que se recibe y se quiere sacar por pantalla.
+
+Para definir rápido la interfaz y no equivocarnos añadiendo más/menos campos, vamos a hacer el siguiente truco.
+
+Pegamos la URL del endpoint del GET de productos en el Chrome, y veremos el JSON de respuesta, y copiamos sólo el primer producto.
+
+Ahora vamos a alguna web tipo que convierta un JSON en Typescript. Por ejemplo, [transform.tools](https://transform.tools/json-to-typescript), y pegamos el objeto en JSON y lo transformamos a su interfaz correspondiente en Typescript.
+
+![](./img/9.png)
+![](./img/10.png)
+
+Y ahora ya tan sólo tenemos que crear una nueva carpeta dentro de *src*, a la que llamaremos *interfaces*, y crearemos la interfaz del producto (ProductInterface.ts) con lo que nos ha transforma la web de antes.
+
+```ts
+export default interface ProductInterface {
+    md_uuid: string
+    md_date: string
+    id: number
+    name: string
+    description: string
+    tag: string
+    category: string
+    price: number
+    image: string
+}
+```
+
+**Nota:** recuerda seguir la buena práctica de crear un index en cada carpeta para exportarlo todo junto.
 
 # Webgrafía y Enlaces de Interés
 
