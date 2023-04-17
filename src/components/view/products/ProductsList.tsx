@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ProductInterface } from '../../../interfaces';
+import ProductCard from './ProductCard';
 
 
 function ProductsList() {
@@ -22,7 +23,13 @@ function ProductsList() {
 
   
   return (
-    <div>ProductsList</div>
+    <div className='container row'>
+      {/* we want to work if the products length is greater that 0, and in that case, we want the conditional rendering and iterate through the products */}
+      {products.length > 0 && products.map((product, index) => (
+        // we have the product card here and we'll say product is equal to this product, we'll give a unique ID with index
+        <ProductCard product={product} key={index} />
+      ))}
+    </div>
   )
 }
 

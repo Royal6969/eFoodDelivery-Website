@@ -199,7 +199,8 @@ Para lanzar nuestro proyecto y ver en local cómo llevamos el desarrollo del mis
 npm start
 ```
 
-[Primera ejecución incial del proyecto](#primera-ejecución-incial-del-proyecto)
+![](./img/5.png)
+![](./img/6.png)
 
 # 1. Header y Footer
 
@@ -305,9 +306,9 @@ function App() {
 }
 ```
 
-### Prueba inicial del Layout
+### Prueba inicial del Layout (Header y Footer)
 
-[Prueba inicial del Header y el Footer](#prueba-inicial-del-header-y-el-footer)
+![](./img/7.png)
 
 ## 1.5. Obtener los productos a través de la API
 
@@ -468,6 +469,52 @@ Y de nuevo comprobamos que la aplicación sigue funcionando perfectamente como a
 
 ![](./img/12.png)
 
+## 1.8. components --> products --> ProductList.tsx y ProductCard.tsx
+
+```tsx
+import React from 'react'
+import { ProductInterface } from '../../../interfaces'
+
+
+// right now we're only passing product, but we might also be passing more things along the road
+// like we're using typescript it's better to define a type for this prop here
+function ProductCard(props: Props) { // right here we have to write the product will be getting props
+  return (
+    <div>
+        {props.product.name}
+    </div>
+  )
+}
+
+
+export default ProductCard
+
+
+// so I'll define a local interface here called Props
+interface Props {
+    product: ProductInterface;
+}
+```
+
+```tsx
+function ProductsList() {
+  ...
+  return (
+    <div className='container row'>
+      {/* we want to work if the products length is greater that 0, and in that case, we want the conditional rendering and iterate through the products */}
+      {products.length > 0 && products.map((product, index) => (
+        // we have the product card here and we'll say product is equal to this product, we'll give a unique ID with index
+        <ProductCard product={product} key={index} />
+      ))}
+    </div>
+  )
+}
+```
+
+Al iterar la lista de los productos del useState() con cada carta de producto, obtendremos el siguiente resultado:
+
+![](./img/13.png)
+
 # Webgrafía y Enlaces de Interés
 
 [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -476,19 +523,17 @@ Y de nuevo comprobamos que la aplicación sigue funcionando perfectamente como a
 
 # Pruebas de Ejecución
 
-## Primera ejecución incial del proyecto
-
-![](./img/5.png)
-![](./img/6.png)
-
-## Prueba inicial del Header y el Footer
-
-![](./img/7.png)
-
 # Extras
 
 ## Enlace al espacio de trabajo y al tablero del proyecto en Trello
 
-### [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](https://trello.com/invite/b/jhJydRkf/ATTI1474acfddb1880c784b2467f19f42a7a387BB064/efooddelivery-website)
+### [1. Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](https://trello.com/invite/b/jhJydRkf/ATTI1474acfddb1880c784b2467f19f42a7a387BB064/efooddelivery-website)
 
-### [Enlace a Bootstrap-Icons](https://icons.getbootstrap.com/)
+### [2. Enlace a Bootstrap-Icons](https://icons.getbootstrap.com/)
+
+### [3. Usando el Hook de useState()](https://es.reactjs.org/docs/hooks-state.html)
+
+### [4. Usando el Hook de useEffect()](https://es.reactjs.org/docs/hooks-effect.html)
+
+### [5. Components and Props](https://legacy.reactjs.org/docs/components-and-props.html)
+
