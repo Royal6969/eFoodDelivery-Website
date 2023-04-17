@@ -350,6 +350,8 @@ function App() {
 ...
 ```
 
+**Nota:** este no es el verdadero uso del useState(), pero me valía para esta prueba rápida. El useState() se usa para definir y almacenar los posibles estados en los que puede encontrarse un objeto, y proceder así con unas funciones u otras.
+
 ![](./img/8.png)
 
 Como podemos apreciar hasta ahora, estamos guardando los productos con el useState localmente en un array vacío. Pero recordando las buenas prácticas que aprendí en la asignatura de Angular, las entidades (como el producto en este caso) deben partir de una interfaz de origen donde se define el objeto que se recibe y se quiere sacar por pantalla.
@@ -380,6 +382,91 @@ export default interface ProductInterface {
 ```
 
 **Nota:** recuerda seguir la buena práctica de crear un index en cada carpeta para exportarlo todo junto.
+
+## 1.7. pages --> Home.tsx
+
+Como no sería una buena práctica que empecemos a meterlo todo en el App.tsx, para lo que hemos hecho antes de obtener los productos a través de la API, lo suyo es que creemos ahora una nueva página para ello... el Home page.
+
+Para ello, por un lado, crearemos dentro de la carpeta *page* un nuevo archivo llamado Home.tsx. 
+Y por otro lado, dentro de la carpeta de *components*, vamos a crear otra llamada *view*, y a su vez dentro de ella, otra llamada *products*, y finalmente aquí creamos el archivo del ProductList.tsx.
+
+Lo primero que haremos será cortar/pegar la lógica que hicimos en el App.tsx en el nuevo ProductList.tsx.
+
+```tsx
+import React, { useEffect, useState } from 'react'
+import { ProductInterface } from '../../../interfaces';
+
+
+function ProductsList() {
+  // I will create a local state here with the name of my products and the function that will set it will be setProducts
+  // and it will be equal to an empty array
+  const [products, setProducts] = useState<ProductInterface[]>([]); // we can define the type here for ProductInterface
+
+  // after that we will use the useEffect hook and we will load that
+  // we will have the arrow function here and right now we can use the default fetch function and there we have to pass the URL
+  useEffect(() => {
+    fetch("https://localhost:7240/api/Product") // we can get this URL from the API response when we execute the GET produt's endpoint
+      // we have a promise here so we use then(), and when the fetch completes, we will be getting a response here,
+      .then((response) => response.json()) // so we add the arrow function and we want to convert that to JSON
+        // after that. we can add another then block here and we can get the data that is being retrieved
+        .then((data) => { // and write a console.log to test if we're getting the products correctly
+          console.log(data);
+          setProducts(data.result); // setting the data with the useState
+        })
+  }, []); // when this useEffect needs to be executed, we will keep that empty. That way it will be executed evedry time the component renders
+
+  
+  return (
+    <div>ProductsList</div>
+  )
+}
+
+
+export default ProductsList
+```
+
+Después ponemos el componente del ProductList.tsx dentro de la nueva página del Home.tsx
+
+```tsx
+import React from 'react'
+import { ProductsList } from '../components/view/products'
+
+
+function Home() {
+  return (
+    <div>
+      <div className='container p-2'>
+        <ProductsList />
+      </div>
+    </div>
+  )
+}
+
+
+export default Home
+```
+
+Y por último ponemos el Home.tsx entre el Header y el Footer del App.tsx
+
+```tsx
+function App() {
+  return (
+    <div>
+      <Header />
+        <Home />
+      <Footer />
+    </div>
+  );
+}
+```
+
+De modo que la nueva estructura del proyecto debería de quedar tal que así:
+
+![](./img/11.png)
+
+Y de nuevo comprobamos que la aplicación sigue funcionando perfectamente como antes:
+
+![](./img/12.png)
 
 # Webgrafía y Enlaces de Interés
 
