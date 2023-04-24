@@ -1,5 +1,44 @@
 # eFoodDelivery Website - Trabajo de Fin de Grado
 
+- [eFoodDelivery Website - Trabajo de Fin de Grado](#efooddelivery-website---trabajo-de-fin-de-grado)
+- [0. Crear una aplicaión de React con Typescript](#0-crear-una-aplicaión-de-react-con-typescript)
+  - [0.1. package.json](#01-packagejson)
+  - [0.2. Limpiar y reorganizar la arquitectura inicial por defecto del proyecto](#02-limpiar-y-reorganizar-la-arquitectura-inicial-por-defecto-del-proyecto)
+    - [Eliminar](#eliminar)
+    - [Reorganizar](#reorganizar)
+    - [Limpiar](#limpiar)
+      - [App.tsx](#apptsx)
+      - [index.tsx](#indextsx)
+    - [index.html](#indexhtml)
+  - [0.3. Instalar Bootstrap y Bootstrap Icons](#03-instalar-bootstrap-y-bootstrap-icons)
+    - [src --\> index.tsx](#src----indextsx)
+  - [0.4 Primera prueba de ejecución del proyecto](#04-primera-prueba-de-ejecución-del-proyecto)
+- [1. Header y Footer](#1-header-y-footer)
+  - [1.1. Header.tsx](#11-headertsx)
+  - [1.2. Footer.tsx](#12-footertsx)
+  - [1.3. index.tsx](#13-indextsx)
+  - [1.4. App.tsx](#14-apptsx)
+    - [Prueba inicial del Layout (Header y Footer)](#prueba-inicial-del-layout-header-y-footer)
+  - [1.5. Obtener los productos a través de la API](#15-obtener-los-productos-a-través-de-la-api)
+  - [1.7. pages --\> Home.tsx](#17-pages----hometsx)
+  - [1.8. components --\> products --\> ProductList.tsx y ProductCard.tsx](#18-components----products----productlisttsx-y-productcardtsx)
+  - [1.9. Prueba de ejecución con la API desplegada](#19-prueba-de-ejecución-con-la-api-desplegada)
+  - [1.10. Interfaz de la página del Home](#110-interfaz-de-la-página-del-home)
+    - [ProductCard.tsx](#productcardtsx)
+- [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
+    - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
+    - [2. Bootstrap components](#2-bootstrap-components)
+    - [3. Enlace a Bootstrap-Icons](#3-enlace-a-bootstrap-icons)
+    - [4. Usando el Hook de useState()](#4-usando-el-hook-de-usestate)
+    - [5. Usando el Hook de useEffect()](#5-usando-el-hook-de-useeffect)
+    - [6. Components and Props](#6-components-and-props)
+    - [7. Conditional Rendering](#7-conditional-rendering)
+- [Pruebas de Ejecución](#pruebas-de-ejecución)
+- [Extras](#extras)
+  - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
+    - [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](#enlace-a-trello---espacio-de-trabajo-y-tablero-del-proyecto-efooddelivery-website)
+
+
 # 0. Crear una aplicaión de React con Typescript
 
 La segunda parte de este proyecto (la parte web del cliente), voy a desarrollarla en React usando como lenguaje base Typescript.
@@ -353,6 +392,8 @@ function App() {
 
 **Nota:** este no es el verdadero uso del useState(), pero me valía para esta prueba rápida. El useState() se usa para definir y almacenar los posibles estados en los que puede encontrarse un objeto, y proceder así con unas funciones u otras.
 
+**Nota:** como tuve algunos problemas con Azure y eliminé la cuenta con la que desarrollé la API, hasta que no vuelva a re-desplegarla, comenzaré usando la API en local ejecutándola desde su proyecto en el VS2022.
+
 ![](./img/8.png)
 
 Como podemos apreciar hasta ahora, estamos guardando los productos con el useState localmente en un array vacío. Pero recordando las buenas prácticas que aprendí en la asignatura de Angular, las entidades (como el producto en este caso) deben partir de una interfaz de origen donde se define el objeto que se recibe y se quiere sacar por pantalla.
@@ -515,11 +556,100 @@ Al iterar la lista de los productos del useState() con cada carta de producto, o
 
 ![](./img/13.png)
 
+## 1.9. Prueba de ejecución con la API desplegada
+
+He vuelto a crear una nueva cuenta gratuita de Azure y he vuelto a crear los cinco servicios que tenía.
+
+Entonces he conseguido re-desplegar la API, por lo que voy a hacer una prueba de ejecución, pero esta vez consumiendo directamente la API desplegada en internet. 
+
+Para ello, tan sólo tengo que ir al ProductList.tsx y poner la URL de la API desplegada en la función del useEffect() en su método de fetch("https://efooddelivery-api.azurewebsites.net/api/Product").
+
+Y funciona perfectamente!! 🤩
+
+## 1.10. Interfaz de la página del Home
+
+### ProductCard.tsx
+
+```tsx
+function ProductCard(props: Props) { // right here we have to write the product will be getting props
+  return (
+    <div className='col-md-4 col-12 p-4'>
+      {/* *********************************************** PRODUCT CARD STARTS ************************************************ */}
+      <div className='card' style={{ boxShadow: '0 1px 7px 0 rgb(0 0 0 / 50%)' }}>
+        <div className='card-body pt-2'>
+         
+          <div className='row col-10 offset-1 p-4'>
+            <img src={props.product.image} style={{ borderRadius: '50%' }} className='w-100 mt-5 image-box' alt='' />
+          </div>
+
+          {/* in teh case we've got more than one tag, we need to define a consitional rendering */}
+          {props.product.tag && props.product.tag.length > 0 && (
+            <i className='bi bi-star btn btn-warning'
+              style={{
+                position: 'absolute',
+                top: '15px',
+                left: '15px',
+                padding: '5px 10px',
+                borderRadius: '3px',
+                outline: 'none !important',
+                cursor: 'pointer',
+              }}
+            >
+              &nbsp; {props.product.tag}
+            </i>
+          )}
+
+          <i className='bi bi-cart-plus btn btn-outline-danger'
+            style={{
+              position: 'absolute',
+              top: '15px',
+              right: '15px',
+              padding: '5px 10px',
+              borderRadius: '3px',
+              outline: 'none !important',
+              cursor: 'pointer',
+            }}
+          ></i>
+
+          <div className='text-center'>
+            <p className='card-title m-0 text-warning fs-3'>
+              {props.product.name}
+            </p>
+            <p className='badge bg-secondary' style={{ fontSize: '12px' }}>
+              {props.product.category}
+            </p>
+          </div>
+          <p className='card-text' style={{ textAlign: 'center' }}>
+            {props.product.description}
+          </p>
+          <div className='row text-center'>
+            <h4>{props.product.price}€</h4>
+          </div>
+        </div>
+      </div>
+      {/* *********************************************** PRODUCT CARD STARTS ************************************************ */}
+    </div>
+  )
+}
+```
+
+![](./img/14.png)
+
 # Webgrafía y Enlaces de Interés
 
-[1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
+### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
 
-[2. Bootstrap components](https://getbootstrap.com/docs/5.3/components/)
+### [2. Bootstrap components](https://getbootstrap.com/docs/5.3/components/)
+
+### [3. Enlace a Bootstrap-Icons](https://icons.getbootstrap.com/)
+
+### [4. Usando el Hook de useState()](https://es.reactjs.org/docs/hooks-state.html)
+
+### [5. Usando el Hook de useEffect()](https://es.reactjs.org/docs/hooks-effect.html)
+
+### [6. Components and Props](https://legacy.reactjs.org/docs/components-and-props.html)
+
+### [7. Conditional Rendering](https://react.dev/learn/conditional-rendering#logical-and-operator-)
 
 # Pruebas de Ejecución
 
@@ -527,13 +657,4 @@ Al iterar la lista de los productos del useState() con cada carta de producto, o
 
 ## Enlace al espacio de trabajo y al tablero del proyecto en Trello
 
-### [1. Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](https://trello.com/invite/b/jhJydRkf/ATTI1474acfddb1880c784b2467f19f42a7a387BB064/efooddelivery-website)
-
-### [2. Enlace a Bootstrap-Icons](https://icons.getbootstrap.com/)
-
-### [3. Usando el Hook de useState()](https://es.reactjs.org/docs/hooks-state.html)
-
-### [4. Usando el Hook de useEffect()](https://es.reactjs.org/docs/hooks-effect.html)
-
-### [5. Components and Props](https://legacy.reactjs.org/docs/components-and-props.html)
-
+### [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](https://trello.com/invite/b/jhJydRkf/ATTI1474acfddb1880c784b2467f19f42a7a387BB064/efooddelivery-website)

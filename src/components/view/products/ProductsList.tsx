@@ -11,7 +11,7 @@ function ProductsList() {
   // after that we will use the useEffect hook and we will load that
   // we will have the arrow function here and right now we can use the default fetch function and there we have to pass the URL
   useEffect(() => {
-    fetch("https://localhost:7240/api/Product") // we can get this URL from the API response when we execute the GET produt's endpoint
+    fetch("https://efooddelivery-api.azurewebsites.net/api/Product") // we can get this URL from the API response when we execute the GET produt's endpoint
       // we have a promise here so we use then(), and when the fetch completes, we will be getting a response here,
       .then((response) => response.json()) // so we add the arrow function and we want to convert that to JSON
         // after that. we can add another then block here and we can get the data that is being retrieved
