@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { Footer, Header } from '../components/layout';
-import { Home, NotFound } from '../pages';
+import { Home, NotFound, ProductDetails } from '../pages';
 
 
 function App() {
@@ -12,6 +12,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Home />}></Route>
             <Route path='*' element={<NotFound />}></Route>
+            <Route path='/ProductDetails/:productId' element={<ProductDetails />}></Route>
           </Routes>
         </div>
         

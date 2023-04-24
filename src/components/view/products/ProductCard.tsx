@@ -1,5 +1,6 @@
 import React from 'react'
 import { ProductInterface } from '../../../interfaces'
+import { Link } from 'react-router-dom';
 
 
 // right now we're only passing product, but we might also be passing more things along the road
@@ -12,7 +13,9 @@ function ProductCard(props: Props) { // right here we have to write the product 
         <div className='card-body pt-2'>
          
           <div className='row col-10 offset-1 p-4'>
-            <img src={props.product.image} style={{ borderRadius: '50%' }} className='w-100 mt-5 image-box' alt='' />
+            <Link to={`/ProductDetails/${props.product.id}`}> {/* note that the route here is dynamic for the product ID */}
+              <img src={props.product.image} style={{ borderRadius: '50%' }} className='w-100 mt-5 image-box' alt='' />
+            </Link>
           </div>
 
           {/* in teh case we've got more than one tag, we need to define a consitional rendering */}
@@ -46,7 +49,9 @@ function ProductCard(props: Props) { // right here we have to write the product 
 
           <div className='text-center'>
             <p className='card-title m-0 text-warning fs-3'>
-              {props.product.name}
+              <Link to={`/ProductDetails/${props.product.id}`} style={{ textDecoration: 'none', color: '#ffbd40'}}> {/* note that the route here is dynamic for the product ID */}
+                {props.product.name}
+              </Link>
             </p>
             <p className='badge bg-secondary' style={{ fontSize: '12px' }}>
               {props.product.category}

@@ -20,12 +20,14 @@
   - [1.4. App.tsx](#14-apptsx)
     - [Prueba inicial del Layout (Header y Footer)](#prueba-inicial-del-layout-header-y-footer)
   - [1.5. Obtener los productos a través de la API](#15-obtener-los-productos-a-través-de-la-api)
-  - [1.7. pages --\> Home.tsx](#17-pages----hometsx)
-  - [1.8. components --\> products --\> ProductList.tsx y ProductCard.tsx](#18-components----products----productlisttsx-y-productcardtsx)
-  - [1.9. Prueba de ejecución con la API desplegada](#19-prueba-de-ejecución-con-la-api-desplegada)
-  - [1.10. Interfaz de la página del Home](#110-interfaz-de-la-página-del-home)
+- [2. Página del Home](#2-página-del-home)
+  - [2.1. pages --\> Home.tsx](#21-pages----hometsx)
+  - [2.2. components --\> products --\> ProductList.tsx y ProductCard.tsx](#22-components----products----productlisttsx-y-productcardtsx)
+  - [2.3. Prueba de ejecución con la API desplegada](#23-prueba-de-ejecución-con-la-api-desplegada)
+  - [2.4. Interfaz de la página del Home](#24-interfaz-de-la-página-del-home)
     - [ProductCard.tsx](#productcardtsx)
-  - [1.11. Añadiendo el routing y la página 404](#111-añadiendo-el-routing-y-la-página-404)
+  - [2.5. Añadiendo el routing y la página 404](#25-añadiendo-el-routing-y-la-página-404)
+- [3. Página de los Detalles del Producto](#3-página-de-los-detalles-del-producto)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -34,6 +36,9 @@
     - [5. Usando el Hook de useEffect()](#5-usando-el-hook-de-useeffect)
     - [6. Components and Props](#6-components-and-props)
     - [7. Conditional Rendering](#7-conditional-rendering)
+    - [8. BrowserRouter](#8-browserrouter)
+    - [9. Routes](#9-routes)
+    - [10. NavLink](#10-navlink)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
 - [Extras](#extras)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
@@ -426,7 +431,9 @@ export default interface ProductInterface {
 
 **Nota:** recuerda seguir la buena práctica de crear un index en cada carpeta para exportarlo todo junto.
 
-## 1.7. pages --> Home.tsx
+# 2. Página del Home
+
+## 2.1. pages --> Home.tsx
 
 Como no sería una buena práctica que empecemos a meterlo todo en el App.tsx, para lo que hemos hecho antes de obtener los productos a través de la API, lo suyo es que creemos ahora una nueva página para ello... el Home page.
 
@@ -511,7 +518,7 @@ Y de nuevo comprobamos que la aplicación sigue funcionando perfectamente como a
 
 ![](./img/12.png)
 
-## 1.8. components --> products --> ProductList.tsx y ProductCard.tsx
+## 2.2. components --> products --> ProductList.tsx y ProductCard.tsx
 
 ```tsx
 import React from 'react'
@@ -557,7 +564,7 @@ Al iterar la lista de los productos del useState() con cada carta de producto, o
 
 ![](./img/13.png)
 
-## 1.9. Prueba de ejecución con la API desplegada
+## 2.3. Prueba de ejecución con la API desplegada
 
 He vuelto a crear una nueva cuenta gratuita de Azure y he vuelto a crear los cinco servicios que tenía.
 
@@ -567,7 +574,7 @@ Para ello, tan sólo tengo que ir al ProductList.tsx y poner la URL de la API de
 
 Y funciona perfectamente!! 🤩
 
-## 1.10. Interfaz de la página del Home
+## 2.4. Interfaz de la página del Home
 
 ### ProductCard.tsx
 
@@ -636,7 +643,7 @@ function ProductCard(props: Props) { // right here we have to write the product 
 
 ![](./img/14.png)
 
-## 1.11. Añadiendo el routing y la página 404
+## 2.5. Añadiendo el routing y la página 404
 
 En este momento, si no lo hubiéramos hecho al principio con el *package.json*, sería el momento de instalar el React Router DOM.
 
@@ -697,6 +704,98 @@ Luego en el Header.tsx añadimos un nuevo item a la lista del navbar para linkea
 
 ![](./img/15.png)
 
+# 3. Página de los Detalles del Producto
+
+Lo primero será crear esta nueva página, y acto seguido definiremos su ruta en el App.tsx
+
+```tsx
+<Routes>
+  <Route path='/' element={<Home />}></Route>
+  <Route path='*' element={<NotFound />}></Route>
+  <Route path='/ProductDetails/:productId' element={<ProductDetails />}></Route>
+</Routes>
+```
+
+Como podemos ver, para estaruta particular, al igual que ya hacíamos en la API, necvesitaremos pasar un ID del producto en cuestión.
+
+También vamos a linkear con este nueva ruta, la foto de cada producto en el componente del ProductCard.
+
+```tsx
+<div className='row col-10 offset-1 p-4'>
+  <Link to={`/ProductDetails/${props.product.id}`}> {/* note that the route here is dynamic for the product ID */}
+    <img src={props.product.image} style={{ borderRadius: '50%' }} className='w-100 mt-5 image-box' alt='' />
+  </Link>
+</div>
+```
+
+Y también le añadimos este mismo Link al nombre del producto. 
+
+Ahora vamos a implementar alguna plantilla de bootstrap para esta nueva página de los detalles del producto.
+
+```tsx
+function ProductDetails() {
+  return (
+    <div className="container pt-4 pt-md-5">
+      <div className="row">
+        <div className="col-7">
+          <h2 className="text-warning">NAME</h2>
+          
+          <span>
+            <span className="badge text-bg-dark pt-2" style={{ height: "40px", fontSize: "20px" }}>
+              CATEGORY
+            </span>
+          </span>
+
+          <span>
+            <span className="badge text-bg-light pt-2" style={{ height: "40px", fontSize: "20px" }}>
+              SPECIAL TAG
+            </span>
+          </span>
+          
+          <p style={{ fontSize: "20px" }} className="pt-2">
+            DESCRIPTION
+          </p>
+          
+          <span className="h3">$10</span> &nbsp;&nbsp;&nbsp;
+          
+          <span className="pb-2  p-3" style={{ border: "1px solid #333", borderRadius: "30px" }}>
+            <i className="bi bi-dash p-1" style={{ fontSize: "25px", cursor: "pointer" }}></i>
+            <span className="h3 mt-3 px-3">XX</span>
+            <i className="bi bi-plus p-1" style={{ fontSize: "25px", cursor: "pointer" }}></i>
+          </span>
+          
+          <div className="row pt-4">
+            <div className="col-5">
+              <button className="btn btn-warning form-control">
+                Add to Cart
+              </button>
+            </div>
+
+            <div className="col-5 ">
+              <button className="btn btn-secondary form-control">
+                Back to Home
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div className="col-5">
+          <img src="https://via.placeholder.com/150" width="100%" style={{ borderRadius: "50%" }} alt="No content" />
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+![](./img/16.png)
+
+Y ahora nos paramos a plantear el cómo vamos a hacer esto, es decir, en el ProductList habíamos recuperado todos los productos de la BBDD con el hook del useEffect(), pero ahora nos enfrentemos a una nueva situación...
+
+Necesitamos de algún modo poder coger uno de esos productos que tenemos en el ProductList y enviarlo hacia la nueva página del ProductDetails. Pues para hacer esto hay un truco... ¡vamos a utilizar la herramienta de Redux!
+
+Con Redux, podremos tener como un "almacenamiento centralizado" y desde ahí, acceder fácilmente a cualquier objeto que queramos.
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -712,6 +811,12 @@ Luego en el Header.tsx añadimos un nuevo item a la lista del navbar para linkea
 ### [6. Components and Props](https://legacy.reactjs.org/docs/components-and-props.html)
 
 ### [7. Conditional Rendering](https://react.dev/learn/conditional-rendering#logical-and-operator-)
+
+### [8. BrowserRouter](https://reactrouter.com/en/main/router-components/browser-router)
+
+### [9. Routes](https://reactrouter.com/en/main/components/routes)
+
+### [10. NavLink](https://reactrouter.com/en/main/components/nav-link)
 
 # Pruebas de Ejecución
 
