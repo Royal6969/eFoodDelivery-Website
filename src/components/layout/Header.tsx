@@ -1,4 +1,5 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom';
 
 let appLogo = require("../../assets/images/eFoodDeliveryLogo.png");
 
@@ -8,14 +9,26 @@ function Header() {
     <div>
       <nav style={{background:'#ffbd40'}} className="navbar navbar-expand-lg text-black">
         <div className="container-fluid">
-          <img src={appLogo} style={{height:'40px'}} className='m-1' />
+          <NavLink className="nav-link" aria-current="page" to="/">
+            <img src={appLogo} style={{height:'40px'}} className='m-1' alt='' />
+          </NavLink>
+          
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
+          
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <a className="nav-link" aria-current="page" href="#">Home</a>
+                <NavLink className="nav-link" aria-current="page" to="/">
+                  Home
+                </NavLink>
+              </li>
+
+              <li className="nav-item">
+                <NavLink className="nav-link" aria-current="page" to="/cart">
+                  <i className="bi bi-cart4"></i>
+                </NavLink>
               </li>
 
               <li className="nav-item dropdown">

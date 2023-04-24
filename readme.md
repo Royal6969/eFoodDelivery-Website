@@ -25,6 +25,7 @@
   - [1.9. Prueba de ejecución con la API desplegada](#19-prueba-de-ejecución-con-la-api-desplegada)
   - [1.10. Interfaz de la página del Home](#110-interfaz-de-la-página-del-home)
     - [ProductCard.tsx](#productcardtsx)
+  - [1.11. Añadiendo el routing y la página 404](#111-añadiendo-el-routing-y-la-página-404)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -634,6 +635,67 @@ function ProductCard(props: Props) { // right here we have to write the product 
 ```
 
 ![](./img/14.png)
+
+## 1.11. Añadiendo el routing y la página 404
+
+En este momento, si no lo hubiéramos hecho al principio con el *package.json*, sería el momento de instalar el React Router DOM.
+
+```bash
+npm install react-router-dom
+```
+
+Para habilitar el routing, tenemos que ir en primer lugar al index.tsx principal, y envolver el contenedor principal de <App/> dentro del tag de <BrowserRouter>
+
+```tsx
+...
+root.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+);
+```
+
+Luego, en el App.tsx, es donde definiremos las diferentes rutas que vaya a tener nuestra aplicación y que vayamos necesitando a medida que avancemos
+
+```tsx
+function App() {
+  return (
+    <div>
+      <Header />
+        
+        <div className="pb-5">
+          <Routes>
+            <Route path='/' element={<Home />}></Route>
+          </Routes>
+        </div>
+        
+      <Footer />
+    </div>
+  );
+}
+```
+
+Por último y para su aplicación final, vamos por ejemplo al componente del Header.tsx para definir bien los enlaces, y sustituímos los antiguos anclas por el tag del <NavLink> y reemplazamos el href="#" por to="/"
+
+```tsx
+...
+<li className="nav-item">
+  <NavLink className="nav-link" aria-current="page" to="/">
+    Home
+  </NavLink>
+</li>
+...
+```
+
+Ahora para añadir la página del NotFound.tsx, lo creamos rápidamente y tal cual viene lo usaremos. 
+
+Vamos al App.tsx para añadir su nueva ruta (para indicar cualquier página que no se encuntre se pone con un asterisco *).
+
+Luego en el Header.tsx añadimos un nuevo item a la lista del navbar para linkearlo con la nueva ruta y le ponemos un icono de bootstrap de un carrito de la compra...
+
+... y comprobamos que funciona correctamente!!
+
+![](./img/15.png)
 
 # Webgrafía y Enlaces de Interés
 
