@@ -28,6 +28,7 @@
     - [ProductCard.tsx](#productcardtsx)
   - [2.5. Añadiendo el routing y la página 404](#25-añadiendo-el-routing-y-la-página-404)
 - [3. Página de los Detalles del Producto](#3-página-de-los-detalles-del-producto)
+  - [3.1. Añadir Redux y Redux Toolkit](#31-añadir-redux-y-redux-toolkit)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -36,9 +37,8 @@
     - [5. Usando el Hook de useEffect()](#5-usando-el-hook-de-useeffect)
     - [6. Components and Props](#6-components-and-props)
     - [7. Conditional Rendering](#7-conditional-rendering)
-    - [8. BrowserRouter](#8-browserrouter)
-    - [9. Routes](#9-routes)
-    - [10. NavLink](#10-navlink)
+    - [8. BrowserRouter - Routes - NavLink - Link](#8-browserrouter---routes---navlink---link)
+    - [9. Redux Toolkit Guide - Creating Slices](#9-redux-toolkit-guide---creating-slices)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
 - [Extras](#extras)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
@@ -796,6 +796,89 @@ Necesitamos de algún modo poder coger uno de esos productos que tenemos en el P
 
 Con Redux, podremos tener como un "almacenamiento centralizado" y desde ahí, acceder fácilmente a cualquier objeto que queramos.
 
+## 3.1. Añadir Redux y Redux Toolkit
+
+Para instalar el paquete de Redux necesitamos ejecutar el siguiente comando:
+
+```bash
+npm install @reduxjs/toolkit react-redux
+```
+
+Ahora vamos a crear dentro de *src* una nueva carpeta llamada *store* por ejemplo, y dentro de ella a su vez, creamos otra para Redux.
+
+Dentro de la carpeta de Redux, vamos a crear dos archivos, un *ReduxStorage.ts* y un *ProductSlice.ts*, los cuales serán los archivos básicos que necesitaremos para la configuración de Redux y su uso por el momento.
+
+Lo primero de ambos, será configurar el ProductSlice
+
+```ts
+// First thing that we want to work in the slice here and we will be creating a slice, and we have to import it from Redux Toolkit
+import { createSlice } from "@reduxjs/toolkit";
+
+
+// and inside here we have to think about what will be the slice that we want to manage?
+// we want to manage an array or list of products
+// so for the initial state, we will set that as product, which is an array
+const initialState = {
+  product: []
+};
+
+
+// now we have to export the const productSlice and we say it's equal to the createSlice() method
+// and here we will configure our reducer or slice
+export const productSlice = createSlice({
+  name: "Product",
+  initialState: initialState,
+  reducers: { // here we want the reducers that will be responsible for managing the state
+    setProduct: (state, action) => {  // it receives two parameters, first one is the state itself, and the second one is the action
+      state.product = action.payload; // we need to set the state for product which will be passed to us from the payload when we invoke this
+    }
+  }
+});
+
+
+// finally we will export the setProduct action, and we will also export the productReducer from productSlice
+export const { setProduct } = productSlice.actions;
+export const productReducer = productSlice.reducer;
+```
+
+En segundo lugar, ahora tenemos que configurar el ReduxStorage
+
+```ts
+// now this store is where we will manage all the slices. To configure the store we need to import the configureStore from Redux Toolkit
+import { configureStore } from "@reduxjs/toolkit/dist/configureStore";
+import { productReducer } from "./ProductSlice";
+
+
+const reduxStorage = configureStore({ // we have to configure the objects here
+  reducer: {
+    productStore: productReducer  // name for the store and the reducer imported
+  }
+});
+
+
+// now when we are working with Typescript, we basically have to export the root state and that will be the type os store state
+// that way, whatever is the type of the current state of the slice that will be exported in the root state
+export type RootState = ReturnType<typeof reduxStorage.getState>;
+// getting the state by this way, whenever we are calling the paryicular store, Typescript will expect a type,
+// and we can use that as root state that we have exported right here
+
+export default reduxStorage;
+```
+
+Y ahora ya tan sólo tendríamos que añadir Redux a nuestra aplicación, por lo cual, iremos al nivel root, el cual es el *index.tsx* y añadiremos ahí el proveedor. Importaremos el Provider de Redux y tenemos que envolver lo que teníamos del BrowserRouter y el App, ahora dentro del tag Provider, indicando cual es el store que vamos a usar.
+
+```tsx
+root.render(
+  <Provider store={reduxStorage}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>
+);
+```
+
+Si entonces ahora ejecutamos la aplicación, lo primero es comprobar que no tenemos errores en panatalla o en la consola del inspeccionar... y efectivamente no los tenemos, todo sigue funcionando perfectamente!!
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -812,11 +895,9 @@ Con Redux, podremos tener como un "almacenamiento centralizado" y desde ahí, ac
 
 ### [7. Conditional Rendering](https://react.dev/learn/conditional-rendering#logical-and-operator-)
 
-### [8. BrowserRouter](https://reactrouter.com/en/main/router-components/browser-router)
+### [8. BrowserRouter - Routes - NavLink - Link](https://reactrouter.com/en/main/start/tutorial)
 
-### [9. Routes](https://reactrouter.com/en/main/components/routes)
-
-### [10. NavLink](https://reactrouter.com/en/main/components/nav-link)
+### [9. Redux Toolkit Guide - Creating Slices](https://redux-toolkit.js.org/api/createSlice)
 
 # Pruebas de Ejecución
 

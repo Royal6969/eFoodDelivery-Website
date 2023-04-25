@@ -6,14 +6,19 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { reduxStorage } from './store'; // when you export something from the index file, you don't have to write forward slash index here
 
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
+
 root.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+  <Provider store={reduxStorage}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>
 );
