@@ -29,6 +29,7 @@
   - [2.5. Añadiendo el routing y la página 404](#25-añadiendo-el-routing-y-la-página-404)
 - [3. Página de los Detalles del Producto](#3-página-de-los-detalles-del-producto)
   - [3.1. Añadir Redux y Redux Toolkit](#31-añadir-redux-y-redux-toolkit)
+  - [3.2. Añadir una consulta para buscar los productos](#32-añadir-una-consulta-para-buscar-los-productos)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -39,6 +40,9 @@
     - [7. Conditional Rendering](#7-conditional-rendering)
     - [8. BrowserRouter - Routes - NavLink - Link](#8-browserrouter---routes---navlink---link)
     - [9. Redux Toolkit Guide - Creating Slices](#9-redux-toolkit-guide---creating-slices)
+    - [10. Redux Toolkit - createApi](#10-redux-toolkit---createapi)
+    - [11. Redux Toolkit - fetchBaseQuery](#11-redux-toolkit---fetchbasequery)
+    - [12. Redux Toolkit - getDefaultMiddleware](#12-redux-toolkit---getdefaultmiddleware)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
 - [Extras](#extras)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
@@ -879,6 +883,65 @@ root.render(
 
 Si entonces ahora ejecutamos la aplicación, lo primero es comprobar que no tenemos errores en panatalla o en la consola del inspeccionar... y efectivamente no los tenemos, todo sigue funcionando perfectamente!!
 
+## 3.2. Añadir una consulta para buscar los productos
+
+Ahora que vamos a utilizar Redux, la cosa es que en vez de sobrecargar nuestra aplicación con el hook del useEffect(), vamos a utilizar queries con Redux, lo cual es más eficiente para el rendimiento de la app.
+
+En primer lugar vamos a crear una nueva carpeta dentro de *src*, a la que llamaremos *APIs*, y a su vez dentro de ella, creamos un archivo llamado *ProductAPI.ts*
+
+```ts
+// let's add the import statement to import createAPI and fetchBaseQuery
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
+
+const productAPI = createApi({
+  reducerPath: "productAPI",  // a name to identify it
+  baseQuery: fetchBaseQuery({ // to configure the baseQuery and here we want to fetch the baseQuery using a baseURL
+    baseUrl: "https://efooddelivery-api.azurewebsites.net/api/" // we set here the same URL that we used in ProductList but without the endpoint
+    // when we define the query endpoint, we will append the product there
+  }),
+  tagTypes: ["Products"],
+  endpoints: (builder) => ({  // when we build the endpoint, we have the arrow function where will get the builder object
+    // we want to define the endpoints for GetProducts (/api/Product) and GetProductById (/api/Product/{id})
+    getProducts: builder.query({
+      query: () => ({
+        url: "product" // the only parameter that we have is product
+      }),
+      providesTags: ["Products"] // when we retrieve this query, how we want to catch it, that is using the tag products that we defined in tagTypes before
+      // so next time, if you update a product, you have to invalidate this tag and the endpoint will fetch the record again from the API
+    }),
+    getProductById: builder.query({
+      query: (productId) => ({ // when we have to get the product by id here, we will receive the parameter ID
+        url: `product/${productId}` // and we will use string interpolation here and add that to the URL here using the productID
+      }),
+      providesTags: ["Products"]
+    }),
+  })
+});
+
+
+// now, what we have here, our query, so the action methods are created automatically, but we have to add the name which is used
+// then we set the endpoint name, changing the case, and we will have to append query at the end
+// and these will be the default actions that are created automatically when we work with our query
+export const { useGetProductsQuery, useGetProductByIdQuery } = productAPI;
+export default productAPI;
+```
+
+Una vez habiendo creado los endpoints, tenemos que anadirlo a nuestro *ReduxStorage.ts*, y también definir un middleware por defecto
+
+```ts
+...
+const reduxStorage = configureStore({ // we have to configure the objects here
+  reducer: {
+    productStore: productReducer,  // name for the store and the reducer imported
+    [productAPI.reducerPath]: productAPI.reducer
+  },
+  // now you should remember that when we have to register the API, we also have to add that in the middleware, and it needs a default configuration
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(productAPI.middleware)
+});
+...
+```
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -898,6 +961,12 @@ Si entonces ahora ejecutamos la aplicación, lo primero es comprobar que no tene
 ### [8. BrowserRouter - Routes - NavLink - Link](https://reactrouter.com/en/main/start/tutorial)
 
 ### [9. Redux Toolkit Guide - Creating Slices](https://redux-toolkit.js.org/api/createSlice)
+
+### [10. Redux Toolkit - createApi](https://redux-toolkit.js.org/rtk-query/api/createApi)
+
+### [11. Redux Toolkit - fetchBaseQuery](https://redux-toolkit.js.org/rtk-query/api/fetchBaseQuery)
+
+### [12. Redux Toolkit - getDefaultMiddleware](https://redux-toolkit.js.org/api/getDefaultMiddleware)
 
 # Pruebas de Ejecución
 

@@ -1,12 +1,16 @@
 // now this store is where we will manage all the slices. To configure the store we need to import the configureStore from Redux Toolkit
 import { configureStore } from "@reduxjs/toolkit";
 import { productReducer } from "./ProductSlice";
+import { productAPI } from "../../APIs"; // we have to register it as a reducer
 
 
 const reduxStorage = configureStore({ // we have to configure the objects here
   reducer: {
-    productStore: productReducer  // name for the store and the reducer imported
-  }
+    productStore: productReducer,  // name for the store and the reducer imported
+    [productAPI.reducerPath]: productAPI.reducer
+  },
+  // now you should remember that when we have to register the API, we also have to add that in the middleware, and it needs a default configuration
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(productAPI.middleware)
 });
 
 
