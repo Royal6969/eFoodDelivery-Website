@@ -30,6 +30,7 @@
 - [3. Página de los Detalles del Producto](#3-página-de-los-detalles-del-producto)
   - [3.1. Añadir Redux y Redux Toolkit](#31-añadir-redux-y-redux-toolkit)
   - [3.2. Añadir una consulta para buscar los productos](#32-añadir-una-consulta-para-buscar-los-productos)
+  - [3.3. LLamar al Slice para buscar los productos](#33-llamar-al-slice-para-buscar-los-productos)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -941,6 +942,57 @@ const reduxStorage = configureStore({ // we have to configure the objects here
 });
 ...
 ```
+
+## 3.3. LLamar al Slice para buscar los productos
+
+Volvemos al *ProductList.tsx* para actualizar el useEffect() y usarlo esta vez con la redux query
+
+```tsx
+function ProductsList() {
+  // after we created and configure our first Redux Query to fetch the products,
+  // now we want to extract the data, and we're going to extract the "isLoading" flag from useGetProductsQuery
+  const { data, isLoading } = useGetProductsQuery(null); // remember we had not parameters so we can set it as null, and this line will automatically be execute
+  // what we want to do is when isLoading is false, then we want to set the product in our store where we have the product slice so we want to invoke the setProduct
+  // so now we don't need the local state before (comment it for the moment) and let's remove the actual useEffect() content
+
+  // for that we will have to add the import for dispath hook and we will have to create a constant for dispatch
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!isLoading) { // that means the data is populated using the redux query, it has fetched it from our API
+      // so if that is populated then, we want to dispatch an event to populate or rather call the setProduct
+      dispatch(setProduct(data.result)); // when we're dispatching, we need the payload, and that payload will be reiceived in data.result
+    }
+  // now with this new useEffect() that we have, we don't want it to load every time the component is rendered
+  }, [isLoading]); // we only want it to be execute when the value os isLoading is updated
+  
+  // note that initially, data will not have all the value because it's still loading that using the query right now, so data will be undefined
+  // one way to handle this exception that we have, is we can add a condition here
+  if (isLoading) {
+    return (
+      <div>
+        Loading products ...
+      </div>
+    )
+  }
+
+  return (
+    <div className='container row'>
+      {data.result.length > 0 && data.result.map(
+        // but now Typescript doesn't know what is the type here
+        (product: ProductInterface, index: number) => ( // so it says you can write any here, but we know product will be of type ProductInterface and the index will be a Number
+          <ProductCard product={product} key={index} />
+        )
+      )}
+    </div>
+  )
+}
+```
+
+Si ahora ejecutamos la aplicación, mientras se cargan los rpoductos, podremos ver el mensaje de "Loading Products", hasta que se cargan y se presentan todos los productos en pantalla.
+
+![](./img/17.png)
+![](./img/18.png)
 
 # Webgrafía y Enlaces de Interés
 
