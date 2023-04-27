@@ -32,6 +32,8 @@
   - [3.2. Añadir una consulta para buscar los productos](#32-añadir-una-consulta-para-buscar-los-productos)
   - [3.3. LLamar al Slice para buscar los productos](#33-llamar-al-slice-para-buscar-los-productos)
   - [3.4. Cargar los detalles de un producto](#34-cargar-los-detalles-de-un-producto)
+  - [3.5. Controlar la cantidad de items de un producto](#35-controlar-la-cantidad-de-items-de-un-producto)
+    - [Prueba de Ejecución](#prueba-de-ejecución)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -45,7 +47,13 @@
     - [10. Redux Toolkit - createApi](#10-redux-toolkit---createapi)
     - [11. Redux Toolkit - fetchBaseQuery](#11-redux-toolkit---fetchbasequery)
     - [12. Redux Toolkit - getDefaultMiddleware](#12-redux-toolkit---getdefaultmiddleware)
+    - [13. What is useDispatch() hook](#13-what-is-usedispatch-hook)
+    - [14. How to use useParams() hook](#14-how-to-use-useparams-hook)
+    - [15. How to use useNavigation() hook](#15-how-to-use-usenavigation-hook)
+    - [16. Items counter example with useState() hook](#16-items-counter-example-with-usestate-hook)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
+  - [ProductList y ProductDetails](#productlist-y-productdetails)
+    - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
 - [Extras](#extras)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
     - [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](#enlace-a-trello---espacio-de-trabajo-y-tablero-del-proyecto-efooddelivery-website)
@@ -1088,6 +1096,54 @@ function ProductDetails() {
 ![](./img/19.png)
 ![](./img/20.png)
 
+## 3.5. Controlar la cantidad de items de un producto
+
+Se trata del contador del ProductDetails. Esto no tiene sentido que lo guardemos en el contenedor de redux, ya que es una funcionalidad aislada que sólo estará en los detalles del producto y cada vez que el usuario se salga se perderá, y tan sólo lo necesitaremos después para el carrito, así que para ello utilizaremos simplemente el hook del useState().
+
+```tsx
+function ProductDetails() {
+  ...
+  const [quantity, setQuantity] = useState(1); // to manage the counter and minimal quantity is 1
+
+  // dummy function with useState() hook to handle the items quantity for the product and no count below than minimal 1
+  const handleCounterQuantity = (counter: number) => {
+    let updatedQuantity = quantity + counter;
+    if (updatedQuantity == 0)
+      updatedQuantity = 1;
+
+    setQuantity(updatedQuantity);
+    return;
+  }
+
+  return (
+    ...
+    <span className="pb-2  p-3" style={{ border: "1px solid #333", borderRadius: "30px" }}>
+      <i 
+        className="bi bi-dash p-1" 
+        style={{ fontSize: "25px", cursor: "pointer" }}
+        onClick={() => {
+          handleCounterQuantity(-1); // custom helper method
+        }}
+      ></i>
+      <span className="h3 mt-3 px-3">
+        { quantity }
+      </span>
+      <i 
+        className="bi bi-plus p-1" 
+        style={{ fontSize: "25px", cursor: "pointer" }}
+        onClick={() => {
+          handleCounterQuantity(+1); // custom helper method
+        }}
+      ></i>
+    </span>
+  )
+}
+```
+
+### Prueba de Ejecución
+
+[Ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -1114,7 +1170,21 @@ function ProductDetails() {
 
 ### [12. Redux Toolkit - getDefaultMiddleware](https://redux-toolkit.js.org/api/getDefaultMiddleware)
 
+### [13. What is useDispatch() hook](https://react-redux.js.org/api/hooks#usedispatch)
+
+### [14. How to use useParams() hook](https://refine.dev/blog/react-router-useparams/#how-to-use-the--useparams-hook)
+
+### [15. How to use useNavigation() hook](https://reactnavigation.org/docs/use-navigation)
+
+### [16. Items counter example with useState() hook](https://legacy.reactjs.org/docs/hooks-state.html)
+
 # Pruebas de Ejecución
+
+## ProductList y ProductDetails
+
+### Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa
+
+[]()
 
 # Extras
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetProductByIdQuery } from '../APIs/ProductAPI';
 
@@ -14,6 +14,17 @@ function ProductDetails() {
   // console.log(data);
 
   const navigate = useNavigate(); // to back to home button functionality
+  const [quantity, setQuantity] = useState(1); // to manage the counter and minimal quantity is 1
+
+  // dummy function with useState() hook to handle the items quantity for the product and no count below than minimal 1
+  const handleCounterQuantity = (counter: number) => {
+    let updatedQuantity = quantity + counter;
+    if (updatedQuantity == 0)
+      updatedQuantity = 1;
+
+    setQuantity(updatedQuantity);
+    return;
+  }
 
   // to control the isLoading, instead use another flag like we did in ProductList, now we're going to use a conditional rendering
   return (
@@ -50,9 +61,23 @@ function ProductDetails() {
               </span> &nbsp;&nbsp;&nbsp;
               
               <span className="pb-2  p-3" style={{ border: "1px solid #333", borderRadius: "30px" }}>
-                <i className="bi bi-dash p-1" style={{ fontSize: "25px", cursor: "pointer" }}></i>
-                <span className="h3 mt-3 px-3">XX</span>
-                <i className="bi bi-plus p-1" style={{ fontSize: "25px", cursor: "pointer" }}></i>
+                <i 
+                  className="bi bi-dash p-1" 
+                  style={{ fontSize: "25px", cursor: "pointer" }}
+                  onClick={() => {
+                    handleCounterQuantity(-1); // custom helper method
+                  }}
+                ></i>
+                <span className="h3 mt-3 px-3">
+                  { quantity }
+                </span>
+                <i 
+                  className="bi bi-plus p-1" 
+                  style={{ fontSize: "25px", cursor: "pointer" }}
+                  onClick={() => {
+                    handleCounterQuantity(+1); // custom helper method
+                  }}
+                ></i>
               </span>
               
               <div className="row pt-4">
