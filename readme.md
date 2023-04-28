@@ -34,6 +34,9 @@
   - [3.4. Cargar los detalles de un producto](#34-cargar-los-detalles-de-un-producto)
   - [3.5. Controlar la cantidad de items de un producto](#35-controlar-la-cantidad-de-items-de-un-producto)
     - [Prueba de Ejecución](#prueba-de-ejecución)
+- [4. Cart](#4-cart)
+  - [4.1. Usuarios](#41-usuarios)
+  - [4.2. Crear el endpoint del carrito](#42-crear-el-endpoint-del-carrito)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -51,6 +54,7 @@
     - [14. How to use useParams() hook](#14-how-to-use-useparams-hook)
     - [15. How to use useNavigation() hook](#15-how-to-use-usenavigation-hook)
     - [16. Items counter example with useState() hook](#16-items-counter-example-with-usestate-hook)
+    - [17. Redux Toolkit - Mutations](#17-redux-toolkit---mutations)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [ProductList y ProductDetails](#productlist-y-productdetails)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -1144,6 +1148,84 @@ function ProductDetails() {
 
 [Ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
 
+# 4. Cart
+
+## 4.1. Usuarios
+
+Lo primero que tenemos que tener en cuenta es que cuando probábamos el carrito en la API, lo hacíamos a través de los userId de un par de usuarios que teníamos en la BBDD local, pero ahora estamos con la BBDD real de Azure, y por el momento aún no tenemos usuarios.
+
+Vamos a crear los dos usuarios que ya teníamos antes en la BBDD local pero aquí en la BBDD real de azure, necesitamos volver a tener el "admin" y el "customer".
+
+Una vez que tenemos este par de usuarios de prueba... ¿cómo podemos saber sus IDs? Pues haciendo login en la API a través del endpoint del login y copiando su token y pegando éste en la página web del JWT, y en el JSON de respuesta podremos ver los userId para poder desarrollar mejor y hacer las primeras pruebas con el carrito en React.
+
+user ADMIN --> userId: 26c2a46a-5fa6-43c1-8765-f96cc07d85bb
+
+## 4.2. Crear el endpoint del carrito
+
+Vamos a la carpeta de las APIs y copiamos y pegamos la que ya teníamos del producto, y le cambiamos el nombre para que sea la del carrito y actualizamos un poco el archivo por dentro
+
+```tsx
+const cartAPI = createApi({
+  reducerPath: "cartAPI",  // a name to identify it
+  baseQuery: fetchBaseQuery({ // to configure the baseQuery and here we want to fetch the baseQuery using a baseURL
+    baseUrl: "https://efooddelivery-api.azurewebsites.net/api/" // we set here the same URL that we used in ProductList but without the endpoint
+    // when we define the query endpoint, we will append the user there
+  }),
+  tagTypes: ["Carts"],
+  endpoints: (builder) => ({  // when we build the endpoint, we have the arrow function where will get the builder object
+    getCart: builder.query({
+      query: (userId) => ({ // when we have to get the cart by userId here, we will receive the parameter ID
+        // url: `cart/${userId}` // and we will use string interpolation here and add that to the URL here using the userID
+        // but rather than doing this like before with products, what we can do is we want to go to the cart endpoint and then we want to pass the parameters
+        url: `cart`,
+        params: { // because if you examine the endpoint in API, this endpoint is receiving the userId as a parameter to be executed
+          userId: userId
+        }
+      }),
+      providesTags: ["Carts"]
+    }),
+    // we alredy added a userId in our code right now, and that is what we will be using for all the request that we make
+    // that looks good for the query, but main thing when we add or remove anything from the cart is calling this post endpoint
+    // for that we will have to call a mutation where we have the get cart here, we would rather calling update cart here
+    // and for that we will go to builder a mutation and first thing here will be the query itself
+    updateCart: builder.mutation({ // this endpoint have three parameters (userId, productId, updateQuantity),
+      // so we will get all those values when we invoke this mutation as a parameter
+      query: ({ userId, productId, updateQuantity }) => ({
+        url: "cart",
+        method: "POST",
+        params: { userId, productId, updateQuantity }
+      }),
+      // we will have to invalidate that tag, and that way teh query will fetch a new cart
+      invalidatesTags: ["Carts"]
+    })
+  })
+});
+
+
+// now, what we have here, our query, so the action methods are created automatically, but we have to add the name which is used
+// then we set the endpoint name, changing the case, and we will have to append query at the end
+// and these will be the default actions that are created automatically when we work with our query
+export const { useGetCartQuery, useUpdateCartMutation } = cartAPI;
+export default cartAPI;
+```
+
+Y finalmente añadimos este nuevo endpoint a nuestro contenedor de Redux, en el *ReduxStorage.ts* (sin olvidar su middleware!)
+
+```ts
+const reduxStorage = configureStore({ // we have to configure the objects here
+  reducer: {
+    productStore: productReducer,  // name for the store and the reducer imported
+    [productAPI.reducerPath]: productAPI.reducer,
+    [cartAPI.reducerPath]: cartAPI.reducer
+  },
+  // now you should remember that when we have to register the API, we also have to add that in the middleware, and it needs a default configuration
+  middleware: (getDefaultMiddleware) => 
+    getDefaultMiddleware()
+      .concat(productAPI.middleware)
+      .concat(cartAPI.middleware)
+});
+```
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -1178,13 +1260,15 @@ function ProductDetails() {
 
 ### [16. Items counter example with useState() hook](https://legacy.reactjs.org/docs/hooks-state.html)
 
+### [17. Redux Toolkit - Mutations](https://redux-toolkit.js.org/rtk-query/usage/mutations)
+
 # Pruebas de Ejecución
 
 ## ProductList y ProductDetails
 
 ### Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa
 
-[]()
+[Prueba de Ejecución 1](https://user-images.githubusercontent.com/80839621/235106658-a548ae24-190b-4d47-99d9-f73c4b879118.mp4)
 
 # Extras
 
