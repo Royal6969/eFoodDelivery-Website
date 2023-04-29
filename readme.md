@@ -37,6 +37,8 @@
 - [4. Cart](#4-cart)
   - [4.1. Usuarios](#41-usuarios)
   - [4.2. Crear el endpoint del carrito](#42-crear-el-endpoint-del-carrito)
+  - [4.3. Actualizar el ProductDetails y probar que se crear y se actualiza el carrito](#43-actualizar-el-productdetails-y-probar-que-se-crear-y-se-actualiza-el-carrito)
+    - [Prueba de Ejecución](#prueba-de-ejecución-1)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -58,6 +60,8 @@
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [ProductList y ProductDetails](#productlist-y-productdetails)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
+  - [Cart](#cart)
+    - [Prueba de ejecución de creación y actualización del carrito a través del botón de añadir un producto](#prueba-de-ejecución-de-creación-y-actualización-del-carrito-a-través-del-botón-de-añadir-un-producto)
 - [Extras](#extras)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
     - [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](#enlace-a-trello---espacio-de-trabajo-y-tablero-del-proyecto-efooddelivery-website)
@@ -1226,6 +1230,74 @@ const reduxStorage = configureStore({ // we have to configure the objects here
 });
 ```
 
+## 4.3. Actualizar el ProductDetails y probar que se crear y se actualiza el carrito
+
+```tsx
+function ProductDetails() {
+  ...
+  // so when the AddToCart button will be clicked, we will have to invoke this updateCart method and there we will have to pass the three parameters
+  const handleAddToCart =async (productId: number) => { // it's async because we will be calling the mutation and we will have to wait for a response
+    setIsAddedToCart(true);
+
+    // quantity will be inside the quantity counter local state that we have, so we don't have to pass that as a parameter
+    // and the userId we're using the hardcoded string for now --> user ADMIN --> userId: 26c2a46a-5fa6-43c1-8765-f96cc07d85bb
+    const response = await updateCart({
+      productId: productId,
+      updateQuantity: quantity,
+      userId: '26c2a46a-5fa6-43c1-8765-f96cc07d85bb'
+    });
+    console.log(response);
+
+    setIsAddedToCart(false);
+  }
+
+  return (
+    ...
+    <span className="pb-2  p-3" style={{ border: "1px solid #333", borderRadius: "30px" }}>
+      <i 
+        className="bi bi-dash p-1" 
+        style={{ fontSize: "25px", cursor: "pointer" }}
+        onClick={() => {
+          handleCounterQuantity(-1); // custom helper method
+        }}
+      ></i>
+      <span className="h3 mt-3 px-3">
+        { quantity }
+      </span>
+      <i 
+        className="bi bi-plus p-1" 
+        style={{ fontSize: "25px", cursor: "pointer" }}
+        onClick={() => {
+          handleCounterQuantity(+1); // custom helper method
+        }}
+      ></i>
+      </span>
+              
+      <div className="row pt-4">
+        <div className="col-5">
+          <button 
+            className="btn btn-warning form-control"
+            onClick={() => handleAddToCart(data.result?.id)}
+          >
+            Add to Cart
+          </button>
+        </div>
+
+        <div className="col-5 ">
+          <button className="btn btn-secondary form-control" onClick={() => navigate(-1)}> {/* this is like the history.go(-1) */}
+            Back to Home
+          </button>
+        </div>
+      </div>
+    ...
+  )
+}
+```
+
+### Prueba de Ejecución
+
+[Prueba de ejecución de creación y actualización del carrito a través del botón de añadir un producto](#prueba-de-ejecución-de-creación-y-actualización-del-carrito-a-través-del-botón-de-añadir-un-producto)
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -1269,6 +1341,19 @@ const reduxStorage = configureStore({ // we have to configure the objects here
 ### Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa
 
 [Prueba de Ejecución 1](https://user-images.githubusercontent.com/80839621/235106658-a548ae24-190b-4d47-99d9-f73c4b879118.mp4)
+
+## Cart
+
+### Prueba de ejecución de creación y actualización del carrito a través del botón de añadir un producto
+
+![](./img/21.png)
+![](./img/22.png)
+![](./img/23.png)
+![](./img/24.png)
+![](./img/25.png)
+![](./img/26.png)
+![](./img/27.png)
+![](./img/28.png)
 
 # Extras
 

@@ -27,10 +27,10 @@ const cartAPI = createApi({
     // and for that we will go to builder a mutation and first thing here will be the query itself
     updateCart: builder.mutation({ // this endpoint have three parameters (userId, productId, updateQuantity),
       // so we will get all those values when we invoke this mutation as a parameter
-      query: ({ userId, productId, updateQuantity }) => ({
+      query: ({ productId, updateQuantity, userId }) => ({
         url: "cart",
         method: "POST",
-        params: { userId, productId, updateQuantity }
+        params: { productId, updateQuantity, userId }
       }),
       // we will have to invalidate that tag, and that way teh query will fetch a new cart
       invalidatesTags: ["Carts"]

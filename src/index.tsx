@@ -22,6 +22,3 @@ root.render(
     </BrowserRouter>
   </Provider>
 );
-
-
-// user ADMIN --> userId: 26c2a46a-5fa6-43c1-8765-f96cc07d85bb

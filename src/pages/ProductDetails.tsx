@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetProductByIdQuery } from '../APIs/ProductAPI';
+import { useUpdateCartMutation } from '../APIs/CartAPI';
 
 
 function ProductDetails() {
@@ -24,6 +25,28 @@ function ProductDetails() {
 
     setQuantity(updatedQuantity);
     return;
+  }
+
+  // we can use another useState() hook to show the loader when an item is being added to the cart
+  const [isAddedToCart, setIsAddedToCart] = useState<boolean>(false);
+  // next thing that we want is the mutation, the function or method that will be returned from the mutation
+  // to invoke that I will give that the name of updateCart and it will be equal to the mutation
+  const [updateCart] = useUpdateCartMutation();
+  
+  // so when the AddToCart button will be clicked, we will have to invoke this updateCart method and there we will have to pass the three parameters
+  const handleAddToCart =async (productId: number) => { // it's async because we will be calling the mutation and we will have to wait for a response
+    setIsAddedToCart(true);
+
+    // quantity will be inside the quantity counter local state that we have, so we don't have to pass that as a parameter
+    // and the userId we're using the hardcoded string for now --> user ADMIN --> userId: 26c2a46a-5fa6-43c1-8765-f96cc07d85bb
+    const response = await updateCart({
+      productId: productId,
+      updateQuantity: quantity,
+      userId: '26c2a46a-5fa6-43c1-8765-f96cc07d85bb'
+    });
+    console.log(response);
+
+    setIsAddedToCart(false);
   }
 
   // to control the isLoading, instead use another flag like we did in ProductList, now we're going to use a conditional rendering
@@ -82,7 +105,10 @@ function ProductDetails() {
               
               <div className="row pt-4">
                 <div className="col-5">
-                  <button className="btn btn-warning form-control">
+                  <button 
+                    className="btn btn-warning form-control"
+                    onClick={() => handleAddToCart(data.result?.id)}
+                  >
                     Add to Cart
                   </button>
                 </div>
