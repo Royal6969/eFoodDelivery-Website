@@ -50,10 +50,20 @@ function ProductCard(props: Props) { // right here we have to write the product 
             </i>
           )}
 
-          <i className='bi bi-cart-plus btn btn-outline-danger'
-            style={{ position: 'absolute', top: '15px', right: '15px', padding: '5px 10px', borderRadius: '3px', outline: 'none !important', cursor: 'pointer', }}
-            onClick={() => handleAddToCart(props.product.id)}
-          ></i>
+          {/* if isAddedToCart is true, we want to display some loader here, else we want to display the button */}
+          {isAddedToCart
+            ? (
+              <div style={{ position: 'absolute', top: '15px', right: '15px' }}>
+                <div style={{ scale: '100%' }} className={'spinner-border text-warning'}></div>
+              </div>
+            )
+            : (
+              <i className='bi bi-cart-plus btn btn-outline-danger'
+                style={{ position: 'absolute', top: '15px', right: '15px', padding: '5px 10px', borderRadius: '3px', outline: 'none !important', cursor: 'pointer', }}
+                onClick={() => handleAddToCart(props.product.id)}
+              ></i>
+            )
+          }
 
           <div className='text-center'>
             <p className='card-title m-0 text-warning fs-3'>

@@ -40,6 +40,7 @@
   - [4.3. Actualizar el ProductDetails y probar que se crear y se actualiza el carrito](#43-actualizar-el-productdetails-y-probar-que-se-crear-y-se-actualiza-el-carrito)
     - [Prueba de Ejecución](#prueba-de-ejecución-1)
   - [4.4. Añadir un producto al carrito desde el ProductCard](#44-añadir-un-producto-al-carrito-desde-el-productcard)
+  - [4.5. Añadir un mini-loader al botón de añadir un producto al carrito en el ProductCard](#45-añadir-un-mini-loader-al-botón-de-añadir-un-producto-al-carrito-en-el-productcard)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -1343,6 +1344,29 @@ function ProductCard(props: Props) { // right here we have to write the product 
 ![](./img/29.png)
 ![](./img/30.png)
 ![](./img/31.png)
+
+## 4.5. Añadir un mini-loader al botón de añadir un producto al carrito en el ProductCard
+
+Cuando el usuario pulse el botón que hicimos en el apartado anterior, tendría sentido que de mientras se ejecuta la función del handleAddToCart, se deshabilitase tal botón o se muestre un mini-loader.
+
+```tsx
+{/* if isAddedToCart is true, we want to display some loader here, else we want to display the button */}
+{isAddedToCart
+  ? (
+      <div style={{ position: 'absolute', top: '15px', right: '15px' }}>
+        <div style={{ scale: '100%' }} className={'spinner-border text-warning'}></div>
+      </div>
+    )
+  : (
+      <i className='bi bi-cart-plus btn btn-outline-danger'
+        style={{ position: 'absolute', top: '15px', right: '15px', padding: '5px 10px', borderRadius: '3px', outline: 'none !important', cursor: 'pointer', }}
+        onClick={() => handleAddToCart(props.product.id)}
+      ></i>
+  )
+}
+```
+
+**Nota:** quería poner aquí alguna captura de pantalla de cómo se ve en acción, pero es tan rápido que no tengo forma de capturarlo en el momento justo, de modo que ya lo enseñaré próximamente mediante algún video.
 
 # Webgrafía y Enlaces de Interés
 
