@@ -46,6 +46,7 @@
   - [4.8. Creando las interfaces del carrito y de los items del carrito](#48-creando-las-interfaces-del-carrito-y-de-los-items-del-carrito)
     - [CartIterface.ts](#cartiterfacets)
     - [CartItemInterface](#cartiteminterface)
+  - [4.9. Slice para el carrito](#49-slice-para-el-carrito)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -64,6 +65,7 @@
     - [15. How to use useNavigation() hook](#15-how-to-use-usenavigation-hook)
     - [16. Items counter example with useState() hook](#16-items-counter-example-with-usestate-hook)
     - [17. Redux Toolkit - Mutations](#17-redux-toolkit---mutations)
+    - [18. React Loader Spinners](#18-react-loader-spinners)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [ProductList y ProductDetails](#productlist-y-productdetails)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -1482,7 +1484,7 @@ Por el momento, aún no tenemos la autentificación ni la autorización, pero po
 
 Seguiremos usando el userId hardcodeado y vamos a volver a hacer el truco de autogenerar la interfaz del la entidad del carrito a través de la respuesta en JSON que obtenemos de nuestra API del endpoint del GetCart(userId), y copiaremos y pegaremos la respuesta en la web de [json-to-typescript](https://transform.tools/json-to-typescript) en las respectivas interfaces que tenemos que crear.
 
-![](.img/33.png)
+![](./img/33.png)
 
 ### CartIterface.ts
 
@@ -1516,6 +1518,94 @@ export default interface CartItemInterface {
   product?: ProductInterface
 }
 ```
+
+## 4.9. Slice para el carrito
+
+Cuando estemos cargando el ProductList, tendremos que recuperar el número de items de cada producto añadido para ponerlo en el icono del carrito del Header, y cuando el usuario vaya efectivamente a la página del carrito tendremos que desplegar todos los productos añadidos.
+
+Por lo tanto, deberíamos recuperar todo el carrito del usuario en cuestión cuando la aplicación se ejecuta y carga por sí misma, pero para que esto ocurra, el usuario debería estar logueado en nuestra aplicación.
+
+Para comenzar a desarrollar toda esta funcionalidad, vamos a comnenzar desde la base de que el usuario ya está logueado y conocemos su userId, el cual usaremos para buscar los productso de su carrito, y una vez que los recuperemos, los almacenaremos en algún lugar en Redux.
+
+Vamos a comenzar creando el Slice del carrito y almacenar lo que recuperemos con una Redux query.
+
+Claro que también tenemos que tener en cuenta que no tendría sentido almacenar en Redux toda la información sensible relativa al usuario.
+Por lo cual, lo único que vamos a almacenar es el array con los items de los productos añadidos, es decir, los CartItems del Cart.
+
+De modo que vamos a nuestra carpeta de redux, y copiamos y pegamos el archivo del ProductSlice para renombrarlo al CartSlice y a actualizar un poco su contenido:
+
+```tsx
+// and inside here we have to think about what will be the slice that we want to manage?
+// we want to manage an array of cartItems
+// so for the initial state, we will set that as cartItems, which is an array
+const initialState = {
+  cartItems: []
+};
+
+// now we have to export the const cartSlice and we say it's equal to the createSlice() method
+// and here we will configure our reducer or slice
+export const cartSlice = createSlice({
+  name: "CartItems",
+  initialState: initialState,
+  reducers: { // here we want the reducers that will be responsible for managing the state
+    setCart: (state, action) => {  // it receives two parameters, first one is the state itself, and the second one is the action
+      state.cartItems = action.payload; // we need to set the state for cart which will be passed to us from the payload when we invoke this
+    }
+  }
+});
+
+// finally we will export the setCart action, and we will also export the cartReducer from cartSlice
+export const { setCart } = cartSlice.actions;
+export const cartReducer = cartSlice.reducer;
+```
+
+Lo siguiente será añadir este Slice al ReduxStorage:
+
+```tsx
+const reduxStorage = configureStore({ // we have to configure the objects here
+  reducer: {
+    productStore: productReducer,  // name for the store and the reducer imported
+    cartStore: cartReducer, // adding the cartReducer with its cartSlice
+
+    [productAPI.reducerPath]: productAPI.reducer,
+    [cartAPI.reducerPath]: cartAPI.reducer
+  },
+  // now you should remember that when we have to register the API, we also have to add that in the middleware, and it needs a default configuration
+  middleware: (getDefaultMiddleware) => 
+    getDefaultMiddleware()
+      .concat(productAPI.middleware)
+      .concat(cartAPI.middleware)
+});
+```
+
+Y ahora en el App, vamos a cargar el carrito con el uso de un par de hooks, el useDispatch() y el useEffect():
+
+```tsx
+function App() {
+  // we habe to load the cart when the app is loaded
+  const dispatch = useDispatch();
+  // next we need to get the cart first with the cartAPI and its query
+  const { data, isLoading } = useGetCartQuery('26c2a46a-5fa6-43c1-8765-f96cc07d85bb'); // our userId hardcoded as the parameter
+  
+  // then we can hve the useEffect() once the loading is complete
+  useEffect(() => {
+    if (!isLoading) {
+      // if the loading is complete, then we want to dispatch and set our shopping cart
+      dispatch(setCart(data.result?.cartItems));
+      console.log(data.result);
+    }
+  // and then when should they useEffect() be triggered, we can do that on isLoading or we can even say whenever the data is toggled
+  }, [data]);
+  // that way, when we update the cart, it automatically dispatches and sets the new cart
+
+  return (
+    ...
+  );
+}
+```
+
+![](./img/34.png)
+![](./img/35.png)
 
 # Webgrafía y Enlaces de Interés
 
@@ -1552,6 +1642,8 @@ export default interface CartItemInterface {
 ### [16. Items counter example with useState() hook](https://legacy.reactjs.org/docs/hooks-state.html)
 
 ### [17. Redux Toolkit - Mutations](https://redux-toolkit.js.org/rtk-query/usage/mutations)
+
+### [18. React Loader Spinners](https://mhnpd.github.io/react-loader-spinner/docs/intro)
 
 # Pruebas de Ejecución
 

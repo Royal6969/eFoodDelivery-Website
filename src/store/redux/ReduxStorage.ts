@@ -2,11 +2,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { productReducer } from "./ProductSlice";
 import { cartAPI, productAPI } from "../../APIs"; // we have to register it as a reducer
+import { cartReducer } from "./CartSlice";
 
 
 const reduxStorage = configureStore({ // we have to configure the objects here
   reducer: {
     productStore: productReducer,  // name for the store and the reducer imported
+    cartStore: cartReducer, // adding the cartReducer with its cartSlice
+
     [productAPI.reducerPath]: productAPI.reducer,
     [cartAPI.reducerPath]: cartAPI.reducer
   },
