@@ -4,6 +4,7 @@ import ProductCard from './ProductCard';
 import { useGetProductsQuery } from '../../../APIs/ProductAPI';
 import { useDispatch } from 'react-redux';
 import { setProduct } from '../../../store/redux/ProductSlice';
+import { BigLoader } from '../common';
 
 
 function ProductsList() {
@@ -47,9 +48,8 @@ function ProductsList() {
   // one way to handle this exception that we have, is we can add a condition here
   if (isLoading) {
     return (
-      <div>
-        Loading products ...
-      </div>
+      // <div>Loading products ...</div>
+      <BigLoader />
     )
   }
 

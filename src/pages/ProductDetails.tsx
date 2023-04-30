@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetProductByIdQuery } from '../APIs/ProductAPI';
 import { useUpdateCartMutation } from '../APIs/CartAPI';
+import { BigLoader } from '../components/view/common';
 
 
 function ProductDetails() {
@@ -129,7 +130,8 @@ function ProductDetails() {
         // else we want to display a <div> with the text of loading
         : (
           <div className='d-flex justify-content-center' style={{ width: "100%" }}>
-            <div>Loading product details...</div>
+            {/* <div>Loading product details...</div> */}
+            <BigLoader />
           </div>
         )
       }

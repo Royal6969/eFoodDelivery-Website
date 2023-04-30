@@ -1,4 +1,5 @@
 import MiniLoader from "./MiniLoader";
+import BigLoader from "./BigLoader";
 
 
-export { MiniLoader };
+export { MiniLoader, BigLoader };

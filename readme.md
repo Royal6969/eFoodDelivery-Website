@@ -42,6 +42,7 @@
   - [4.4. Añadir un producto al carrito desde el ProductCard](#44-añadir-un-producto-al-carrito-desde-el-productcard)
   - [4.5. Añadir un mini-loader al botón de añadir un producto al carrito en el ProductCard](#45-añadir-un-mini-loader-al-botón-de-añadir-un-producto-al-carrito-en-el-productcard)
   - [4.6. Componente del Mini-Loader](#46-componente-del-mini-loader)
+  - [4.7. Componmente del BigLoader](#47-componmente-del-bigloader)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -1399,6 +1400,50 @@ Y en el ProductCard, donde antes teníamos el <div> del mini-loader, ahora llama
 ```
 
 Y ejecutamos nuestra aplicación y comprobamos que el MiniLoader sigue funcionando correctamente!
+
+## 4.7. Componmente del BigLoader
+
+Ya que estamos con el tema de los loaders, también necesitábamos el loader principal, el que se vería cuando cargan el ProductList y el ProductDetails.
+
+Dentro de la carpeta de components --> view --> common --> creamos el componente del *BigLoader.tsx*
+
+```tsx
+import React from 'react'
+
+function BigLoader() {
+  return (
+    <div style={{ position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ width: '4rem', height: '4rem' }} className='spinner-border text-warning'>
+        {' '}
+      </div>
+    </div>
+  )
+}
+
+export default BigLoader
+```
+
+Entonces ahora ya podríamos llamar a este nuevo componente en el ProductDetails
+
+```tsx
+<div className='d-flex justify-content-center' style={{ width: "100%" }}>
+  {/* <div>Loading product details...</div> */}
+  <BigLoader />
+</div>
+```
+
+Y también en el ProductList
+
+```tsx
+if (isLoading) {
+  return (
+    // <div>Loading products ...</div>
+    <BigLoader />
+  )
+}
+```
+
+![](./img/32.png)
 
 # Webgrafía y Enlaces de Interés
 
