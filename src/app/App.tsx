@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { Footer, Header } from '../components/layout';
-import { Home, NotFound, ProductDetails } from '../pages';
+import { Cart, Home, NotFound, ProductDetails } from '../pages';
 import { useDispatch } from 'react-redux';
 import { useGetCartQuery } from '../APIs/CartAPI';
 import { setCart } from '../store/redux/CartSlice';
@@ -17,7 +17,7 @@ function App() {
   useEffect(() => {
     if (!isLoading) {
       // if the loading is complete, then we want to dispatch and set our shopping cart
-      dispatch(setCart(data.result?.cartItems));
+      dispatch(setCart(data.result?.cartItemsList));
       console.log(data.result);
     }
   // and then when should they useEffect() be triggered, we can do that on isLoading or we can even say whenever the data is toggled
@@ -34,6 +34,7 @@ function App() {
             <Route path='/' element={<Home />}></Route>
             <Route path='*' element={<NotFound />}></Route>
             <Route path='/ProductDetails/:productId' element={<ProductDetails />}></Route>
+            <Route path='/Cart' element={<Cart />}></Route>
           </Routes>
         </div>
         

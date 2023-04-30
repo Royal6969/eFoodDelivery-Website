@@ -47,6 +47,7 @@
     - [CartIterface.ts](#cartiterfacets)
     - [CartItemInterface](#cartiteminterface)
   - [4.9. Slice para el carrito](#49-slice-para-el-carrito)
+  - [4.10. Crear la vista de la página del Carrito](#410-crear-la-vista-de-la-página-del-carrito)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -1606,6 +1607,49 @@ function App() {
 
 ![](./img/34.png)
 ![](./img/35.png)
+
+## 4.10. Crear la vista de la página del Carrito
+
+Vamos a nuestra carpeta de *pages* para añadir la nueva vista del carrito, el *Cart.tsx*
+
+```tsx
+import React from 'react'
+import { CartRecap } from '../components/view/cart'
+
+function Cart() {
+  return (
+    <div style={{ marginTop: '10px' }} className='row w-100'>
+      <div style={{ fontWeight: 300 }} className='col-lg-6 col-12'>
+        <CartRecap />
+      </div>
+
+      <div className='col-lg-6 col-12 p-4'>
+        Detalles del usuario
+      </div>
+    </div>
+  )
+}
+
+export default Cart
+```
+
+Y los detalles del carrito (el resumen de los items de éste) lo pondremos en un nuevo componente llamado *CartRecap.tsx* el cual crearemos dentro de *components --> view --> cart --> CartRecap.tsx*
+
+```tsx
+import React from 'react'
+
+function CartRecap() {
+  return (
+    <div>CartRecap</div>
+  )
+}
+
+export default CartRecap
+```
+
+**Nota:** no olvidarnos de añadir la nueva ruta hacia esta nueva página en el *App.tsx* y en el icono del carrito del *Header.tsx*
+
+![](./img/36.png)
 
 # Webgrafía y Enlaces de Interés
 

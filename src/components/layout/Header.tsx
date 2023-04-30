@@ -26,7 +26,7 @@ function Header() {
               </li>
 
               <li className="nav-item">
-                <NavLink className="nav-link" aria-current="page" to="/cart">
+                <NavLink className="nav-link" aria-current="page" to="/Cart">
                   <i className="bi bi-cart4"></i>
                 </NavLink>
               </li>
