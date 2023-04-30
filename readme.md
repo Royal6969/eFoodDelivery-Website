@@ -39,6 +39,7 @@
   - [4.2. Crear el endpoint del carrito](#42-crear-el-endpoint-del-carrito)
   - [4.3. Actualizar el ProductDetails y probar que se crear y se actualiza el carrito](#43-actualizar-el-productdetails-y-probar-que-se-crear-y-se-actualiza-el-carrito)
     - [Prueba de Ejecución](#prueba-de-ejecución-1)
+  - [4.4. Añadir un producto al carrito desde el ProductCard](#44-añadir-un-producto-al-carrito-desde-el-productcard)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -1297,6 +1298,51 @@ function ProductDetails() {
 ### Prueba de Ejecución
 
 [Prueba de ejecución de creación y actualización del carrito a través del botón de añadir un producto](#prueba-de-ejecución-de-creación-y-actualización-del-carrito-a-través-del-botón-de-añadir-un-producto)
+
+## 4.4. Añadir un producto al carrito desde el ProductCard
+
+Como ya nos habremos dado cuenta, en el mismo ProductCard ya pusimos un botón el cual permitiría incrementar en +1 la cantidad de un producto en el carrito.
+
+Tan sólo tenemos que copiar del ProductDetails el useState() del isAddedToCart, el useUpdateCartMutation, y la función del handleAddToCart
+
+```tsx
+function ProductCard(props: Props) { // right here we have to write the product will be getting props
+  // we can use useState() hook to show the loader when an item is being added to the cart
+  const [isAddedToCart, setIsAddedToCart] = useState<boolean>(false);
+  // next thing that we want is the mutation, the function or method that will be returned from the mutation
+  // to invoke that I will give that the name of updateCart and it will be equal to the mutation
+  const [updateCart] = useUpdateCartMutation();
+  
+  // so when the AddToCart button will be clicked, we will have to invoke this updateCart method and there we will have to pass the three parameters
+  const handleAddToCart =async (productId: number) => { // it's async because we will be calling the mutation and we will have to wait for a response
+    setIsAddedToCart(true);
+
+    // quantity will be inside the quantity counter local state that we have, so we don't have to pass that as a parameter
+    // and the userId we're using the hardcoded string for now --> user ADMIN --> userId: 26c2a46a-5fa6-43c1-8765-f96cc07d85bb
+    const response = await updateCart({
+      productId: productId,
+      updateQuantity: 1, // the only thing that we have to change is quantity that it will be always 1 by initial default
+      userId: '26c2a46a-5fa6-43c1-8765-f96cc07d85bb'
+    });
+    console.log(response);
+
+    setIsAddedToCart(false);
+  }
+
+  return (
+    ...
+    <i className='bi bi-cart-plus btn btn-outline-danger'
+      style={{ position: 'absolute', top: '15px', right: '15px', padding: '5px 10px', borderRadius: '3px', outline: 'none !important', cursor: 'pointer', }}
+      onClick={() => handleAddToCart(props.product.id)}
+    ></i>
+    ...
+  )
+}
+```
+
+![](./img/29.png)
+![](./img/30.png)
+![](./img/31.png)
 
 # Webgrafía y Enlaces de Interés
 
