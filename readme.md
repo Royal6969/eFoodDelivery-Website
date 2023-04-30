@@ -43,6 +43,9 @@
   - [4.5. Añadir un mini-loader al botón de añadir un producto al carrito en el ProductCard](#45-añadir-un-mini-loader-al-botón-de-añadir-un-producto-al-carrito-en-el-productcard)
   - [4.6. Componente del Mini-Loader](#46-componente-del-mini-loader)
   - [4.7. Componmente del BigLoader](#47-componmente-del-bigloader)
+  - [4.8. Creando las interfaces del carrito y de los items del carrito](#48-creando-las-interfaces-del-carrito-y-de-los-items-del-carrito)
+    - [CartIterface.ts](#cartiterfacets)
+    - [CartItemInterface](#cartiteminterface)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -1466,6 +1469,53 @@ if (isLoading) {
 ```
 
 ![](./img/32.png)
+
+## 4.8. Creando las interfaces del carrito y de los items del carrito
+
+Recordamos que en el Header, tenemos un icono que nos llevaría a la página del carrito, en la cual queremos desplegar cuantos items de cada producto hay en el carrito del usuario en cuestión.
+
+Básicamente lo que ocurrá es que, cuando la págian del Home, es dedcir, el componente del ProductList se cargue y se renderice por sí mismo, nosotros tendremos que busc ar el carrito del usuario en cuestión.
+
+Pero hay que tener en cuenta que al principio no hay ningún usuario logeado, y en ese punto inicial en el carrito debe poner un 0, pero cuando el usuario es cuestión se logue, entonces necesitaremos cargar esa renderización inicial buscando el carrito de tal usuario.
+
+Por el momento, aún no tenemos la autentificación ni la autorización, pero podemos ir desarrollando la lógica, la cual renderizará el carrito cuando la aplicación se cargue.
+
+Seguiremos usando el userId hardcodeado y vamos a volver a hacer el truco de autogenerar la interfaz del la entidad del carrito a través de la respuesta en JSON que obtenemos de nuestra API del endpoint del GetCart(userId), y copiaremos y pegaremos la respuesta en la web de [json-to-typescript](https://transform.tools/json-to-typescript) en las respectivas interfaces que tenemos que crear.
+
+![](.img/33.png)
+
+### CartIterface.ts
+
+```ts
+import CartItemInterface from "./CartItemInterface"
+
+export default interface CartInterface {
+  md_uuid?: string
+  md_date?: string
+  id?: number
+  userId?: string
+  total?: number
+  paymentAttempId?: any
+  clientSecret?: any
+  cartItemsList?: CartItemInterface[]
+}
+```
+
+### CartItemInterface
+
+```ts
+import ProductInterface from "./ProductInterface"
+
+export default interface CartItemInterface {
+  md_uuid?: string
+  md_date?: string
+  id?: number
+  productId?: number
+  quantity?: number
+  // cartId?: number // we don't care about that by the moment
+  product?: ProductInterface
+}
+```
 
 # Webgrafía y Enlaces de Interés
 
