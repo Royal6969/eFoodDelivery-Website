@@ -1399,6 +1399,28 @@ Y en el ProductCard, donde antes teníamos el <div> del mini-loader, ahora llama
 </div>
 ```
 
+También tendríamos que añadir este MiniLoader al botón del AddToCart del ProductDetails...
+
+```tsx
+<div className="col-5">
+  {isAddedToCart
+    ? (
+      <button className='btn btn-warning form-control' disabled>
+        <MiniLoader type='danger' />
+      </button>
+    )
+    : (
+      <button 
+        className="btn btn-warning form-control"
+        onClick={() => handleAddToCart(data.result?.id)}
+      >
+        Add to Cart
+      </button>
+    )
+  }
+</div>
+```
+
 Y ejecutamos nuestra aplicación y comprobamos que el MiniLoader sigue funcionando correctamente!
 
 ## 4.7. Componmente del BigLoader

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetProductByIdQuery } from '../APIs/ProductAPI';
 import { useUpdateCartMutation } from '../APIs/CartAPI';
-import { BigLoader } from '../components/view/common';
+import { BigLoader, MiniLoader } from '../components/view/common';
 
 
 function ProductDetails() {
@@ -106,12 +106,21 @@ function ProductDetails() {
               
               <div className="row pt-4">
                 <div className="col-5">
-                  <button 
-                    className="btn btn-warning form-control"
-                    onClick={() => handleAddToCart(data.result?.id)}
-                  >
-                    Add to Cart
-                  </button>
+                  {isAddedToCart
+                    ? (
+                      <button className='btn btn-warning form-control' disabled>
+                        <MiniLoader type='danger' />
+                      </button>
+                    )
+                    : (
+                      <button 
+                        className="btn btn-warning form-control"
+                        onClick={() => handleAddToCart(data.result?.id)}
+                      >
+                        Add to Cart
+                      </button>
+                    )
+                  }
                 </div>
 
                 <div className="col-5 ">
