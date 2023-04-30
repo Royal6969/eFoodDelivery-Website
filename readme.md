@@ -48,6 +48,7 @@
     - [CartItemInterface](#cartiteminterface)
   - [4.9. Slice para el carrito](#49-slice-para-el-carrito)
   - [4.10. Crear la vista de la página del Carrito](#410-crear-la-vista-de-la-página-del-carrito)
+  - [4.11. Desarrollando el componente del CartRecap](#411-desarrollando-el-componente-del-cartrecap)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -67,6 +68,7 @@
     - [16. Items counter example with useState() hook](#16-items-counter-example-with-usestate-hook)
     - [17. Redux Toolkit - Mutations](#17-redux-toolkit---mutations)
     - [18. React Loader Spinners](#18-react-loader-spinners)
+    - [19. What is useSelector() hook](#19-what-is-useselector-hook)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [ProductList y ProductDetails](#productlist-y-productdetails)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -1475,7 +1477,7 @@ if (isLoading) {
 
 ## 4.8. Creando las interfaces del carrito y de los items del carrito
 
-Recordamos que en el Header, tenemos un icono que nos llevaría a la página del carrito, en la cual queremos desplegar cuantos items de cada producto hay en el carrito del usuario en cuestión.
+Recordamos que en el Header, tenemos un icono que nos llevaría a la página del carrito, en la cual queremos mostrar cuantos items de cada producto hay en el carrito del usuario en cuestión.
 
 Básicamente lo que ocurrá es que, cuando la págian del Home, es dedcir, el componente del ProductList se cargue y se renderice por sí mismo, nosotros tendremos que busc ar el carrito del usuario en cuestión.
 
@@ -1522,7 +1524,7 @@ export default interface CartItemInterface {
 
 ## 4.9. Slice para el carrito
 
-Cuando estemos cargando el ProductList, tendremos que recuperar el número de items de cada producto añadido para ponerlo en el icono del carrito del Header, y cuando el usuario vaya efectivamente a la página del carrito tendremos que desplegar todos los productos añadidos.
+Cuando estemos cargando el ProductList, tendremos que recuperar el número de items de cada producto añadido para ponerlo en el icono del carrito del Header, y cuando el usuario vaya efectivamente a la página del carrito tendremos que mostrar todos los productos añadidos.
 
 Por lo tanto, deberíamos recuperar todo el carrito del usuario en cuestión cuando la aplicación se ejecuta y carga por sí misma, pero para que esto ocurra, el usuario debería estar logueado en nuestra aplicación.
 
@@ -1651,6 +1653,107 @@ export default CartRecap
 
 ![](./img/36.png)
 
+## 4.11. Desarrollando el componente del CartRecap
+
+Lo primero será volver a buscar por Google cualquier plantilla de Bootstrap de un carrito de la compra de la cual podamos usar de base y seguir hacia adelante rápidamente.
+
+Luego, básicamente tenemos que recuperar que tenemos guardado en el almacenamiento de Redux, y recuperar los productos (cartItems), mapeando a través de ellos, y mostrando por pantalla todo en este componente.
+
+Aunque una vez que tengamos la plantilla, la pregunta sería... ¿cómo podemos acceder a nuestro almacenamiento de Redux?... pues con el hook del useSelector() !! 
+
+```tsx
+function CartRecap() {
+  // to access to our redux store, we have a hook called useSelector() that is inside the React Redux library
+  // and here, basically we will be extracting that from the store
+  const cartFromReduxStorage: CartItemInterface[] = useSelector(
+    // then we have to define the state
+    (state: RootState) => state.cartStore.cartItems ?? [] // and if it's null, return an empty array
+  );
+
+  // if cartFromReduxStorage is empty...
+  if (!cartFromReduxStorage) {
+    return (
+      <div>El carrito está vacío</div>
+    );
+  }
+
+  // ...else show the UI
+  // and we will have to loop through all the cartItems inside the cartFromReduxStorage
+  return (
+    <div className='container p-4 m-2'>
+      <h4 className='text-center text-success'>Cart Summary</h4>
+      
+      {cartFromReduxStorage.map(
+        (cartItem: CartItemInterface, index: number) => (
+          <div 
+            style={{ background: 'ghostwhite' }} 
+            className='d-flex flex-sm-row flex-column align-items-center custom-card-shadow rounded m-3'
+            key={index}
+          >
+            <div className='p-3'>
+              <img 
+                src={cartItem.product?.image} 
+                className='rounded-circle' 
+                width={'120px'} 
+                alt='' 
+              />
+            </div>
+
+            <div style={{ width: '100%' }} className='p-2 mx-3'>
+              <div className='d-flex justify-content-between align-items-center'>
+                <h4 style={{ fontWeight: 300 }}>
+                  {cartItem.product?.name}
+                </h4>
+                
+                <h4>
+                  {(cartItem.quantity! * cartItem.product!.price).toFixed(2)}€ 
+                  {/* the ! symbol means not null assertion with Typescript */}
+                  {/* it checks that quantity is not null and then it will access its value */}
+                </h4>
+              </div>
+              
+              <div className='flex-fill'>
+                <h4 className='text-danger'>
+                  {cartItem.product!.price}
+                </h4>
+              </div>
+              
+              <div className='d-flex justify-content-between'>
+                <div style={{ width: '100px', height: '43px' }} className='d-flex justify-content-between p-2 mt-2 rounded-pill custom-card-shadow'>
+                  <span style={{ color: 'rgba(22, 22, 22, 0.7)' }} role='button'>
+                    <i className='bi bi-dash-circle-fill'></i>
+                  </span>
+                  
+                  <span>
+                    <b>
+                      {cartItem.quantity}
+                    </b>
+                  </span>
+                  
+                  <span style={{ color: 'rgba(22, 22, 22, 0.7)' }} role='button'>
+                    <i className='bi bi-plus-circle-fill'></i>
+                  </span>
+                </div>
+
+                <button className='btn btn-danger mx-1'>Remove</button>
+              </div>
+            </div>
+          </div>
+        )
+      )}
+
+    </div>
+  )
+}
+```
+
+**Nota:** OJO con que la importación del tipo RootState sea la nuestra propia y no una que hay en la librería de Redux
+```tsx
+import { RootState } from '../../../store/redux/ReduxStorage'
+```
+
+![](./img/37.png)
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -1688,6 +1791,8 @@ export default CartRecap
 ### [17. Redux Toolkit - Mutations](https://redux-toolkit.js.org/rtk-query/usage/mutations)
 
 ### [18. React Loader Spinners](https://mhnpd.github.io/react-loader-spinner/docs/intro)
+
+### [19. What is useSelector() hook](https://react-redux.js.org/api/hooks#useselector)
 
 # Pruebas de Ejecución
 
