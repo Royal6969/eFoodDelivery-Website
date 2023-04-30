@@ -41,6 +41,7 @@
     - [Prueba de Ejecución](#prueba-de-ejecución-1)
   - [4.4. Añadir un producto al carrito desde el ProductCard](#44-añadir-un-producto-al-carrito-desde-el-productcard)
   - [4.5. Añadir un mini-loader al botón de añadir un producto al carrito en el ProductCard](#45-añadir-un-mini-loader-al-botón-de-añadir-un-producto-al-carrito-en-el-productcard)
+  - [4.6. Componente del Mini-Loader](#46-componente-del-mini-loader)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -1367,6 +1368,37 @@ Cuando el usuario pulse el botón que hicimos en el apartado anterior, tendría 
 ```
 
 **Nota:** quería poner aquí alguna captura de pantalla de cómo se ve en acción, pero es tan rápido que no tengo forma de capturarlo en el momento justo, de modo que ya lo enseñaré próximamente mediante algún video.
+
+## 4.6. Componente del Mini-Loader
+
+En el apartado anterior añadimos un mini-loader al botón de icono de añadir un producto al carrito desde el ProductCard, pero pensándolo mejor, este mini-loader seguramente lo vaya a necesitar y a reutilizar próximamente en futuros componentes o páginas, de modo que es mejor separarlo en un componente propio.
+
+Para ello, dentro de la carpeta de components --> view --> creamos una carpeta nueva llamada *common*, y dentro de ella creamos este nuevo componente, el *MiniLoader.tsx*
+
+```tsx
+import React from 'react'
+
+function MiniLoader({ type = 'warning', size = '100' }) { // right here in the parameters, we can say the default type will be warning and size will be 100
+  return (
+    // here we can use dynamic text for the styles that we've set as parameters before
+    <div style={{ scale: `${size}%` }} className={`spinner-border text-${type}`}>
+      {' '}
+    </div>
+  )
+}
+
+export default MiniLoader
+```
+
+Y en el ProductCard, donde antes teníamos el <div> del mini-loader, ahora llamamos a este nuevo componente por separado.
+
+```tsx
+<div style={{ position: 'absolute', top: '15px', right: '15px' }}>
+  <MiniLoader />
+</div>
+```
+
+Y ejecutamos nuestra aplicación y comprobamos que el MiniLoader sigue funcionando correctamente!
 
 # Webgrafía y Enlaces de Interés
 
