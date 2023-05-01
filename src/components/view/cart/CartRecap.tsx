@@ -9,7 +9,7 @@ function CartRecap() {
   // and here, basically we will be extracting that from the store
   const cartFromReduxStorage: CartItemInterface[] = useSelector(
     // then we have to define the state
-    (state: RootState) => state.cartStore.cartItems ?? [] // and if it's null, return an empty array
+    (state: RootState) => state.cartStore.cartItemsList ?? [] // and if it's null, return an empty array
   );
 
   // if cartFromReduxStorage is empty...

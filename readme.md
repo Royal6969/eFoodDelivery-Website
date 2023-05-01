@@ -49,6 +49,7 @@
   - [4.9. Slice para el carrito](#49-slice-para-el-carrito)
   - [4.10. Crear la vista de la página del Carrito](#410-crear-la-vista-de-la-página-del-carrito)
   - [4.11. Desarrollando el componente del CartRecap](#411-desarrollando-el-componente-del-cartrecap)
+  - [4.12. Añadir más reducers a nuestro slice del carrito](#412-añadir-más-reducers-a-nuestro-slice-del-carrito)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -1541,8 +1542,8 @@ De modo que vamos a nuestra carpeta de redux, y copiamos y pegamos el archivo de
 // and inside here we have to think about what will be the slice that we want to manage?
 // we want to manage an array of cartItems
 // so for the initial state, we will set that as cartItems, which is an array
-const initialState = {
-  cartItems: []
+const initialState: CartInterface  = {
+  cartItemsList: []
 };
 
 // now we have to export the const cartSlice and we say it's equal to the createSlice() method
@@ -1552,7 +1553,7 @@ export const cartSlice = createSlice({
   initialState: initialState,
   reducers: { // here we want the reducers that will be responsible for managing the state
     setCart: (state, action) => {  // it receives two parameters, first one is the state itself, and the second one is the action
-      state.cartItems = action.payload; // we need to set the state for cart which will be passed to us from the payload when we invoke this
+      state.cartItemsList = action.payload; // we need to set the state for cart which will be passed to us from the payload when we invoke this
     }
   }
 });
@@ -1594,7 +1595,7 @@ function App() {
   useEffect(() => {
     if (!isLoading) {
       // if the loading is complete, then we want to dispatch and set our shopping cart
-      dispatch(setCart(data.result?.cartItems));
+      dispatch(setCart(data.result?.cartItemsList));
       console.log(data.result);
     }
   // and then when should they useEffect() be triggered, we can do that on isLoading or we can even say whenever the data is toggled
@@ -1667,7 +1668,7 @@ function CartRecap() {
   // and here, basically we will be extracting that from the store
   const cartFromReduxStorage: CartItemInterface[] = useSelector(
     // then we have to define the state
-    (state: RootState) => state.cartStore.cartItems ?? [] // and if it's null, return an empty array
+    (state: RootState) => state.cartStore.cartItemsList ?? [] // and if it's null, return an empty array
   );
 
   // if cartFromReduxStorage is empty...
@@ -1753,6 +1754,55 @@ import { RootState } from '../../../store/redux/ReduxStorage'
 ```
 
 ![](./img/37.png)
+
+## 4.12. Añadir más reducers a nuestro slice del carrito
+
+Ahora tenemos que añadir algunos endpoints para actualizar la cantidad o eliminar un item (producto) del carrito.
+
+Lo que tenemos que hacer sobre el CartItem del carrito en el que estábamos trabajando, es que si un usuario quiere actualizar la cantidad, nosotros pasaremos ese mismo CartItem como parámetro en el slice, y lo que observaremos es qué cantidad es la que queremos actualizar sobre la que ya estaba de antes. Por lo tanto, serían dos cosas las que tendremos que pasar en el payload. 
+
+Basándonos en eso, podemos iterar sobre los CartItems, encontrar el CartItem correcto, y modificar su cantidad. Así que volvemos al archivo del *CartSlice.tsx* para desarrollar estas dos nuevas acciones.
+
+```tsx
+// now we have to export the const cartSlice and we say it's equal to the createSlice() method
+// and here we will configure our reducer or slice
+export const cartSlice = createSlice({
+  name: "CartItems",
+  initialState: initialState,
+  reducers: { // here we want the reducers that will be responsible for managing the state
+    setCart: (state, action) => {  // it receives two parameters, first one is the state itself, and the second one is the action
+      state.cartItemsList = action.payload; // we need to set the state for cart which will be passed to us from the payload when we invoke this
+    },
+    updateItemQuantity: (state, action) => {
+      // inside the state, we will have all the cartItems
+      state.cartItemsList = state.cartItemsList?.map((item) => {
+        // if the id matches with the id that is being passed in the payload
+        // in payload here we will be getting the cartItem that needs to be updated
+        if (item.id === action.payload.cartItem.id) {
+          // you should remember that we have to pass the CartItem with the id as well as the quantity in the payload
+          item.quantity = action.payload.quantity;
+        }
+        // but if it's not true, we want to return back that item, because if we don't do that, then it will only have one item with that cartItem
+        return item;
+        // that is how map function works. If the condition means you want to do this as you don't want to touch any other cartItems
+      });
+    },
+    removeItemFromCart: (state, action) => {
+      // when we have to remove an item from the cart, rather than map, we will be using filter method here
+      state.cartItemsList = state.cartItemsList?.filter((item) => {
+        // if the id matches we want to return null
+        if (item.id === action.payload.cartItem.id) {
+          return null;
+        }
+        // else we want to return the item
+        return item;
+        // so if the id matches it will remove that from the cart, else it will return back each item
+        // so that way it will only remove the cartItem that it finds based on this id match
+      });
+    }
+  }
+});
+```
 
 # Webgrafía y Enlaces de Interés
 
