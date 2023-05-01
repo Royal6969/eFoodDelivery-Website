@@ -1,10 +1,22 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom';
+import { RootState } from '../../store/redux/ReduxStorage';
+import { useSelector } from 'react-redux';
+import { CartItemInterface } from '../../interfaces';
 
 let appLogo = require("../../assets/images/eFoodDeliveryLogo.png");
 
 
 function Header() {
+  // to show the number of items in the cart, we have to retrieve the cartItems from the redux storage like we did in the CartRecap component
+  // to access to our redux store, we have a hook called useSelector() that is inside the React Redux library
+  // and here, basically we will be extracting that from the store
+  const cartFromReduxStorage: CartItemInterface[] = useSelector(
+    // then we have to define the state
+    (state: RootState) => state.cartStore.cartItemsList ?? [] // and if it's null, return an empty array
+  );
+
+
   return (
     <div>
       <nav style={{background:'#ffbd40'}} className="navbar navbar-expand-lg text-black">
@@ -27,7 +39,15 @@ function Header() {
 
               <li className="nav-item">
                 <NavLink className="nav-link" aria-current="page" to="/Cart">
-                  <i className="bi bi-cart4"></i>
+                  <i className="bi bi-cart4" style={{ fontSize: '16.5px' }}>
+                    <span  style={{ fontSize: '10px' }} className="translate-middle badge rounded-circle border border-light bg-danger">
+                      {/* we can check the lenght of cart from redux storage and display items accordingly */}
+                      {cartFromReduxStorage?.length
+                        ? `${cartFromReduxStorage.length}`
+                        : ("")
+                      }
+                    </span>
+                  </i>
                 </NavLink>
               </li>
 

@@ -34,7 +34,7 @@
   - [3.4. Cargar los detalles de un producto](#34-cargar-los-detalles-de-un-producto)
   - [3.5. Controlar la cantidad de items de un producto](#35-controlar-la-cantidad-de-items-de-un-producto)
     - [Prueba de Ejecución](#prueba-de-ejecución)
-- [4. Cart](#4-cart)
+- [4. Página del carrito](#4-página-del-carrito)
   - [4.1. Usuarios](#41-usuarios)
   - [4.2. Crear el endpoint del carrito](#42-crear-el-endpoint-del-carrito)
   - [4.3. Actualizar el ProductDetails y probar que se crear y se actualiza el carrito](#43-actualizar-el-productdetails-y-probar-que-se-crear-y-se-actualiza-el-carrito)
@@ -51,6 +51,7 @@
   - [4.11. Desarrollando el componente del CartRecap](#411-desarrollando-el-componente-del-cartrecap)
   - [4.12. Añadir más reducers a nuestro slice del carrito](#412-añadir-más-reducers-a-nuestro-slice-del-carrito)
   - [4.13. Implementando las nuevas funcionalidades en el componente del resumen del carrito](#413-implementando-las-nuevas-funcionalidades-en-el-componente-del-resumen-del-carrito)
+  - [4.14. Mostrar el número de productos en el icono del carrito](#414-mostrar-el-número-de-productos-en-el-icono-del-carrito)
     - [Prueba de ejecución](#prueba-de-ejecución-2)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
@@ -1168,7 +1169,7 @@ function ProductDetails() {
 
 [Ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
 
-# 4. Cart
+# 4. Página del carrito
 
 ## 4.1. Usuarios
 
@@ -1890,6 +1891,42 @@ function CartRecap() {
   )
 }
 ```
+
+## 4.14. Mostrar el número de productos en el icono del carrito
+
+En este pequeño apartado, vamos a implementar la característica de que en icono del carrito en el Header nos muestre el número de items (productos) que nuestro carrito tiene actualmente.
+
+```tsx
+function Header() {
+  // to show the number of items in the cart, we have to retrieve the cartItems from the redux storage like we did in the CartRecap component
+  // to access to our redux store, we have a hook called useSelector() that is inside the React Redux library
+  // and here, basically we will be extracting that from the store
+  const cartFromReduxStorage: CartItemInterface[] = useSelector(
+    // then we have to define the state
+    (state: RootState) => state.cartStore.cartItemsList ?? [] // and if it's null, return an empty array
+  );
+
+  return (
+    ...
+    <li className="nav-item">
+      <NavLink className="nav-link" aria-current="page" to="/Cart">
+        <i className="bi bi-cart4" style={{ fontSize: '16.5px' }}>
+          <span  style={{ fontSize: '10px' }} className="translate-middle badge rounded-circle border border-light bg-danger">
+            {/* we can check the lenght of cart from redux storage and display items accordingly */}
+            {cartFromReduxStorage?.length
+              ? `${cartFromReduxStorage.length}`
+              : ("")
+            }
+          </span>
+        </i>
+      </NavLink>
+    </li>
+    ...
+  )
+}
+```
+
+![](./img/38.png)
 
 ### Prueba de ejecución
 
