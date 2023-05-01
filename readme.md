@@ -50,6 +50,8 @@
   - [4.10. Crear la vista de la página del Carrito](#410-crear-la-vista-de-la-página-del-carrito)
   - [4.11. Desarrollando el componente del CartRecap](#411-desarrollando-el-componente-del-cartrecap)
   - [4.12. Añadir más reducers a nuestro slice del carrito](#412-añadir-más-reducers-a-nuestro-slice-del-carrito)
+  - [4.13. Implementando las nuevas funcionalidades en el componente del resumen del carrito](#413-implementando-las-nuevas-funcionalidades-en-el-componente-del-resumen-del-carrito)
+    - [Prueba de ejecución](#prueba-de-ejecución-2)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -75,6 +77,7 @@
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
   - [Cart](#cart)
     - [Prueba de ejecución de creación y actualización del carrito a través del botón de añadir un producto](#prueba-de-ejecución-de-creación-y-actualización-del-carrito-a-través-del-botón-de-añadir-un-producto)
+    - [Prueba de ejecución para probar las funcionalidades del carrito - Actualizar las cantidades de los productos y eliminar los productos](#prueba-de-ejecución-para-probar-las-funcionalidades-del-carrito---actualizar-las-cantidades-de-los-productos-y-eliminar-los-productos)
 - [Extras](#extras)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
     - [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](#enlace-a-trello---espacio-de-trabajo-y-tablero-del-proyecto-efooddelivery-website)
@@ -1804,6 +1807,94 @@ export const cartSlice = createSlice({
 });
 ```
 
+## 4.13. Implementando las nuevas funcionalidades en el componente del resumen del carrito
+
+Vamos a volver ahora al archivo del *CartRecap.tsx* para implementar y llamar con el hook del useDispatch a las acciones de los métodos que habíamos desarrollado en el apartado anterior.
+
+```tsx
+function CartRecap() {
+  // now we need to add the useDispatch() hook to call the actions in CartSlice
+  const dispatch = useDispatch();
+  // but to make all this functionality not in local (redux storage) and connecting with the API and database, we have to use the cart endpoints that we've made before
+  const [updateCart] = useUpdateCartMutation(); // we have to invoke this before the dispatch hooks calls
+  ...
+  // to use the dispatch hook for the updateQuantity and removeItem actions, we need helper methods
+  const handleItemsQuantity = (updateQuantity: number, cartItem: CartItemInterface) => {
+    // we have to check if there is only one item in the cart and they select two decrements, so that means we will have to remove this item
+    // or if the updateQuantity is equal to 0, taht will means that the right button here is selected to remove the product
+    if ((updateQuantity == -1 && cartItem.quantity == 1) || updateQuantity == 0) { // and both of these cases we have to remove the item
+      updateCart({
+        productId: cartItem.product?.id,
+        updateQuantity: 0,
+        userId: '26c2a46a-5fa6-43c1-8765-f96cc07d85bb'
+      });
+
+      dispatch(removeItemFromCart({
+        cartItem,
+        quantity: 0
+      }));
+    }
+    // and else, we just need to update the quantity with the new quantity
+    else {
+      updateCart({
+        productId: cartItem.product?.id,
+        updateQuantity: updateQuantity, // when we're working with the API, we only have to pass the new quantity
+        userId: '26c2a46a-5fa6-43c1-8765-f96cc07d85bb'
+      });
+      
+      dispatch(updateItemQuantity({
+        cartItem,
+        quantity: cartItem.quantity! + updateQuantity
+      }));
+    }
+  }
+
+  // ...else show the UI
+  // and we will have to loop through all the cartItems inside the cartFromReduxStorage
+  return (
+    ...       
+    <div className='d-flex justify-content-between'>
+      <div style={{ width: '100px', height: '43px' }} className='d-flex justify-content-between p-2 mt-2 rounded-pill custom-card-shadow'>
+        <span style={{ color: 'rgba(22, 22, 22, 0.7)' }} role='button'>
+          <i 
+            className='bi bi-dash-circle-fill'
+            onClick={() => handleItemsQuantity(-1, cartItem)}
+            // -1 because this button is for decrement, and the cartItem is from cartFromReduxStorage that we're mapping
+          ></i>
+        </span>
+                  
+        <span>
+          <b>
+            {cartItem.quantity}
+          </b>
+        </span>
+                  
+        <span style={{ color: 'rgba(22, 22, 22, 0.7)' }} role='button'>
+          <i 
+            className='bi bi-plus-circle-fill'
+            onClick={() => handleItemsQuantity(+1, cartItem)}
+              // +1 because this button is for decrement, and the cartItem is from cartFromReduxStorage that we're mapping
+          ></i>
+        </span>
+      </div>
+
+      <button 
+        className='btn btn-danger mx-1'
+        onClick={() => handleItemsQuantity(0, cartItem)}
+        // when we want to remove anything we will pass 0
+      >
+        Remove
+      </button>
+    </div>
+    ...
+  )
+}
+```
+
+### Prueba de ejecución
+
+[Prueba de ejecución para probar las funcionalidades del carrito - Actualizar las cantidades de los productos y eliminar los productos](#prueba-de-ejecución-para-probar-las-funcionalidades-del-carrito---actualizar-las-cantidades-de-los-productos-y-eliminar-los-productos)
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -1864,6 +1955,10 @@ export const cartSlice = createSlice({
 ![](./img/26.png)
 ![](./img/27.png)
 ![](./img/28.png)
+
+### Prueba de ejecución para probar las funcionalidades del carrito - Actualizar las cantidades de los productos y eliminar los productos
+
+[Prueba de Ejecución 2](https://user-images.githubusercontent.com/80839621/235496943-e98669f0-402e-4401-bed8-a59d1ae4eb20.mp4)
 
 # Extras
 
