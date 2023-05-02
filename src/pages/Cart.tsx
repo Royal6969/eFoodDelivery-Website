@@ -1,5 +1,5 @@
 import React from 'react'
-import { CartRecap } from '../components/view/cart'
+import { CartRecap, DeliveryDetails } from '../components/view/cart'
 
 
 function Cart() {
@@ -10,7 +10,7 @@ function Cart() {
       </div>
 
       <div className='col-lg-6 col-12 p-4'>
-        Detalles del usuario
+        <DeliveryDetails />
       </div>
     </div>
   )

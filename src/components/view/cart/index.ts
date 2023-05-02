@@ -1,4 +1,5 @@
 import CartRecap from "./CartRecap";
+import DeliveryDetails from "./DeliveryDetails";
 
 
-export { CartRecap };
+export { CartRecap, DeliveryDetails };

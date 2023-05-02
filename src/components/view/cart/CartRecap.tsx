@@ -61,7 +61,7 @@ function CartRecap() {
   // and we will have to loop through all the cartItems inside the cartFromReduxStorage
   return (
     <div className='container p-4 m-2'>
-      <h4 className='text-center text-success'>Cart Summary</h4>
+      <h4 className='text-center text-success'>Resumen del carrito</h4>
       
       {cartFromReduxStorage.map(
         (cartItem: CartItemInterface, index: number) => (
@@ -128,7 +128,7 @@ function CartRecap() {
                   onClick={() => handleItemsQuantity(0, cartItem)}
                   // when we want to remove anything we will pass 0
                 >
-                  Remove
+                  Eliminar
                 </button>
               </div>
             </div>

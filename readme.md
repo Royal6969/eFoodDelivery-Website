@@ -51,8 +51,9 @@
   - [4.11. Desarrollando el componente del CartRecap](#411-desarrollando-el-componente-del-cartrecap)
   - [4.12. Añadir más reducers a nuestro slice del carrito](#412-añadir-más-reducers-a-nuestro-slice-del-carrito)
   - [4.13. Implementando las nuevas funcionalidades en el componente del resumen del carrito](#413-implementando-las-nuevas-funcionalidades-en-el-componente-del-resumen-del-carrito)
-  - [4.14. Mostrar el número de productos en el icono del carrito](#414-mostrar-el-número-de-productos-en-el-icono-del-carrito)
     - [Prueba de ejecución](#prueba-de-ejecución-2)
+  - [4.14. Mostrar el número de productos en el icono del carrito](#414-mostrar-el-número-de-productos-en-el-icono-del-carrito)
+  - [4.15. Mostrar los detalles del pedido a la derecha en el carrito](#415-mostrar-los-detalles-del-pedido-a-la-derecha-en-el-carrito)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -1892,9 +1893,13 @@ function CartRecap() {
 }
 ```
 
+### Prueba de ejecución
+
+[Prueba de ejecución para probar las funcionalidades del carrito - Actualizar las cantidades de los productos y eliminar los productos](#prueba-de-ejecución-para-probar-las-funcionalidades-del-carrito---actualizar-las-cantidades-de-los-productos-y-eliminar-los-productos)
+
 ## 4.14. Mostrar el número de productos en el icono del carrito
 
-En este pequeño apartado, vamos a implementar la característica de que en icono del carrito en el Header nos muestre el número de items (productos) que nuestro carrito tiene actualmente.
+En este pequeño apartado, vamos a implementar la característica de que en el icono del carrito del Header, aparezca un badge que nos muestre el número de items (productos) que nuestro carrito tiene actualmente.
 
 ```tsx
 function Header() {
@@ -1928,9 +1933,84 @@ function Header() {
 
 ![](./img/38.png)
 
-### Prueba de ejecución
+## 4.15. Mostrar los detalles del pedido a la derecha en el carrito
 
-[Prueba de ejecución para probar las funcionalidades del carrito - Actualizar las cantidades de los productos y eliminar los productos](#prueba-de-ejecución-para-probar-las-funcionalidades-del-carrito---actualizar-las-cantidades-de-los-productos-y-eliminar-los-productos)
+En este apartado vamos a mostrar los detalles de lo que sería el futuro pedido. Mostraremos tanto el total de la compra como los detalles del usuario que recogerá el pedido, así como su email y su número de teléfono.
+
+Vamos a desarrollar este apartado en un nuevo componente llamada *DeliveryDetails.tsx* por ejemplo, dentro de la ubicación de *components --> view --> cart --> DeliveryDetails.tsx*
+
+Para partir de una estructura inicial de base e ir más rápido en el desarrollo de este componente, he buscado en Google "bootstrap pickup details component" y he copiado y pegado el que más me ha gustado.
+
+Y para recuperar el objeto del carrito del usuario que se trate, ya sabemos tal como hemos hecho antes, que tenemos que usar el hook del useSelector()
+
+```tsx
+function DeliveryDetails() {
+  // to show the delivery details of the cart, we have to retrieve the cart from the redux storage like we did in the CartRecap component
+  // to access to our redux store, we have a hook called useSelector() that is inside the React Redux library
+  // and here, basically we will be extracting that from the store
+  const cartFromReduxStorage: CartItemInterface[] = useSelector(
+    // then we have to define the state
+    (state: RootState) => state.cartStore.cartItemsList ?? [] // and if it's null, return an empty array
+  );
+
+  // we need two variables for the total items of one product, and the cart total for the all products amount
+  let cartTotal = 0;
+  let totalItems = 0;
+
+  // to calculate the totalItems we need to iterate each item through the cart
+  cartFromReduxStorage?.map((cartItem: CartItemInterface) => {
+    totalItems += cartItem.quantity ?? 0;
+    cartTotal  += (cartItem.product?.price ?? 0) * (cartItem.quantity ?? 0); // product price * items quantity
+    // the operator ?? means "if it's null..."
+    // and finally we don't have to return anything
+    return null;
+  })
+
+  return (
+    <div className="border pb-5 pt-3">
+      <h1 style={{ fontWeight: "300" }} className="text-center text-success">
+        Detalles del reparto
+      </h1>
+      <hr />
+      
+      <form className="col-10 mx-auto">
+        <div className="form-group mt-3">
+          Nombre
+          <input type="text" className="form-control" placeholder="nombre..." name="name" required />
+        </div>
+        
+        <div className="form-group mt-3">
+          Email
+          <input type="email" className="form-control" placeholder="email..." name="email" required />
+        </div>
+
+        <div className="form-group mt-3">
+          Teléfono
+          <input type="number" className="form-control" placeholder="teléfono..." name="phoneNumber" required />
+        </div>
+        
+        <div className="form-group mt-3">
+          <div className="card p-3" style={{ background: "ghostwhite" }}>
+            <h5>
+              Total carrito: {cartTotal.toFixed(2)}€
+            </h5>
+            
+            <h5>
+              Número de productos: {totalItems}
+            </h5>
+          </div>
+        </div>
+        
+        <button type="submit" className="btn btn-lg btn-success form-control mt-3">
+          mmmm...¿pinta bien? ¡pues encargar pedido!
+        </button>
+      </form>
+    </div>
+  )
+}
+```
+
+![](./img/39.png)
 
 # Webgrafía y Enlaces de Interés
 
