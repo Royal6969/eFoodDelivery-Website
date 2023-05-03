@@ -3,6 +3,7 @@ import { CartItemInterface } from '../../../interfaces';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/redux/ReduxStorage';
 import { InputHelper } from '../../../helperMethods';
+import { MiniLoader } from '../common';
 
 
 function DeliveryDetails() {
@@ -49,6 +50,15 @@ function DeliveryDetails() {
   }
   // and after that, all we have to do is call this method inside each input element
 
+  // this state is to add a loader when user click the final button to place the order
+  const [loading, setLoading] = useState(false);
+
+  // submit event to place the order
+  const handleSubmitPlaceOrder = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+  }
+
 
   return (
     <div className="border pb-5 pt-3">
@@ -61,7 +71,7 @@ function DeliveryDetails() {
       {/* now I find easier when I'm working with many multiple inputs on a form */}
       {/* That way I don't have to bind their state individually */}
       {/* and the best part is if I move that to a helper component, I can reuse the same logic in multiple places */}
-      <form className="col-10 mx-auto">
+      <form className="col-10 mx-auto" onSubmit={handleSubmitPlaceOrder}>
         <div className="form-group mt-3">
           Nombre
           <input 
@@ -112,8 +122,16 @@ function DeliveryDetails() {
           </div>
         </div>
         
-        <button type="submit" className="btn btn-lg btn-success form-control mt-3">
-          mmmm...¿pinta bien? ¡pues encargar pedido!
+        <button 
+          type="submit" 
+          className="btn btn-lg btn-success form-control mt-3"
+          disabled={loading} // if it's loading, the button will be disabled
+        >
+          {/* if loading it's true, we will display a mini-loader */}
+          {loading
+            ? <MiniLoader />
+            : "mmmm...¿pinta bien? ¡pues encargar pedido!"
+          }
         </button>
       </form>
     </div>

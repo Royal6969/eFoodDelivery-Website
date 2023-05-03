@@ -55,6 +55,7 @@
   - [4.14. Mostrar el número de productos en el icono del carrito](#414-mostrar-el-número-de-productos-en-el-icono-del-carrito)
   - [4.15. Mostrar los detalles del pedido a la derecha en el carrito](#415-mostrar-los-detalles-del-pedido-a-la-derecha-en-el-carrito)
   - [4.16. Desarrollar los métodos de ayuda para los campos a rellenar del DeliveryDetails](#416-desarrollar-los-métodos-de-ayuda-para-los-campos-a-rellenar-del-deliverydetails)
+  - [4.17. Añadiendo un mini-loader cuando el botón de encargar el pedido es pulsado](#417-añadiendo-un-mini-loader-cuando-el-botón-de-encargar-el-pedido-es-pulsado)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -2122,6 +2123,46 @@ function DeliveryDetails() {
   )
 }
 ```
+
+## 4.17. Añadiendo un mini-loader cuando el botón de encargar el pedido es pulsado
+
+```tsx
+function DeliveryDetails() {
+  ...
+  // this state is to add a loader when user click the final button to place the order
+  const [loading, setLoading] = useState(false);
+
+  // submit event to place the order
+  const handleSubmitPlaceOrder = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+  }
+
+  return (
+    <div className="border pb-5 pt-3">
+      ...
+      <form className="col-10 mx-auto" onSubmit={handleSubmitPlaceOrder}>
+        ...
+        <button 
+          type="submit" 
+          className="btn btn-lg btn-success form-control mt-3"
+          disabled={loading} // if it's loading, the button will be disabled
+        >
+          {/* if loading it's true, we will display a mini-loader */}
+          {loading
+            ? <MiniLoader />
+            : "mmmm...¿pinta bien? ¡pues encargar pedido!"
+          }
+        </button>
+      </form>
+    </div>
+  )
+}
+```
+
+![](./img/40.png)
+
+**Nota:** por el momento, no vamos a seguir con la parte del pago y del pedido, porque en este punto conviene centrarse mejor ahora en el tema de los usuarios, en el login y el register de los mismos, así como en la autentificación y la autorización.
 
 # Webgrafía y Enlaces de Interés
 
