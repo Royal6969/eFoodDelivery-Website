@@ -59,6 +59,7 @@
 - [5. Autentificación y Autorización de Usuarios](#5-autentificación-y-autorización-de-usuarios)
   - [5.1. Páginas del Login y el Register](#51-páginas-del-login-y-el-register)
   - [5.2. Crear las nuevas mutations para los nuevos endpoint del login y el register](#52-crear-las-nuevas-mutations-para-los-nuevos-endpoint-del-login-y-el-register)
+  - [5.3. Slice para la autentificación e Interfaz para el usuario](#53-slice-para-la-autentificación-e-interfaz-para-el-usuario)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -2348,6 +2349,52 @@ const authenticationAPI = createApi({
 
 export const { useRegisterUserMutation, useLoginUserMutation } = authenticationAPI;
 export default authenticationAPI;
+```
+
+## 5.3. Slice para la autentificación e Interfaz para el usuario
+
+Vamos a añadir nuestro nuevo endpoint al almacenamiento de Redux. Añadimos la API como reducer y concatenamos su middleware.
+
+Ahora tenemos que crear un nuevo slice para el login, y cuando el usuario haga login, guardaremos sus credenciales en el almacenamiento de Redux.
+
+```ts
+const initialState: UserInterface = { // here's what we'll want to store from user... all things that user needs to register
+  fullName: "",
+  id: "",
+  email: "",
+  role: ""
+};
+
+
+export const authenticationSlice = createSlice({
+  name: "Authentication",
+  initialState: initialState,
+  reducers: {
+    setUserLogged: (state, action) => {
+      // when a user is logged in, we will have all the details in payload that we will pass here when calling the setUserLogged
+      // so from that payload, we have to extract everything and assign them right here
+      state.fullName = action.payload.fullName;
+      state.id = action.payload.id;
+      state.email = action.payload.email;
+      state.role = action.payload.role;
+    }
+  }
+});
+
+
+export const { setUserLogged } = authenticationSlice.actions;
+export const authenticationReducer = authenticationSlice.reducer;
+```
+
+Y la interfaz del usuario sería...
+
+```ts
+export default interface UserInterface {
+    fullName?: string;
+    id: string;
+    email: string;
+    role?: string;
+}
 ```
 
 
