@@ -60,6 +60,7 @@
   - [5.1. Páginas del Login y el Register](#51-páginas-del-login-y-el-register)
   - [5.2. Crear las nuevas mutations para los nuevos endpoint del login y el register](#52-crear-las-nuevas-mutations-para-los-nuevos-endpoint-del-login-y-el-register)
   - [5.3. Slice para la autentificación e Interfaz para el usuario](#53-slice-para-la-autentificación-e-interfaz-para-el-usuario)
+  - [5.4. Reutilizando el método de ayuda del InputHelper en el Registro](#54-reutilizando-el-método-de-ayuda-del-inputhelper-en-el-registro)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -2397,7 +2398,94 @@ export default interface UserInterface {
 }
 ```
 
+## 5.4. Reutilizando el método de ayuda del InputHelper en el Registro
 
+En esta primera versión de la aplicación, como se pudo apreciar en la plantilla del Register, para elegir el rol hay un select, de modo que ambos roles serán datos estáticos, los cuales podríamos definirlos dentro de una carpeta llamada *Utils* por ejemplo, y dentro de ella crearemos un archivo llamado *StaticDetails.ts*
+
+```ts
+export enum StaticDetails_Roles {
+  ADMIN = "admin",
+  CUSTOMER = "customer"
+}
+```
+
+Y ahora en el Register volvemos a usar el InputHelper de la misma forma en la que ya lo usamos en el último apartado del carrito.
+
+```tsx
+function Register() {
+  const [loading, setLoading] = useState(false);
+  
+  // also we need a useState for the input fields to register an user
+  const [registerInput, setRegisterInput] = useState({
+    userName: '',
+    password: '',
+    role: '',
+    name: ''
+  });
+
+  // now we have to use our helper method called InputHandler
+  const handleRegisterInput = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const tempData = InputHelper(event, registerInput);
+    setRegisterInput(tempData);
+  }
+
+  return (
+    ...
+        <div className='mt-5'>
+          <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Enter Username'
+              required
+              name='userName'
+              value={registerInput.userName}
+              onChange={handleRegisterInput}
+            />
+          </div>
+        
+          <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Enter Name'
+              required
+              name='name'
+              value={registerInput.name}
+              onChange={handleRegisterInput}
+            />
+          </div>
+        
+          <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+            <input
+              type='password'
+              className='form-control'
+              placeholder='Enter Password'
+              required
+              name='password'
+              value={registerInput.password}
+              onChange={handleRegisterInput}
+            />
+          </div>
+        
+          <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+            <select 
+              className='form-control form-select' 
+              required
+              name='role'
+              value={registerInput.role}
+              onChange={handleRegisterInput}
+            >
+              <option value=''>--Select Role--</option>
+              <option value={`${StaticDetails_Roles.CUSTOMER}`}>Customer</option>
+              <option value={`${StaticDetails_Roles.ADMIN}`}>Admin</option>
+            </select>
+          </div>
+        </div>    
+    ...
+  )
+}
+```
 
 # Webgrafía y Enlaces de Interés
 
