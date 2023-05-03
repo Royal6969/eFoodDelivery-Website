@@ -89,6 +89,7 @@
     - [Prueba de ejecución de creación y actualización del carrito a través del botón de añadir un producto](#prueba-de-ejecución-de-creación-y-actualización-del-carrito-a-través-del-botón-de-añadir-un-producto)
     - [Prueba de ejecución para probar las funcionalidades del carrito - Actualizar las cantidades de los productos y eliminar los productos](#prueba-de-ejecución-para-probar-las-funcionalidades-del-carrito---actualizar-las-cantidades-de-los-productos-y-eliminar-los-productos)
 - [Extras](#extras)
+  - [Crear una interfaz para las respuesta de la API](#crear-una-interfaz-para-las-respuesta-de-la-api)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
     - [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](#enlace-a-trello---espacio-de-trabajo-y-tablero-del-proyecto-efooddelivery-website)
 
@@ -2555,6 +2556,34 @@ function Register() {
 [Prueba de Ejecución 2](https://user-images.githubusercontent.com/80839621/235496943-e98669f0-402e-4401-bed8-a59d1ae4eb20.mp4)
 
 # Extras
+
+## Crear una interfaz para las respuesta de la API
+
+Cuando estamos en Swagger, podemos apreciar que debajo de los endpoints, al final de todos ellos, podemos encontrar la sección de los esquemas, y entre ellos podemos ver que están los DTO de las entidades que la API devuelve como respuesta a las peticiones que lanzamos por aquí.
+
+Sabiendo esto, sería interesante la idea de crear una interfaz para las respuestas de la API.
+
+```ts
+export default interface ApiResponse {
+  apiResponseData?: {
+    statusCode?: number;
+    success?: boolean;
+    errorList?: Array<string>;
+    // we don't know what the result could be, basically in that result that will be a key and a value
+    // we can be dynamic about it and we can just say that will be a key which will be type string and the response also will be in a tring
+    // but we don't know because when we convert everything to JSON, it will be a string by itself
+    result: {
+      [key: string]: string 
+      // note that it will not give any suggestion for typing with what will be inside the result
+      // so you will be responsible to find what exactly will be inside result when you call the API
+      // but on the other hand, when you define that this a number, it's a boolean or aaray of string
+      // typescript will be able to bind these suggestion and show you if youencounter any errors while you are writing the code
+    }
+  }
+
+  responseError?: any;
+}
+```
 
 ## Enlace al espacio de trabajo y al tablero del proyecto en Trello
 
