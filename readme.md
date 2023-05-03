@@ -54,6 +54,7 @@
     - [Prueba de ejecución](#prueba-de-ejecución-2)
   - [4.14. Mostrar el número de productos en el icono del carrito](#414-mostrar-el-número-de-productos-en-el-icono-del-carrito)
   - [4.15. Mostrar los detalles del pedido a la derecha en el carrito](#415-mostrar-los-detalles-del-pedido-a-la-derecha-en-el-carrito)
+  - [4.16. Desarrollar los métodos de ayuda para los campos a rellenar del DeliveryDetails](#416-desarrollar-los-métodos-de-ayuda-para-los-campos-a-rellenar-del-deliverydetails)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -74,6 +75,7 @@
     - [17. Redux Toolkit - Mutations](#17-redux-toolkit---mutations)
     - [18. React Loader Spinners](#18-react-loader-spinners)
     - [19. What is useSelector() hook](#19-what-is-useselector-hook)
+    - [20. Handle Forms - React.ChangeEvent](#20-handle-forms---reactchangeevent)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [ProductList y ProductDetails](#productlist-y-productdetails)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -2012,6 +2014,115 @@ function DeliveryDetails() {
 
 ![](./img/39.png)
 
+## 4.16. Desarrollar los métodos de ayuda para los campos a rellenar del DeliveryDetails
+
+En este apartado crearemos una nueva carpeta para los *helper methods* que podamos desarrollar con funcionalidades comunes a cualquier página y/o componente de la aplicación.
+
+Dentro de esta nueva carpeta llamada por ejemplo *helperMethods*, vamos a crear un primer archivo llamado *InputHelper.ts*, el cual desarrollaremos básicamente para que nos ayude a recoger cualquier entrada de texto en los inputs, en este caso, para el componente del *DeliveryDetails.tsx*
+
+```ts
+// in the parameters here, we will be receiving the event, that it's teh same event whenever we're updating anything
+// if you remember in the onChange(), we used to pass that event
+// also when a form submit, we pass that event and we say preventDefault() to avoid submitting that form
+// so here, first we can get that event, and next we can get a data
+const InputHelper = (event: React.ChangeEvent<HTMLInputElement>, data: any) => { // so that way our change event will be functional for the input elements
+  // first we want to spread out the data that we receive here
+  const tempData: any = { ...data }; // destructuring technique
+  
+  // once we spread that data out, then based on the name that is given to the input element, we will assign the target value
+  tempData[event.target.name] = event.target.value;
+
+  // once we do that, we will return back the tempData
+  return tempData;
+};
+// basically if we use the InputHelper on those input fields, if the field has a name of email, 
+// it will automatically assign that value to an email field inside the initialDeliveryData
+```
+
+Y ahora lo implementamos en el *DeliveryDetails.tsx*
+
+```tsx
+function DeliveryDetails() {
+  ...
+  // for values in the input fields for receive the delivery data
+  const initialDeliveryData = {
+    name: "",
+    email: "",
+    phone: ""
+  };
+  // when we have controlled components, we will have an onChange() event and we will pass the corresponding value to the corresponding field
+  // but if you have multiple of them, it will get ugly if you have three states for each one of them
+  // so rather than that, let's create a helper method folder where we have the components at the same directory
+
+  // so what we have in the initialDeliveryData, we can create a state for that
+  const [deliveryInput, setDeliveryInput] = useState(initialDeliveryData);
+
+  // basically if we use the InputHelper on those input fields, if the field has a name of email, 
+  // it will automatically assign that value to an email field inside the initialDeliveryData
+  const handleDeliveryInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const tempData = InputHelper(event, deliveryInput);
+    // once we do that, we can call the setState with the new data that we receive, which is tempData
+    setDeliveryInput(tempData);
+  }
+  // and after that, all we have to do is call this method inside each input element
+
+  return (
+    <div className="border pb-5 pt-3">
+      <h1 style={{ fontWeight: "300" }} className="text-center text-success">
+        Detalles del reparto
+      </h1>
+      <hr />
+      
+      {/* so name field is required if you use this approach and it must match */}
+      {/* now I find easier when I'm working with many multiple inputs on a form */}
+      {/* That way I don't have to bind their state individually */}
+      {/* and the best part is if I move that to a helper component, I can reuse the same logic in multiple places */}
+      <form className="col-10 mx-auto">
+        <div className="form-group mt-3">
+          Nombre
+          <input 
+            type="text" 
+            className="form-control" 
+            placeholder="nombre..." 
+            name="name" 
+            required
+            value={deliveryInput.name}
+            onChange={handleDeliveryInput}
+          />
+        </div>
+        
+        <div className="form-group mt-3">
+          Email
+          <input 
+            type="email" 
+            className="form-control" 
+            placeholder="email..." 
+            name="email" 
+            required 
+            value={deliveryInput.email}
+            onChange={handleDeliveryInput}
+          />
+        </div>
+
+        <div className="form-group mt-3">
+          Teléfono
+          <input 
+            type="number" 
+            className="form-control" 
+            placeholder="teléfono..." 
+            name="phone" 
+            required 
+            value={deliveryInput.phone}
+            onChange={handleDeliveryInput}
+          />
+        </div>
+        ...
+      </form>
+    </div>
+  )
+}
+```
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -2051,6 +2162,8 @@ function DeliveryDetails() {
 ### [18. React Loader Spinners](https://mhnpd.github.io/react-loader-spinner/docs/intro)
 
 ### [19. What is useSelector() hook](https://react-redux.js.org/api/hooks#useselector)
+
+### [20. Handle Forms - React.ChangeEvent<HTMLInputElement>](https://bobbyhadz.com/blog/typescript-react-onchange-event-type)
 
 # Pruebas de Ejecución
 
