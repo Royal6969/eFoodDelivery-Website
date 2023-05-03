@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { Footer, Header } from '../components/layout';
-import { Cart, Home, NotFound, ProductDetails } from '../pages';
+import { Cart, Home, Login, NotFound, ProductDetails, Register } from '../pages';
 import { useDispatch } from 'react-redux';
 import { useGetCartQuery } from '../APIs/CartAPI';
 import { setCart } from '../store/redux/CartSlice';
@@ -35,6 +35,8 @@ function App() {
             <Route path='*' element={<NotFound />}></Route>
             <Route path='/ProductDetails/:productId' element={<ProductDetails />}></Route>
             <Route path='/Cart' element={<Cart />}></Route>
+            <Route path='/Register' element={<Register />}></Route>
+            <Route path='/Login' element={<Login />}></Route>
           </Routes>
         </div>
         

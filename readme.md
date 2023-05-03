@@ -56,6 +56,8 @@
   - [4.15. Mostrar los detalles del pedido a la derecha en el carrito](#415-mostrar-los-detalles-del-pedido-a-la-derecha-en-el-carrito)
   - [4.16. Desarrollar los métodos de ayuda para los campos a rellenar del DeliveryDetails](#416-desarrollar-los-métodos-de-ayuda-para-los-campos-a-rellenar-del-deliverydetails)
   - [4.17. Añadiendo un mini-loader cuando el botón de encargar el pedido es pulsado](#417-añadiendo-un-mini-loader-cuando-el-botón-de-encargar-el-pedido-es-pulsado)
+- [5. Autentificación y Autorización de Usuarios](#5-autentificación-y-autorización-de-usuarios)
+  - [5.1. Páginas del Login y el Register](#51-páginas-del-login-y-el-register)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -2163,6 +2165,146 @@ function DeliveryDetails() {
 ![](./img/40.png)
 
 **Nota:** por el momento, no vamos a seguir con la parte del pago y del pedido, porque en este punto conviene centrarse mejor ahora en el tema de los usuarios, en el login y el register de los mismos, así como en la autentificación y la autorización.
+
+
+# 5. Autentificación y Autorización de Usuarios
+
+## 5.1. Páginas del Login y el Register
+
+Como siempre, lo primero de todo será crear un par de nuevas páginas, una para el Login y otra para el Register. Para ello buscaremos por Google un par de plantillas de Bootstrap de cuales podamos tirar de base.
+
+```tsx
+function Register() {
+  return (
+    <div className="container text-center">
+      <form method="post">
+        <h1 className="mt-5">Register</h1>
+        <div className="mt-5">
+          <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter Username"
+              required
+            />
+          </div>
+          <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter Name"
+              required
+            />
+          </div>
+          <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Enter Password"
+              required
+            />
+          </div>
+          <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
+            <select className="form-control form-select" required>
+              <option value="">--Select Role--</option>
+              <option value="customer">Customer</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+        <div className="mt-5">
+          <button type="submit" className="btn btn-success">
+            Register
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
+```
+
+```tsx
+function Login() {
+  return (
+    <div className="container text-center">
+      <form method="post">
+        <h1 className="mt-5">Login</h1>
+        <div className="mt-5">
+          <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter Username"
+              required
+            />
+          </div>
+
+          <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Enter Password"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="mt-2">
+          <button
+            type="submit"
+            className="btn btn-success"
+            style={{ width: "200px" }}
+          >
+            Login
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
+```
+
+Y ahora en nuestro Header vamos a enlazar estas dos nuevas páginas a través de botones
+
+```tsx
+function Header() {
+  ...
+
+  return (
+    ...   
+    <div style={{ marginLeft: 'auto' }} className='d-flex'>
+      <li className='nav-item'>
+        <button 
+          style={{ border: 'none', width: '100px', height: '40px' }} 
+          className='btn btn-secondary btn-outlined rounded-pill text-white mx-2'
+        >
+          Logout
+        </button>
+      </li>
+
+      <li className='nav-item text-white'>
+        <NavLink className='nav-link' to='/Register'>
+          Register
+        </NavLink>
+      </li>
+
+      <li className='nav-item text-white'>
+        <NavLink 
+          style={{ border: 'none', width: '100px', height: '40px' }} 
+          className='btn btn-success btn-outlined rounded-pill text-white mx-2' 
+          to='/Login'
+        >
+          Login
+        </NavLink>
+      </li>
+    </div>
+    ...
+  )
+}
+```
+
+![](./img/41.png)
+![](./img/42.png)
 
 # Webgrafía y Enlaces de Interés
 
