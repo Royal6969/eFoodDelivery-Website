@@ -58,6 +58,7 @@
   - [4.17. Añadiendo un mini-loader cuando el botón de encargar el pedido es pulsado](#417-añadiendo-un-mini-loader-cuando-el-botón-de-encargar-el-pedido-es-pulsado)
 - [5. Autentificación y Autorización de Usuarios](#5-autentificación-y-autorización-de-usuarios)
   - [5.1. Páginas del Login y el Register](#51-páginas-del-login-y-el-register)
+  - [5.2. Crear las nuevas mutations para los nuevos endpoint del login y el register](#52-crear-las-nuevas-mutations-para-los-nuevos-endpoint-del-login-y-el-register)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -2303,8 +2304,53 @@ function Header() {
 }
 ```
 
+**Nota:** no olvides enrutar también estas dos nuevas páginas en el *App.tsx*
+
 ![](./img/41.png)
 ![](./img/42.png)
+
+## 5.2. Crear las nuevas mutations para los nuevos endpoint del login y el register
+
+Vamos a nuestra carpeta de *APIs* y copiamos/pegamos la del carrito para modificarla por dentro para el register y el login.
+
+```tsx
+const authenticationAPI = createApi({
+  reducerPath: "authenticationAPI",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "https://efooddelivery-api.azurewebsites.net/api/"
+  }),
+  // tagTypes: [""], // we don't need any tagType in this case
+  endpoints: (builder) => ({
+    registerUser: builder.mutation({
+      query: (userData) => ({ // userData will have all teh properties that we require for registration
+        url: "Authentication/Register",
+        method: "POST",
+        // params: { } // we don't have parameters in this endpoint
+        // we receive the data directly in a body in json format
+        headers: { "Content-type": "application/json" },
+        body: userData
+      }),
+      // invalidatesTags: [""] // we don't have to invalidate any tag here
+    }),
+    loginUser: builder.mutation({
+      query: (userAccreditations) => ({ // userData will have all teh properties that we require for registration
+        url: "Authentication/Login",
+        method: "POST",
+        // params: { } // we don't have parameters in this endpoint
+        // we receive the data directly in a body in json format
+        headers: { "Content-type": "application/json" },
+        body: userAccreditations
+      }),
+      // invalidatesTags: [""] // we don't have to invalidate any tag here
+    })
+  })
+});
+
+export const { useRegisterUserMutation, useLoginUserMutation } = authenticationAPI;
+export default authenticationAPI;
+```
+
+
 
 # Webgrafía y Enlaces de Interés
 
