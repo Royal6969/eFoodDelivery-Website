@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { ProductInterface } from '../../../interfaces'
+import { ApiResponse, ProductInterface } from '../../../interfaces'
 import { Link } from 'react-router-dom';
 import { useUpdateCartMutation } from '../../../APIs/CartAPI';
 import { MiniLoader } from '../common';
+import { toastNotifyHelper } from '../../../helperMethods';
 
 
 // right now we're only passing product, but we might also be passing more things along the road
@@ -20,12 +21,17 @@ function ProductCard(props: Props) { // right here we have to write the product 
 
     // quantity will be inside the quantity counter local state that we have, so we don't have to pass that as a parameter
     // and the userId we're using the hardcoded string for now --> user ADMIN --> userId: 26c2a46a-5fa6-43c1-8765-f96cc07d85bb
-    const response = await updateCart({
+    const cartResponse: ApiResponse = await updateCart({
       productId: productId,
       updateQuantity: 1, // the only thing that we have to change is quantity that it will be always 1 by initial default
       userId: '26c2a46a-5fa6-43c1-8765-f96cc07d85bb'
     });
-    // console.log(response);
+    // console.log(cartResponse);
+
+    // if cartResponse.data is populated and success flag is true, let's invoke a toast notification
+    if (cartResponse.data && cartResponse.data.success) {
+      toastNotifyHelper('Producto añadido al carrito correctamente');
+    }
 
     setIsAddedToCart(false);
   }

@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
 import { StaticDetails_Roles } from '../Utils/StaticDetails'
-import { InputHelper } from '../helperMethods';
+import { InputHelper, toastNotifyHelper } from '../helperMethods';
 import { useRegisterUserMutation } from '../APIs/AuthenticationAPI';
 import { ApiResponse } from '../interfaces';
+import { useNavigate } from 'react-router-dom';
+import { BigLoader } from '../components/view/common';
 
 
 function Register() {
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  // to redirect user to login page once is registered
+  const navigate = useNavigate();
   
   // also we need a useState for the input fields to register an user
   const [registerInput, setRegisterInput] = useState({
@@ -27,7 +31,7 @@ function Register() {
 
   const handleRegisterUser = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setLoading(true);
+    setIsLoading(true);
 
     const registerResponse: ApiResponse = await registerUser({
       userName: registerInput.userName,
@@ -39,17 +43,24 @@ function Register() {
 
     // one we invoke the endpoint, we have to examine the response that result
     if (registerResponse.data) { // if registerResponse.data, if that is populated, let's check what happens 
-      console.log(registerResponse.data);
+      // console.log(registerResponse.data);
+      toastNotifyHelper('Nuevo usuario registrado correctamente!');
+      navigate('/Login');
     }
     else if (registerResponse.error) {
-      console.log(registerResponse.error.data.errorsList[0]);
+      // console.log(registerResponse.error.data.errorsList[0]);
+      toastNotifyHelper(registerResponse.error.data.errorsList[0], 'error')
     }
 
-    setLoading(true);
+    setIsLoading(true);
   }
 
   return (
     <div className='container text-center'>
+      {isLoading && (
+        <BigLoader />
+      )}
+
       <form onSubmit={handleRegisterUser} method='post'>
         <h1 className='mt-5'>Register</h1>
 
@@ -106,7 +117,11 @@ function Register() {
         </div>
         
         <div className='mt-5'>
-          <button type='submit' className='btn btn-warning'>
+          <button 
+            type='submit' 
+            className='btn btn-warning'
+            disabled={isLoading}
+          >
             Register
           </button>
         </div>

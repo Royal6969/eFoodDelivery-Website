@@ -67,6 +67,7 @@
   - [5.8. Alternar botones de acceso en el Header y bienvenida al usuario](#58-alternar-botones-de-acceso-en-el-header-y-bienvenida-al-usuario)
   - [5.9. Funcionalidad del Logout](#59-funcionalidad-del-logout)
     - [Prueba de ejecución](#prueba-de-ejecución-3)
+  - [5.10. Añadir las notificaciones *Toast*](#510-añadir-las-notificaciones-toast)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -90,6 +91,7 @@
     - [20. Handle Forms - React.ChangeEvent](#20-handle-forms---reactchangeevent)
     - [21. jwt-decode npm package with example](#21-jwt-decode-npm-package-with-example)
     - [22. Distructuring technique with ellipsis](#22-distructuring-technique-with-ellipsis)
+    - [23. react-toastify npm package](#23-react-toastify-npm-package)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [ProductList y ProductDetails](#productlist-y-productdetails)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -99,6 +101,7 @@
     - [Prueba de ejecución para probar la funcionalidad del Login y Logout](#prueba-de-ejecución-para-probar-la-funcionalidad-del-login-y-logout)
 - [Extras](#extras)
   - [Crear una interfaz para las respuesta de la API](#crear-una-interfaz-para-las-respuesta-de-la-api)
+  - [Evitar perder el contenido del almacenamiento de Redux con los valores del token del usuario](#evitar-perder-el-contenido-del-almacenamiento-de-redux-con-los-valores-del-token-del-usuario)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
     - [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](#enlace-a-trello---espacio-de-trabajo-y-tablero-del-proyecto-efooddelivery-website)
 
@@ -2806,6 +2809,63 @@ function Header() {
 
 [Prueba de ejecución para probar la funcionalidad del Login y Logout](#prueba-de-ejecución-para-probar-la-funcionalidad-del-login-y-logout)
 
+## 5.10. Añadir las notificaciones *Toast*
+
+Para añadir este tipo de notificaciones a nuestra aplicación de una forma más rápida y sencilla, vamos a instalar un paquete de npm llamado react-toastify
+
+```bash
+npm install react-toastify
+```
+
+Y ahora, cómo podemos implementarlo??
+
+Primero tenemos que crearnos un nuevo helper method, por ejemplo, el *toastNotifyHelper.ts* y pegar la configuración de la web de [react-toastify Demo - Toast Emitter](https://fkhadra.github.io/react-toastify/introduction/)
+
+```ts
+const toastNotifyHelper = (toastNotificationMessage: string, toastNotificationType: TypeOptions='success') => { // TypeOptions it's alredy defied inside the react notify
+  toast(toastNotificationMessage, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "dark",
+    type: toastNotificationType // to modify the notification type if the user wants
+  });
+}
+
+export default toastNotifyHelper;
+```
+
+Luego tenemos que añadir el contenedor del componente en sí en nuestro *index.tsx* del nivel root de nuestra aplicaión
+
+```tsx
+root.render(
+  <Provider store={reduxStorage}>
+    <BrowserRouter>
+      <App />
+      <ToastContainer />
+    </BrowserRouter>
+  </Provider>
+);
+```
+
+Y por último, llamamos al helper method donde queramos activar la mnotificación toast, que normalmente será cuando obtengamos las respuestas de la API. Por ejemplo, en el *ProductCard.tsx* para notificar que añadimos un producto al carrito desde el Home sería así
+
+```tsx
+...
+// if cartResponse.data is populated and success flag is true, let's invoke a toast notification
+if (cartResponse.data && cartResponse.data.success) {
+    toastNotifyHelper('Producto añadido al carrito correctamente');
+}
+...
+```
+
+![](./img/50.png)
+![](./img/51.png)
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -2851,6 +2911,8 @@ function Header() {
 ### [21. jwt-decode npm package with example](https://www.npmjs.com/package/jwt-decode)
 
 ### [22. Distructuring technique with ellipsis](https://stackoverflow.com/questions/31048953/what-are-these-three-dots-in-react-doing)
+
+### [23. react-toastify npm package](https://www.npmjs.com/package/react-toastify)
 
 # Pruebas de Ejecución
 
@@ -2912,6 +2974,32 @@ export default interface ApiResponse {
 ```
 
 ![](./img/43.png)
+
+## Evitar perder el contenido del almacenamiento de Redux con los valores del token del usuario
+
+En el *App.tsx* tendríamos que descodificar el token de nuevo y llamar al slice del setUserLogged
+
+```tsx
+// to avoid losing the Redux store content for the token decoded we have to repopulate with useEffect()
+  // this useEffect() should be execute when the app is rendered
+  useEffect(() => {
+    // first we have to get the token from localStorage
+    const userTokenFromLocalStorage = localStorage.getItem('token');
+
+    // if the local token is populated then we have to extract that using jwt-decode
+    if (userTokenFromLocalStorage) {
+      const { fullName, userId, email, role }: UserInterface = jwt_decode(userTokenFromLocalStorage);
+      // once we get all the values here, if we go to login, we have to dispatch and setUserLogged
+      // call the authenticationSlice to populate the values inside the token decoded
+      dispatch(setUserLogged({
+        fullName,
+        userId,
+        email,
+        role
+      }));
+    }
+  }, []);
+```
 
 ## Enlace al espacio de trabajo y al tablero del proyecto en Trello
 

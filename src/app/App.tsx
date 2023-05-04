@@ -5,6 +5,9 @@ import { useDispatch } from 'react-redux';
 import { useGetCartQuery } from '../APIs/CartAPI';
 import { setCart } from '../store/redux/CartSlice';
 import { useEffect } from 'react';
+import jwt_decode from "jwt-decode";
+import { UserInterface } from '../interfaces';
+import { setUserLogged } from '../store/redux/AuthenticationSlice';
 
 
 function App() {
@@ -13,6 +16,26 @@ function App() {
   // next we need to get the cart first with the cartAPI and its query
   const { data, isLoading } = useGetCartQuery('26c2a46a-5fa6-43c1-8765-f96cc07d85bb'); // our userId hardcoded as the parameter
   
+  // to avoid losing the Redux store content for the token decoded we have to repopulate with useEffect()
+  // this useEffect() should be execute when the app is rendered
+  useEffect(() => {
+    // first we have to get the token from localStorage
+    const userTokenFromLocalStorage = localStorage.getItem('token');
+
+    // if the local token is populated then we have to extract that using jwt-decode
+    if (userTokenFromLocalStorage) {
+      const { fullName, userId, email, role }: UserInterface = jwt_decode(userTokenFromLocalStorage);
+      // once we get all the values here, if we go to login, we have to dispatch and setUserLogged
+      // call the authenticationSlice to populate the values inside the token decoded
+      dispatch(setUserLogged({
+        fullName,
+        userId,
+        email,
+        role
+      }));
+    }
+  }, []);
+
   // then we can hve the useEffect() once the loading is complete
   useEffect(() => {
     if (!isLoading) {

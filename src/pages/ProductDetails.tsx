@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useGetProductByIdQuery } from '../APIs/ProductAPI';
 import { useUpdateCartMutation } from '../APIs/CartAPI';
 import { BigLoader, MiniLoader } from '../components/view/common';
+import { ApiResponse } from '../interfaces';
+import { toastNotifyHelper } from '../helperMethods';
 
 
 function ProductDetails() {
@@ -40,12 +42,17 @@ function ProductDetails() {
 
     // quantity will be inside the quantity counter local state that we have, so we don't have to pass that as a parameter
     // and the userId we're using the hardcoded string for now --> user ADMIN --> userId: 26c2a46a-5fa6-43c1-8765-f96cc07d85bb
-    const response = await updateCart({
+    const cartResponse: ApiResponse = await updateCart({
       productId: productId,
       updateQuantity: quantity,
       userId: '26c2a46a-5fa6-43c1-8765-f96cc07d85bb'
     });
-    console.log(response);
+    // console.log(cartResponse);
+
+    // if cartResponse.data is populated and success flag is true, let's invoke a toast notification
+    if (cartResponse.data && cartResponse.data.success) {
+      toastNotifyHelper('Producto añadido al carrito correctamente');
+    }
 
     setIsAddedToCart(false);
   }
