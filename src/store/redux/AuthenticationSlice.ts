@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { UserInterface } from "../../interfaces";
 
 
-const initialState: UserInterface = { // here's what we'll want to store from user... all things that user needs to register
+export const initialUserEmptyState: UserInterface = { // here's what we'll want to store from user... all things that user needs to register
   fullName: "",
   userId: "",
   email: "",
@@ -12,7 +12,7 @@ const initialState: UserInterface = { // here's what we'll want to store from us
 
 export const authenticationSlice = createSlice({
   name: "Authentication",
-  initialState: initialState,
+  initialState: initialUserEmptyState,
   reducers: {
     setUserLogged: (state, action) => {
       // when a user is logged in, we will have all the details in payload that we will pass here when calling the setUserLogged

@@ -65,6 +65,8 @@
   - [5.6. Lógica y funcionalidad del Login](#56-lógica-y-funcionalidad-del-login)
   - [5.7 Descodificar el token para obtener su información](#57-descodificar-el-token-para-obtener-su-información)
   - [5.8. Alternar botones de acceso en el Header y bienvenida al usuario](#58-alternar-botones-de-acceso-en-el-header-y-bienvenida-al-usuario)
+  - [5.9. Funcionalidad del Logout](#59-funcionalidad-del-logout)
+    - [Prueba de ejecución](#prueba-de-ejecución-3)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -87,12 +89,14 @@
     - [19. What is useSelector() hook](#19-what-is-useselector-hook)
     - [20. Handle Forms - React.ChangeEvent](#20-handle-forms---reactchangeevent)
     - [21. jwt-decode npm package with example](#21-jwt-decode-npm-package-with-example)
+    - [22. Distructuring technique with ellipsis](#22-distructuring-technique-with-ellipsis)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [ProductList y ProductDetails](#productlist-y-productdetails)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
   - [Cart](#cart)
     - [Prueba de ejecución de creación y actualización del carrito a través del botón de añadir un producto](#prueba-de-ejecución-de-creación-y-actualización-del-carrito-a-través-del-botón-de-añadir-un-producto)
     - [Prueba de ejecución para probar las funcionalidades del carrito - Actualizar las cantidades de los productos y eliminar los productos](#prueba-de-ejecución-para-probar-las-funcionalidades-del-carrito---actualizar-las-cantidades-de-los-productos-y-eliminar-los-productos)
+    - [Prueba de ejecución para probar la funcionalidad del Login y Logout](#prueba-de-ejecución-para-probar-la-funcionalidad-del-login-y-logout)
 - [Extras](#extras)
   - [Crear una interfaz para las respuesta de la API](#crear-una-interfaz-para-las-respuesta-de-la-api)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
@@ -2365,7 +2369,7 @@ Vamos a añadir nuestro nuevo endpoint al almacenamiento de Redux. Añadimos la 
 Ahora tenemos que crear un nuevo slice para el login, y cuando el usuario haga login, guardaremos sus credenciales en el almacenamiento de Redux.
 
 ```ts
-const initialState: UserInterface = { // here's what we'll want to store from user... all things that user needs to register
+export const initialUserEmptyState: UserInterface = { // here's what we'll want to store from user... all things that user needs to register
   fullName: "",
   userId: "",
   email: "",
@@ -2375,7 +2379,7 @@ const initialState: UserInterface = { // here's what we'll want to store from us
 
 export const authenticationSlice = createSlice({
   name: "Authentication",
-  initialState: initialState,
+  initialState: initialUserEmptyState,
   reducers: {
     setUserLogged: (state, action) => {
       // when a user is logged in, we will have all the details in payload that we will pass here when calling the setUserLogged
@@ -2749,7 +2753,58 @@ function Header() {
 }
 ```
 
+## 5.9. Funcionalidad del Logout
 
+Cuando el usuario presione el botón del logout, debemos tener en cuenta un par de cosas:
+
+1. Tenemos que setear el estado de logeo del usuario como vacío en Redux
+2. Tenemos que eliminar el token del localStorage
+
+```tsx
+function Header() {
+  // to call the setUserLogged slice and set it empty
+  const dispatch = useDispatch();
+  // to redirect user to login page
+  const navigate = useNavigate();
+  ...
+  const handleLogoutUser = () => {
+    // remove the token in localStorage
+    localStorage.removeItem('token');
+    // call the setUserLogged slice to set its initial state empty
+    dispatch(setUserLogged({ ...initialUserEmptyState })); // distructuring technique
+    // redirect user to home page
+    navigate('/');
+  }
+
+  return (
+    ...
+    {userData.userId && (
+      <>
+        <li className='nav-item'>
+          <button style={{ cursor: 'pointer', background: 'transparent', border: '0' }} className='nav-link active'>
+            Hola, {userData.fullName}
+          </button>
+        </li>
+
+        <li className='nav-item'>
+          <button 
+            style={{ border: 'none', width: '100px', height: '40px' }} 
+            className='btn btn-secondary btn-outlined rounded-pill text-white mx-2'
+            onClick={handleLogoutUser}
+          >
+            Logout
+          </button>
+        </li>
+      </>
+    )}
+    ...
+  )
+}
+```
+
+### Prueba de ejecución
+
+[Prueba de ejecución para probar la funcionalidad del Login y Logout](#prueba-de-ejecución-para-probar-la-funcionalidad-del-login-y-logout)
 
 # Webgrafía y Enlaces de Interés
 
@@ -2795,6 +2850,8 @@ function Header() {
 
 ### [21. jwt-decode npm package with example](https://www.npmjs.com/package/jwt-decode)
 
+### [22. Distructuring technique with ellipsis](https://stackoverflow.com/questions/31048953/what-are-these-three-dots-in-react-doing)
+
 # Pruebas de Ejecución
 
 ## ProductList y ProductDetails
@@ -2819,6 +2876,10 @@ function Header() {
 ### Prueba de ejecución para probar las funcionalidades del carrito - Actualizar las cantidades de los productos y eliminar los productos
 
 [Prueba de Ejecución 2](https://user-images.githubusercontent.com/80839621/235496943-e98669f0-402e-4401-bed8-a59d1ae4eb20.mp4)
+
+### Prueba de ejecución para probar la funcionalidad del Login y Logout
+
+[Prueba de Ejecución 3](https://user-images.githubusercontent.com/80839621/236282697-d3a808d0-7e18-4eec-adb6-71491f6fa8ec.mp4)
 
 # Extras
 

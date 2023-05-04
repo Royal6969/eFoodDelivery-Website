@@ -1,13 +1,19 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { RootState } from '../../store/redux/ReduxStorage';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { CartItemInterface, UserInterface } from '../../interfaces';
+import { initialUserEmptyState, setUserLogged } from '../../store/redux/AuthenticationSlice';
 
 let appLogo = require('../../assets/images/eFoodDeliveryLogo.png');
 
 
 function Header() {
+  // to call the setUserLogged slice and set it empty
+  const dispatch = useDispatch();
+  // to redirect user to login page
+  const navigate = useNavigate();
+
   // to show the number of items in the cart, we have to retrieve the cartItems from the redux storage like we did in the CartRecap component
   // to access to our redux store, we have a hook called useSelector() that is inside the React Redux library
   // and here, basically we will be extracting that from the store
@@ -23,6 +29,15 @@ function Header() {
   const userData: UserInterface = useSelector(
     (state: RootState) => state.authenticationStore
   );
+
+  const handleLogoutUser = () => {
+    // remove the token in localStorage
+    localStorage.removeItem('token');
+    // call the setUserLogged slice to set its initial state empty
+    dispatch(setUserLogged({ ...initialUserEmptyState })); // distructuring technique
+    // redirect user to home page
+    navigate('/');
+  }
 
 
   return (
@@ -83,6 +98,7 @@ function Header() {
                       <button 
                         style={{ border: 'none', width: '100px', height: '40px' }} 
                         className='btn btn-secondary btn-outlined rounded-pill text-white mx-2'
+                        onClick={handleLogoutUser}
                       >
                         Logout
                       </button>
