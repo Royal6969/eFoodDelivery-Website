@@ -1,6 +1,6 @@
 export default interface UserInterface {
     fullName?: string;
-    id: string;
+    userId: string;
     email: string;
     role?: string;
 }

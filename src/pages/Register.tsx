@@ -106,7 +106,7 @@ function Register() {
         </div>
         
         <div className='mt-5'>
-          <button type='submit' className='btn btn-success'>
+          <button type='submit' className='btn btn-warning'>
             Register
           </button>
         </div>

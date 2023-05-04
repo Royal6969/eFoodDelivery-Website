@@ -62,6 +62,8 @@
   - [5.3. Slice para la autentificación e Interfaz para el usuario](#53-slice-para-la-autentificación-e-interfaz-para-el-usuario)
   - [5.4. Reutilizando el método de ayuda del InputHelper en el Registro](#54-reutilizando-el-método-de-ayuda-del-inputhelper-en-el-registro)
   - [5.5. Lógica del registro de usuario](#55-lógica-del-registro-de-usuario)
+  - [5.6. Lógica y funcionalidad del Login](#56-lógica-y-funcionalidad-del-login)
+  - [5.7 Descodificar el token para obtener su información](#57-descodificar-el-token-para-obtener-su-información)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -83,6 +85,7 @@
     - [18. React Loader Spinners](#18-react-loader-spinners)
     - [19. What is useSelector() hook](#19-what-is-useselector-hook)
     - [20. Handle Forms - React.ChangeEvent](#20-handle-forms---reactchangeevent)
+    - [21. jwt-decode npm package with example](#21-jwt-decode-npm-package-with-example)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [ProductList y ProductDetails](#productlist-y-productdetails)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -2218,7 +2221,7 @@ function Register() {
           </div>
         </div>
         <div className="mt-5">
-          <button type="submit" className="btn btn-success">
+          <button type="submit" className="btn btn-warning">
             Register
           </button>
         </div>
@@ -2257,7 +2260,7 @@ function Login() {
         <div className="mt-2">
           <button
             type="submit"
-            className="btn btn-success"
+            className="btn btn-warning"
             style={{ width: "200px" }}
           >
             Login
@@ -2363,7 +2366,7 @@ Ahora tenemos que crear un nuevo slice para el login, y cuando el usuario haga l
 ```ts
 const initialState: UserInterface = { // here's what we'll want to store from user... all things that user needs to register
   fullName: "",
-  id: "",
+  userId: "",
   email: "",
   role: ""
 };
@@ -2377,7 +2380,7 @@ export const authenticationSlice = createSlice({
       // when a user is logged in, we will have all the details in payload that we will pass here when calling the setUserLogged
       // so from that payload, we have to extract everything and assign them right here
       state.fullName = action.payload.fullName;
-      state.id = action.payload.id;
+      state.userId = action.payload.userId;
       state.email = action.payload.email;
       state.role = action.payload.role;
     }
@@ -2394,7 +2397,7 @@ Y la interfaz del usuario sería...
 ```ts
 export default interface UserInterface {
     fullName?: string;
-    id: string;
+    userId: string;
     email: string;
     role?: string;
 }
@@ -2533,6 +2536,150 @@ function Register() {
 ![](./img/45.png)
 ![](./img/46.png)
 
+## 5.6. Lógica y funcionalidad del Login
+
+De primeras, literalmente tenemos que hacer lo mismo que en el register (copia/pega) solo que utilizando la *mutation* del que definimos para el login.
+
+La cuestión es que haciendo todo lo anterior, cuando nos logamos, vemos que dentro del *result* en la respuesta de la API, se nos devuelve el token del usuario, y ese token tenemos que almacernarlo en el clásico "localStorage".
+
+```tsx
+function Login() {
+  const [loading, setLoading] = useState(false);
+  // if we have any error message while login, let's set that in a local state for now
+  const [errorMessage, setErrorMessage] = useState('');
+  
+  // also we need a useState for the input fields to login an user
+  const [loginInput, setLoginInput] = useState({
+    userName: '',
+    password: '',
+  });
+
+  // now we have to use our helper method called InputHandler
+  const handleLoginInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const tempData = InputHelper(event, loginInput);
+    setLoginInput(tempData);
+  }
+
+  // define mutation to invoke it on form submit
+  const [loginUser] = useLoginUserMutation();
+
+  const handleLoginUser = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+
+    const loginResponse: ApiResponse = await loginUser({
+      userName: loginInput.userName,
+      password: loginInput.password,
+      // all of these values will be populated inside the loginInput because we have the control component
+    });
+
+    // one we invoke the endpoint, we have to examine the response that result
+    if (loginResponse.data) { // if loginResponse.data, if that is populated, let's check what happens 
+      console.log(loginResponse.data);
+      // we have to fetch the user token from the loginResponse and save it in the localStorage
+      const { token } = loginResponse.data.result;
+      localStorage.setItem('token', token)
+    }
+    else if (loginResponse.error) {
+      console.log(loginResponse.error.data.errorsList[0]);
+      setErrorMessage(loginResponse.error.data.errorsList[0]);
+    }
+
+    setLoading(true);
+  }
+
+
+  return (
+    <div className='container text-center'>
+      <form onSubmit={handleLoginUser} method='post'>
+        <h1 className='mt-5'>Login</h1>
+        
+        <div className='mt-5'>
+          <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Email'
+              required
+              name='userName'
+              value={loginInput.userName}
+              onChange={handleLoginInput}
+            />
+          </div>
+
+          <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+            <input
+              type='password'
+              className='form-control'
+              placeholder='Contraseña'
+              required
+              name='password'
+              value={loginInput.password}
+              onChange={handleLoginInput}
+            />
+          </div>
+        </div>
+
+        <div className='mt-2'>
+          {errorMessage && (
+            <p className='text-danger'>
+              {errorMessage}
+            </p>
+          )}
+
+          <button
+            type='submit'
+            style={{ width: '200px' }}
+            className='btn btn-warning'
+          >
+            Login
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
+```
+
+![](./img/47.png)
+![](./img/48.png)
+
+## 5.7 Descodificar el token para obtener su información
+
+Para descodificar el token que hemos guardado en el localStorage, necesitamos hacer uso de un paquete externo llamado *jwt-decode*
+
+```bash
+npm install jwt-decode
+```
+
+```tsx
+const handleLoginUser = async (event: React.FormEvent<HTMLFormElement>) => {
+    ...
+    // one we invoke the endpoint, we have to examine the response that result
+    if (loginResponse.data) { // if loginResponse.data, if that is populated, let's check what happens 
+      console.log(loginResponse.data);
+      
+      // we have to fetch the user token from the loginResponse and save it in the localStorage
+      const { token } = loginResponse.data.result;
+      // and after that we have to decode the token to get its information inside
+      // if we copy/paste the user token in JWT website, we can see what fields we need to decode
+      const { fullName, userId, email, role }: UserInterface = jwt_decode(token);
+      // save the token in localStorage
+      localStorage.setItem('token', token);
+      // call the authenticationSlice to populate the values inside the token decoded
+      dispatch(setUserLogged({
+        fullName,
+        userId,
+        email,
+        role
+      }));
+    }
+    ...
+  }
+```
+
+![](./img/49.png)
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -2574,6 +2721,8 @@ function Register() {
 ### [19. What is useSelector() hook](https://react-redux.js.org/api/hooks#useselector)
 
 ### [20. Handle Forms - React.ChangeEvent<HTMLInputElement>](https://bobbyhadz.com/blog/typescript-react-onchange-event-type)
+
+### [21. jwt-decode npm package with example](https://www.npmjs.com/package/jwt-decode)
 
 # Pruebas de Ejecución
 
