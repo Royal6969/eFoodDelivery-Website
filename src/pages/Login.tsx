@@ -5,6 +5,8 @@ import { useLoginUserMutation } from '../APIs/AuthenticationAPI';
 import jwt_decode from "jwt-decode";
 import { useDispatch } from 'react-redux';
 import { setUserLogged } from '../store/redux/AuthenticationSlice';
+import { useNavigate } from 'react-router-dom';
+import { BigLoader } from '../components/view/common';
 
 
 function Login() {
@@ -13,6 +15,8 @@ function Login() {
   const [errorMessage, setErrorMessage] = useState('');
   // to call the authenticationSlice we need the useDispatch() hook
   const dispatch = useDispatch();
+  // define useNavigate() hook to redirect user to Home page when user is logged
+  const navigate = useNavigate();
   
   // also we need a useState for the input fields to login an user
   const [loginInput, setLoginInput] = useState({
@@ -57,6 +61,8 @@ function Login() {
         email,
         role
       }));
+      // redirect user to Home page
+      navigate('/');
     }
     else if (loginResponse.error) {
       console.log(loginResponse.error.data.errorsList[0]);
@@ -69,6 +75,9 @@ function Login() {
 
   return (
     <div className='container text-center'>
+      {loading && (
+        <BigLoader />
+      )}
       <form onSubmit={handleLoginUser} method='post'>
         <h1 className='mt-5'>Login</h1>
         

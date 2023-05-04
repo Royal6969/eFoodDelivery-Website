@@ -64,6 +64,7 @@
   - [5.5. Lógica del registro de usuario](#55-lógica-del-registro-de-usuario)
   - [5.6. Lógica y funcionalidad del Login](#56-lógica-y-funcionalidad-del-login)
   - [5.7 Descodificar el token para obtener su información](#57-descodificar-el-token-para-obtener-su-información)
+  - [5.8. Alternar botones de acceso en el Header y bienvenida al usuario](#58-alternar-botones-de-acceso-en-el-header-y-bienvenida-al-usuario)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -2679,6 +2680,76 @@ const handleLoginUser = async (event: React.FormEvent<HTMLFormElement>) => {
 ```
 
 ![](./img/49.png)
+
+## 5.8. Alternar botones de acceso en el Header y bienvenida al usuario
+
+Lo primero de todo, es que cuando el usuario esté logeado que le redirijamos hacia el el Home, lo cual es simplemente añadir un navigate('/'); justo después de lo que habíamos hecho antes.
+
+Lo segundo será añadir un big-loader, para que durante esos dos o tres segundos, el usuario sepa que se está intentando efectivamente hacer el login.
+
+Lo tercero será el hecho de esconder el botón del login en el Header si el usuario ya está logeado, o esconder el botón del logout si aún no hay ningún usuario identificado, es decir, aplicar la funcionalidad que alterna entre la visibilidad de los botones del Header del logout y el login.
+
+Y lo cuarto y último será el poner el nombre del usuario logeado a modo de darle la bienvenida y que pueda comprobar que efectivamente está autentificado dentro de nuestra app.
+
+```tsx
+function Header() {
+  ...
+  // to alternate between show/hide the logout-register-login buttons
+  // in our authenticationSlice we have the user details that are stored in setUserLogged
+  // we will retrieve that and we will add it like we're retrieving the cartStore
+  // we will also retrieve the userData from authenticationStore
+  const userData: UserInterface = useSelector(
+    (state: RootState) => state.authenticationStore
+  );
+
+  return (
+    ...
+    <div style={{ marginLeft: 'auto' }} className='d-flex'>
+      {userData.userId && (
+        <>
+          <li className='nav-item'>
+            <button style={{ cursor: 'pointer', background: 'transparent', border: '0' }} className='nav-link active'>
+              Hola, {userData.fullName}
+            </button>
+          </li>
+
+          <li className='nav-item'>
+            <button 
+              style={{ border: 'none', width: '100px', height: '40px' }} 
+              className='btn btn-secondary btn-outlined rounded-pill text-white mx-2'
+            >
+              Logout
+            </button>
+          </li>
+        </>
+      )}
+
+      {!userData.userId && (
+        <>
+          <li className='nav-item text-white'>
+            <NavLink className='nav-link' to='/Register'>
+              Register
+            </NavLink>
+          </li>
+
+          <li className='nav-item text-white'>
+            <NavLink 
+              style={{ border: 'none', width: '100px', height: '40px' }} 
+              className='btn btn-success btn-outlined rounded-pill text-white mx-2' 
+              to='/Login'
+            >
+              Login
+            </NavLink>
+          </li>
+        </>
+      )}
+    </div>
+    ...
+  )
+}
+```
+
+
 
 # Webgrafía y Enlaces de Interés
 

@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom';
 import { RootState } from '../../store/redux/ReduxStorage';
 import { useSelector } from 'react-redux';
-import { CartItemInterface } from '../../interfaces';
+import { CartItemInterface, UserInterface } from '../../interfaces';
 
 let appLogo = require('../../assets/images/eFoodDeliveryLogo.png');
 
@@ -14,6 +14,14 @@ function Header() {
   const cartFromReduxStorage: CartItemInterface[] = useSelector(
     // then we have to define the state
     (state: RootState) => state.cartStore.cartItemsList ?? [] // and if it's null, return an empty array
+  );
+
+  // to alternate between show/hide the logout-register-login buttons
+  // in our authenticationSlice we have the user details that are stored in setUserLogged
+  // we will retrieve that and we will add it like we're retrieving the cartStore
+  // we will also retrieve the userData from authenticationStore
+  const userData: UserInterface = useSelector(
+    (state: RootState) => state.authenticationStore
   );
 
 
@@ -63,30 +71,44 @@ function Header() {
               </li>
               
               <div style={{ marginLeft: 'auto' }} className='d-flex'>
-                <li className='nav-item'>
-                  <button 
-                    style={{ border: 'none', width: '100px', height: '40px' }} 
-                    className='btn btn-secondary btn-outlined rounded-pill text-white mx-2'
-                  >
-                    Logout
-                  </button>
-                </li>
+                {userData.userId && (
+                  <>
+                    <li className='nav-item'>
+                      <button style={{ cursor: 'pointer', background: 'transparent', border: '0' }} className='nav-link active'>
+                        Hola, {userData.fullName}
+                      </button>
+                    </li>
 
-                <li className='nav-item text-white'>
-                  <NavLink className='nav-link' to='/Register'>
-                    Register
-                  </NavLink>
-                </li>
+                    <li className='nav-item'>
+                      <button 
+                        style={{ border: 'none', width: '100px', height: '40px' }} 
+                        className='btn btn-secondary btn-outlined rounded-pill text-white mx-2'
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </>
+                )}
 
-                <li className='nav-item text-white'>
-                  <NavLink 
-                    style={{ border: 'none', width: '100px', height: '40px' }} 
-                    className='btn btn-success btn-outlined rounded-pill text-white mx-2' 
-                    to='/Login'
-                  >
-                    Login
-                  </NavLink>
-                </li>
+                {!userData.userId && (
+                  <>
+                    <li className='nav-item text-white'>
+                      <NavLink className='nav-link' to='/Register'>
+                        Register
+                      </NavLink>
+                    </li>
+
+                    <li className='nav-item text-white'>
+                      <NavLink 
+                        style={{ border: 'none', width: '100px', height: '40px' }} 
+                        className='btn btn-success btn-outlined rounded-pill text-white mx-2' 
+                        to='/Login'
+                      >
+                        Login
+                      </NavLink>
+                    </li>
+                  </>
+                )}
               </div>
             </ul>
           </div>
