@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { StaticDetails_Roles } from '../Utils/StaticDetails'
 import { InputHelper } from '../helperMethods';
+import { useRegisterUserMutation } from '../APIs/AuthenticationAPI';
+import { ApiResponse } from '../interfaces';
 
 
 function Register() {
@@ -20,9 +22,35 @@ function Register() {
     setRegisterInput(tempData);
   }
 
+  // define mutation to invoke it on form submit
+  const [registerUser] = useRegisterUserMutation();
+
+  const handleRegisterUser = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+
+    const registerResponse: ApiResponse = await registerUser({
+      userName: registerInput.userName,
+      password: registerInput.password,
+      role: registerInput.role,
+      name: registerInput.name
+      // all of these values will be populated inside the registerInput because we have the control component
+    });
+
+    // one we invoke the endpoint, we have to examine the response that result
+    if (registerResponse.data) { // if registerResponse.data, if that is populated, let's check what happens 
+      console.log(registerResponse.data);
+    }
+    else if (registerResponse.error) {
+      console.log(registerResponse.error.data.errorsList[0]);
+    }
+
+    setLoading(true);
+  }
+
   return (
     <div className='container text-center'>
-      <form method='post'>
+      <form onSubmit={handleRegisterUser} method='post'>
         <h1 className='mt-5'>Register</h1>
 
         <div className='mt-5'>

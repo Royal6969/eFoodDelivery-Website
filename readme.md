@@ -61,6 +61,7 @@
   - [5.2. Crear las nuevas mutations para los nuevos endpoint del login y el register](#52-crear-las-nuevas-mutations-para-los-nuevos-endpoint-del-login-y-el-register)
   - [5.3. Slice para la autentificación e Interfaz para el usuario](#53-slice-para-la-autentificación-e-interfaz-para-el-usuario)
   - [5.4. Reutilizando el método de ayuda del InputHelper en el Registro](#54-reutilizando-el-método-de-ayuda-del-inputhelper-en-el-registro)
+  - [5.5. Lógica del registro de usuario](#55-lógica-del-registro-de-usuario)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -2488,6 +2489,50 @@ function Register() {
 }
 ```
 
+## 5.5. Lógica del registro de usuario
+
+```tsx
+function Register() {
+  ...
+  // define mutation to invoke it on form submit
+  const [registerUser] = useRegisterUserMutation();
+
+  const handleRegisterUser = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+
+    const registerResponse: ApiResponse = await registerUser({
+      userName: registerInput.userName,
+      password: registerInput.password,
+      role: registerInput.role,
+      name: registerInput.name
+      // all of these values will be populated inside the registerInput because we have the control component
+    });
+
+    // one we invoke the endpoint, we have to examine the response that result
+    if (registerResponse.data) { // if registerResponse.data, if that is populated, let's check what happens 
+      console.log(registerResponse.data);
+    }
+    else if (registerResponse.error) {
+      console.log(registerResponse.error.data.errorsList[0]);
+    }
+
+    setLoading(true);
+  }
+
+  return (
+    <div className='container text-center'>
+      <form onSubmit={handleRegisterUser} method='post'>
+        <h1 className='mt-5'>Register</h1>
+    ...
+  )
+}
+```
+
+![](./img/44.png)
+![](./img/45.png)
+![](./img/46.png)
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -2565,15 +2610,15 @@ Sabiendo esto, sería interesante la idea de crear una interfaz para las respues
 
 ```ts
 export default interface ApiResponse {
-  apiResponseData?: {
+  data?: {
     statusCode?: number;
     success?: boolean;
-    errorList?: Array<string>;
+    errorsList?: Array<string>;
     // we don't know what the result could be, basically in that result that will be a key and a value
     // we can be dynamic about it and we can just say that will be a key which will be type string and the response also will be in a tring
     // but we don't know because when we convert everything to JSON, it will be a string by itself
     result: {
-      [key: string]: string 
+      [key: string]: string
       // note that it will not give any suggestion for typing with what will be inside the result
       // so you will be responsible to find what exactly will be inside result when you call the API
       // but on the other hand, when you define that this a number, it's a boolean or aaray of string
@@ -2581,9 +2626,11 @@ export default interface ApiResponse {
     }
   }
 
-  responseError?: any;
+  error?: any;
 }
 ```
+
+![](./img/43.png)
 
 ## Enlace al espacio de trabajo y al tablero del proyecto en Trello
 
