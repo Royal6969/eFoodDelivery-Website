@@ -1,5 +1,6 @@
 import React from 'react'
 import { CartRecap, DeliveryDetails } from '../components/view/cart'
+import { checkCustomerAuth } from '../HOC'
 
 
 function Cart() {
@@ -17,4 +18,4 @@ function Cart() {
 }
 
 
-export default Cart
+export default checkCustomerAuth(Cart)

@@ -74,6 +74,18 @@ function Header() {
                 </NavLink>
               </li>
 
+              <li className='nav-item'>
+                <NavLink className='nav-link' aria-current='page' to='/AuthCustomerTest'>
+                  AuthCustomerTest
+                </NavLink>
+              </li>
+
+              <li className='nav-item'>
+                <NavLink className='nav-link' aria-current='page' to='/AuthAdminTest'>
+                  AuthAdminTest
+                </NavLink>
+              </li>
+
               <li className='nav-item dropdown'>
                 <a className='nav-link dropdown-toggle' href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
                   Admin

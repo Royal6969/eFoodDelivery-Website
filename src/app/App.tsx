@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { Footer, Header } from '../components/layout';
-import { Cart, Home, Login, NotFound, ProductDetails, Register } from '../pages';
+import { AccessRefused, AuthAdminTest, AuthCustomerTest, Cart, Home, Login, NotFound, ProductDetails, Register } from '../pages';
 import { useDispatch } from 'react-redux';
 import { useGetCartQuery } from '../APIs/CartAPI';
 import { setCart } from '../store/redux/CartSlice';
@@ -56,10 +56,16 @@ function App() {
           <Routes>
             <Route path='/' element={<Home />}></Route>
             <Route path='*' element={<NotFound />}></Route>
-            <Route path='/ProductDetails/:productId' element={<ProductDetails />}></Route>
-            <Route path='/Cart' element={<Cart />}></Route>
+            
             <Route path='/Register' element={<Register />}></Route>
             <Route path='/Login' element={<Login />}></Route>
+          
+            <Route path='/ProductDetails/:productId' element={<ProductDetails />}></Route>
+            <Route path='/Cart' element={<Cart />}></Route>
+            
+            <Route path='/AuthCustomerTest' element={<AuthCustomerTest />}></Route>
+            <Route path='/AuthAdminTest' element={<AuthAdminTest />}></Route>
+            <Route path='/AccessRefused' element={<AccessRefused />}></Route>
           </Routes>
         </div>
         

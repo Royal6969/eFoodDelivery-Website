@@ -68,6 +68,8 @@
   - [5.9. Funcionalidad del Logout](#59-funcionalidad-del-logout)
     - [Prueba de ejecución](#prueba-de-ejecución-3)
   - [5.10. Añadir las notificaciones *Toast*](#510-añadir-las-notificaciones-toast)
+  - [5.11. Autentificación del usuario con High-Order-Component (HOC)](#511-autentificación-del-usuario-con-high-order-component-hoc)
+  - [5.12. Autorización del usuario con High-Order-Component (HOC)](#512-autorización-del-usuario-con-high-order-component-hoc)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -92,6 +94,7 @@
     - [21. jwt-decode npm package with example](#21-jwt-decode-npm-package-with-example)
     - [22. Distructuring technique with ellipsis](#22-distructuring-technique-with-ellipsis)
     - [23. react-toastify npm package](#23-react-toastify-npm-package)
+    - [24. High Order Component - Authentication and Autorization](#24-high-order-component---authentication-and-autorization)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [ProductList y ProductDetails](#productlist-y-productdetails)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -2866,6 +2869,106 @@ if (cartResponse.data && cartResponse.data.success) {
 ![](./img/50.png)
 ![](./img/51.png)
 
+## 5.11. Autentificación del usuario con High-Order-Component (HOC)
+
+Ahora ha llegado el momento de agregar validaciones de los permisos del usuario en función de su rol para poder acceder a ciertas páginas, es decir, debemos limitar las acciones y accesos de los usuarios *clientes*, y debemos otorgar más accesos y funciones para los usuarios *administradores*.
+
+Para empezar a desarrollar esta parte y poder ir probándolo, vamos a crear algunas páginas tipo test. Una para probar el acceso por cualquier usuario autentificado (clientes) y otra para probar los usuarios autorizados (administradores).
+
+- AuthCustomerTest.tsx
+- AuthAdminTest.tsx
+- AccessRefused.tsx
+
+Para llegar a implementar esto que queremos hacer, vamos a hacer uso del High Order Component de React (HOC), es decir, un tipo de autentificación y autorización un tanto más automática ya preparado por los de React.
+
+Ahora vamos a crear una nueva carpeta llamada por ejemplo *HOC* y dentro de ella vamos a crear un nuevo archivo llamado *CheckAuthentication.tsx*
+
+```tsx
+const checkCustomerAuth = (WrappedComponent: any) => {
+  // now we have to return back that wrapped component
+  // we can also expect any props that are being passed with the component we will capture and return them back as well
+  // so in the return statement, we will also return any props that are defined with the WrappedComponent
+  return(props: any) => {
+    // so before we return the WrappedComponent here, we need to check if a user is authenticated or not
+    const userAccessToken = localStorage.getItem('token');
+
+    // if token is not populated, redirect user to login page
+    if (!userAccessToken) {
+      window.location.replace('/Login');
+      return null;
+    }
+
+    // now if it's a simple component what we can do is we can return that WrappedComponent along with all the props spread
+    return <WrappedComponent {...props} />
+  }
+}
+
+
+export default checkCustomerAuth;
+```
+
+Para probar esto por ejemplo con el carrito, tenemos que ir a la página del carrito para envolver la devolución del componente en el HOC que acabamos de crear, y de esa forma, que el icono del carrito del Header, sólo pueda ser accesible por los usuarios identificados (clientes) en nuestra aplicación.
+
+```tsx
+function AuthCustomerTest() {
+  return (
+    <div>Esta página es accesible por cualquier cliente <i>(usuario registrado)</i></div>
+  )
+}
+
+export default checkCustomerAuth(AuthCustomerTest)
+```
+
+## 5.12. Autorización del usuario con High-Order-Component (HOC)
+
+Para la autorización del usuario y poder comprobar su rol, y en base a ello ofrecerle el acceso a nuevas páginas o fuciones, vamos a crear en la carpeta del *HOC*. un nuevo archivo llamado *CheckAdminAuth.tsx*
+
+```tsx
+const checkAdminAuth = (WrappedComponent: any) => {
+  // now we have to return back that wrapped component
+  // we can also expect any props that are being passed with the component we will capture and return them back as well
+  // so in the return statement, we will also return any props that are defined with the WrappedComponent
+  return (props: any) => {
+    // so before we return the WrappedComponent here, we need to check if a user is authenticated or not
+    const userAccessToken = localStorage.getItem('token') ?? ''; // if token does't exist, we have and empty token
+
+    // if token exists, now we have to examine the token and extract the role
+    if (userAccessToken) {
+      const decodeTokenForRole: { role: string; } = jwt_decode(userAccessToken);
+
+      // if the role from the token decoded is not admin
+      if (decodeTokenForRole.role !== StaticDetails_Roles.ADMIN) {
+        // redirect user to the AccessRefused page
+        window.location.replace('/AccessRefused');
+        return null;
+      }
+    }
+    // else, if access token is not present, then we want to redirect user to the login page
+    else {
+      window.location.replace('/Login');
+      return null;
+    }
+
+    // now if it's a simple component what we can do is we can return that WrappedComponent along with all the props spread
+    return <WrappedComponent {...props} />
+  }
+}
+```
+
+Y entonces en el *AuthAdminTest.tsx*
+
+```tsx
+function AuthAdminTest() {
+  return (
+    <div>Esta página sólo es accesible por los administradores</div>
+  )
+}
+
+export default checkAdminAuth(AuthAdminTest)
+```
+
+Y para la página del *AccessRefused.tsx* nos buscamos cualquier plantilla en Google.
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -2913,6 +3016,8 @@ if (cartResponse.data && cartResponse.data.success) {
 ### [22. Distructuring technique with ellipsis](https://stackoverflow.com/questions/31048953/what-are-these-three-dots-in-react-doing)
 
 ### [23. react-toastify npm package](https://www.npmjs.com/package/react-toastify)
+
+### [24. High Order Component - Authentication and Autorization](https://legacy.reactjs.org/docs/higher-order-components.html#)
 
 # Pruebas de Ejecución
 
