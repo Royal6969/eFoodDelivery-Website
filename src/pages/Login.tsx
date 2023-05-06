@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { InputHelper } from '../helperMethods';
+import { InputHelper, toastNotifyHelper } from '../helperMethods';
 import { ApiResponse, UserInterface } from '../interfaces';
 import { useLoginUserMutation } from '../APIs/AuthenticationAPI';
 import jwt_decode from "jwt-decode";
@@ -65,8 +65,10 @@ function Login() {
       navigate('/');
     }
     else if (loginResponse.error) {
-      console.log(loginResponse.error.data.errorsList[0]);
-      setErrorMessage(loginResponse.error.data.errorsList[0]);
+      // console.log(loginResponse.error.data.errorsList[0]);
+      // setErrorMessage(loginResponse.error.data.errorsList[0]);
+      toastNotifyHelper(loginResponse.error.data.errorsList[0], 'error');
+      setLoading(false);
     }
 
     setLoading(true);

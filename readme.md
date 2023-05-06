@@ -70,6 +70,7 @@
   - [5.10. Añadir las notificaciones *Toast*](#510-añadir-las-notificaciones-toast)
   - [5.11. Autentificación del usuario con High-Order-Component (HOC)](#511-autentificación-del-usuario-con-high-order-component-hoc)
   - [5.12. Autorización del usuario con High-Order-Component (HOC)](#512-autorización-del-usuario-con-high-order-component-hoc)
+  - [5.13. Añadir la lógica de que sólo los usuarios identificados puedan añadir productos al carrito](#513-añadir-la-lógica-de-que-sólo-los-usuarios-identificados-puedan-añadir-productos-al-carrito)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -2968,6 +2969,53 @@ export default checkAdminAuth(AuthAdminTest)
 ```
 
 Y para la página del *AccessRefused.tsx* nos buscamos cualquier plantilla en Google.
+
+## 5.13. Añadir la lógica de que sólo los usuarios identificados puedan añadir productos al carrito
+
+Esto tenemos que hacerlo tanto en el *ProductCard.tsx* como en el *ProductDetails.tsx*
+
+Empezaremos por hacerlo en el ProductCard:
+
+```tsx
+// when the user clicks the AddToCart button, we have to check if inside the Redux store, if userId is populated, that means that user is logged in
+  // so far that we will have to extract the authenticationStore with the useSelector() hook
+  const userDataFromAuthenticationStore: UserInterface = useSelector((state: RootState) => state.authenticationStore);
+
+  // so when the AddToCart button will be clicked, we will have to invoke this updateCart method and there we will have to pass the three parameters
+  const handleAddToCart =async (productId: number) => { // it's async because we will be calling the mutation and we will have to wait for a response
+    // if inside the user data the userId is not populated, we want to navigate to the login page
+    if (!userDataFromAuthenticationStore.userId) {
+      navigate('/Login');
+      return null;
+    }
+    ...
+  }
+```
+
+Y ahora hacemos copia/pega para implementar lo mismo en el ProductDetails.
+
+Por último, lo suyo sería que el badge del contador de productos del icono del carrito, sólo fuese visible para los usuarios identificados, por lo tanto iremos al Header para implementar esta pequeña lógica de condicional renderizado:
+
+```tsx
+<li className='nav-item'>
+  <NavLink className='nav-link' aria-current='page' to='/Cart'>
+    <i className='bi bi-cart4' style={{ fontSize: '16.5px' }}>
+      {/* **** conditional rendering to display the counter products badge **** */}
+      {userData.userId && (
+        <span  style={{ fontSize: '10px' }} className='translate-middle badge rounded-circle border border-light bg-danger'>
+          {/* we can check the lenght of cart from redux storage and display items accordingly */}
+          {cartFromReduxStorage?.length
+            ? `${cartFromReduxStorage.length}`
+            : ('')
+          }
+        </span>
+      )}
+    </i>
+  </NavLink>
+</li>
+```
+
+**Nota:** lo siguiente sería ya introducor el usuario dinámico, es decir, sustituir el user id hardcodeado del admin1 por la lógica que añada al usuario en cuestión del que se tarte realmente. Y una vez que haga eso, ya añadiría un video a modo de prueba de ejecución de toda esta parte para esclarecer cómo debe de quedar todo.
 
 # Webgrafía y Enlaces de Interés
 

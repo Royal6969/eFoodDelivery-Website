@@ -3,8 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useGetProductByIdQuery } from '../APIs/ProductAPI';
 import { useUpdateCartMutation } from '../APIs/CartAPI';
 import { BigLoader, MiniLoader } from '../components/view/common';
-import { ApiResponse } from '../interfaces';
+import { ApiResponse, UserInterface } from '../interfaces';
 import { toastNotifyHelper } from '../helperMethods';
+import { RootState } from '../store/redux/ReduxStorage';
+import { useSelector } from 'react-redux';
 
 
 function ProductDetails() {
@@ -35,9 +37,20 @@ function ProductDetails() {
   // next thing that we want is the mutation, the function or method that will be returned from the mutation
   // to invoke that I will give that the name of updateCart and it will be equal to the mutation
   const [updateCart] = useUpdateCartMutation();
+
+  // when the user clicks the AddToCart button, we have to check if inside the Redux store, if userId is populated, that means that user is logged in
+  // so far that we will have to extract the authenticationStore with the useSelector() hook
+  const userDataFromAuthenticationStore: UserInterface = useSelector((state: RootState) => state.authenticationStore);
+
   
   // so when the AddToCart button will be clicked, we will have to invoke this updateCart method and there we will have to pass the three parameters
   const handleAddToCart =async (productId: number) => { // it's async because we will be calling the mutation and we will have to wait for a response
+    // if inside the user data the userId is not populated, we want to navigate to the login page
+    if (!userDataFromAuthenticationStore.userId) {
+      navigate('/Login');
+      return null;
+    }
+
     setIsAddedToCart(true);
 
     // quantity will be inside the quantity counter local state that we have, so we don't have to pass that as a parameter

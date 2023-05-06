@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
-import { ApiResponse, ProductInterface } from '../../../interfaces'
-import { Link } from 'react-router-dom';
+import { ApiResponse, ProductInterface, UserInterface } from '../../../interfaces'
+import { Link, useNavigate } from 'react-router-dom';
 import { useUpdateCartMutation } from '../../../APIs/CartAPI';
 import { MiniLoader } from '../common';
 import { toastNotifyHelper } from '../../../helperMethods';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/redux/ReduxStorage';
 
 
 // right now we're only passing product, but we might also be passing more things along the road
@@ -11,12 +13,26 @@ import { toastNotifyHelper } from '../../../helperMethods';
 function ProductCard(props: Props) { // right here we have to write the product will be getting props
   // we can use useState() hook to show the loader when an item is being added to the cart
   const [isAddedToCart, setIsAddedToCart] = useState<boolean>(false);
+
   // next thing that we want is the mutation, the function or method that will be returned from the mutation
   // to invoke that I will give that the name of updateCart and it will be equal to the mutation
   const [updateCart] = useUpdateCartMutation();
   
+  // to navigate to login page in case user data doesn't populated
+  const navigate = useNavigate();
+
+  // when the user clicks the AddToCart button, we have to check if inside the Redux store, if userId is populated, that means that user is logged in
+  // so far that we will have to extract the authenticationStore with the useSelector() hook
+  const userDataFromAuthenticationStore: UserInterface = useSelector((state: RootState) => state.authenticationStore);
+
   // so when the AddToCart button will be clicked, we will have to invoke this updateCart method and there we will have to pass the three parameters
   const handleAddToCart =async (productId: number) => { // it's async because we will be calling the mutation and we will have to wait for a response
+    // if inside the user data the userId is not populated, we want to navigate to the login page
+    if (!userDataFromAuthenticationStore.userId) {
+      navigate('/Login');
+      return null;
+    }
+    
     setIsAddedToCart(true);
 
     // quantity will be inside the quantity counter local state that we have, so we don't have to pass that as a parameter

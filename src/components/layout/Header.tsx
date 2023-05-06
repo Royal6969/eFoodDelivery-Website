@@ -63,13 +63,16 @@ function Header() {
               <li className='nav-item'>
                 <NavLink className='nav-link' aria-current='page' to='/Cart'>
                   <i className='bi bi-cart4' style={{ fontSize: '16.5px' }}>
-                    <span  style={{ fontSize: '10px' }} className='translate-middle badge rounded-circle border border-light bg-danger'>
-                      {/* we can check the lenght of cart from redux storage and display items accordingly */}
-                      {cartFromReduxStorage?.length
-                        ? `${cartFromReduxStorage.length}`
-                        : ('')
-                      }
-                    </span>
+                    {/* **** conditional rendering to display the counter products badge **** */}
+                    {userData.userId && (
+                      <span  style={{ fontSize: '10px' }} className='translate-middle badge rounded-circle border border-light bg-danger'>
+                        {/* we can check the lenght of cart from redux storage and display items accordingly */}
+                        {cartFromReduxStorage?.length
+                          ? `${cartFromReduxStorage.length}`
+                          : ('')
+                        }
+                      </span>
+                    )}
                   </i>
                 </NavLink>
               </li>
