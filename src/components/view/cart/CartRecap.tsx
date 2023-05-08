@@ -66,6 +66,13 @@ function CartRecap() {
   return (
     <div className='container p-4 m-2'>
       <h4 className='text-center text-success'>Resumen del carrito</h4>
+
+      {cartFromReduxStorage.length == 0 && (
+        <h5 className='text-center text-warning'>
+          El carrito está vacío.<br/> 
+          Aún no has añadido ningún producto.
+          </h5>
+      )}
       
       {cartFromReduxStorage.map(
         (cartItem: CartItemInterface, index: number) => (
