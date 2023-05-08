@@ -61,6 +61,8 @@ function Login() {
         email,
         role
       }));
+      toastNotifyHelper('Login realizado correctamente.');
+
       // redirect user to Home page
       navigate('/');
     }
@@ -77,9 +79,11 @@ function Login() {
 
   return (
     <div className='container text-center'>
+    {/* 
       {loading && (
         <BigLoader />
-      )}
+      )} 
+    */}
       <form onSubmit={handleLoginUser} method='post'>
         <h1 className='mt-5'>Login</h1>
         
