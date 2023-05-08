@@ -71,6 +71,7 @@
   - [5.11. Autentificación del usuario con High-Order-Component (HOC)](#511-autentificación-del-usuario-con-high-order-component-hoc)
   - [5.12. Autorización del usuario con High-Order-Component (HOC)](#512-autorización-del-usuario-con-high-order-component-hoc)
   - [5.13. Añadir la lógica de que sólo los usuarios identificados puedan añadir productos al carrito](#513-añadir-la-lógica-de-que-sólo-los-usuarios-identificados-puedan-añadir-productos-al-carrito)
+  - [5.14. Cambiar el id estático del usuario "admin" por un id dinámico](#514-cambiar-el-id-estático-del-usuario-admin-por-un-id-dinámico)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -3016,6 +3017,21 @@ Por último, lo suyo sería que el badge del contador de productos del icono del
 ```
 
 **Nota:** lo siguiente sería ya introducor el usuario dinámico, es decir, sustituir el user id hardcodeado del admin1 por la lógica que añada al usuario en cuestión del que se tarte realmente. Y una vez que haga eso, ya añadiría un video a modo de prueba de ejecución de toda esta parte para esclarecer cómo debe de quedar todo.
+
+## 5.14. Cambiar el id estático del usuario "admin" por un id dinámico
+
+Por fin llegamos al punto en el que ya lo tenemos todo listo para dar el paso a cambiar el userId que tenemos estáticamente hardcodeado perteneciente al primer usuario que creamos (admin@gmail.com), por un userId dinámico que pertenezca al usuario en cuestión que esté identificado en nuestra aplicación.
+
+Es muy sencillo, en la barra de opciones de la izquierda del VSC, pulsamos sobre el icono de la lupa y pegamos el userId que tenemos hardcodeado, y nos saldrá en que archivos aparece tal coincidencia.
+
+Copiamos el useSelector() que recupera el userId del usuario que esté logeado en ese momento, y donde antes teníamos el userId hardcodeado, ahora llamamos a tal constante y especificamos que del usuario recuperado, coja su userId.
+
+Los componentes/páginas donde lo he cambiado han sido:
+
+- ProductDetails
+- ProductCard
+- CartRecap
+- App
 
 # Webgrafía y Enlaces de Interés
 

@@ -1,20 +1,28 @@
 import { Route, Routes } from 'react-router-dom';
 import { Footer, Header } from '../components/layout';
 import { AccessRefused, AuthAdminTest, AuthCustomerTest, Cart, Home, Login, NotFound, ProductDetails, Register } from '../pages';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useGetCartQuery } from '../APIs/CartAPI';
 import { setCart } from '../store/redux/CartSlice';
 import { useEffect } from 'react';
 import jwt_decode from "jwt-decode";
 import { UserInterface } from '../interfaces';
 import { setUserLogged } from '../store/redux/AuthenticationSlice';
+import { RootState } from '../store/redux/ReduxStorage';
 
 
 function App() {
   // we habe to load the cart when the app is loaded
   const dispatch = useDispatch();
+
+  // at this point, it's time to replace the static user id for the dynamic user id wich belong to the user who is logged in
+  // so for that we will have to extract the authenticationStore with the useSelector() hook
+  const userDataFromAuthenticationStore: UserInterface = useSelector((state: RootState) => state.authenticationStore);
+
   // next we need to get the cart first with the cartAPI and its query
-  const { data, isLoading } = useGetCartQuery('26c2a46a-5fa6-43c1-8765-f96cc07d85bb'); // our userId hardcoded as the parameter
+  // in the begining, our userId was hardcoded as the parameter
+  // but at this point, it's time to replace the static user id for the dynamic user id wich belong to the user who is logged in
+  const { data, isLoading } = useGetCartQuery(userDataFromAuthenticationStore.userId);
   
   // to avoid losing the Redux store content for the token decoded we have to repopulate with useEffect()
   // this useEffect() should be execute when the app is rendered

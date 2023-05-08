@@ -40,7 +40,7 @@ function ProductCard(props: Props) { // right here we have to write the product 
     const cartResponse: ApiResponse = await updateCart({
       productId: productId,
       updateQuantity: 1, // the only thing that we have to change is quantity that it will be always 1 by initial default
-      userId: '26c2a46a-5fa6-43c1-8765-f96cc07d85bb'
+      userId: userDataFromAuthenticationStore.userId
     });
     // console.log(cartResponse);
 

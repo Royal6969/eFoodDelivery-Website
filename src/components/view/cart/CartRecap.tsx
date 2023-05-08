@@ -1,5 +1,5 @@
 import React from 'react'
-import { CartItemInterface } from '../../../interfaces'
+import { CartItemInterface, UserInterface } from '../../../interfaces'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../../store/redux/ReduxStorage'
 import { removeItemFromCart, updateItemQuantity } from '../../../store/redux/CartSlice';
@@ -19,6 +19,10 @@ function CartRecap() {
     (state: RootState) => state.cartStore.cartItemsList ?? [] // and if it's null, return an empty array
   );
 
+  // at this point, it's time to replace the static user id for the dynamic user id wich belong to the user who is logged in
+  // so for that we will have to extract the authenticationStore with the useSelector() hook
+  const userDataFromAuthenticationStore: UserInterface = useSelector((state: RootState) => state.authenticationStore);
+
   // if cartFromReduxStorage is empty...
   if (!cartFromReduxStorage) {
     return (
@@ -34,7 +38,7 @@ function CartRecap() {
       updateCart({
         productId: cartItem.product?.id,
         updateQuantity: 0,
-        userId: '26c2a46a-5fa6-43c1-8765-f96cc07d85bb'
+        userId: userDataFromAuthenticationStore.userId
       });
 
       dispatch(removeItemFromCart({
@@ -47,7 +51,7 @@ function CartRecap() {
       updateCart({
         productId: cartItem.product?.id,
         updateQuantity: updateQuantity, // when we're working with the API, we only have to pass the new quantity
-        userId: '26c2a46a-5fa6-43c1-8765-f96cc07d85bb'
+        userId: userDataFromAuthenticationStore.userId
       });
       
       dispatch(updateItemQuantity({

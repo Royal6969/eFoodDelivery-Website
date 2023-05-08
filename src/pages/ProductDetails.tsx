@@ -39,7 +39,7 @@ function ProductDetails() {
   const [updateCart] = useUpdateCartMutation();
 
   // when the user clicks the AddToCart button, we have to check if inside the Redux store, if userId is populated, that means that user is logged in
-  // so far that we will have to extract the authenticationStore with the useSelector() hook
+  // so for that we will have to extract the authenticationStore with the useSelector() hook
   const userDataFromAuthenticationStore: UserInterface = useSelector((state: RootState) => state.authenticationStore);
 
   
@@ -55,10 +55,11 @@ function ProductDetails() {
 
     // quantity will be inside the quantity counter local state that we have, so we don't have to pass that as a parameter
     // and the userId we're using the hardcoded string for now --> user ADMIN --> userId: 26c2a46a-5fa6-43c1-8765-f96cc07d85bb
+    // but now at this point, it's time to replace the static user id for the dynamic user id wich belong to the user who is logged in
     const cartResponse: ApiResponse = await updateCart({
       productId: productId,
       updateQuantity: quantity,
-      userId: '26c2a46a-5fa6-43c1-8765-f96cc07d85bb'
+      userId: userDataFromAuthenticationStore.userId
     });
     // console.log(cartResponse);
 
