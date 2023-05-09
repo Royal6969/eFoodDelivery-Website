@@ -7,6 +7,7 @@ import Register from "./Register";
 import AuthCustomerTest from "./AuthCustomerTest";
 import AuthAdminTest from "./AuthAdminTest";
 import AccessRefused from "./AccessRefused";
+import PaymentDetails from "./PaymentDetails";
 
 
 export {
@@ -18,5 +19,6 @@ export {
   Register, 
   AuthCustomerTest, 
   AuthAdminTest, 
-  AccessRefused
+  AccessRefused,
+  PaymentDetails
 }

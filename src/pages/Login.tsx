@@ -45,7 +45,7 @@ function Login() {
 
     // one we invoke the endpoint, we have to examine the response that result
     if (loginResponse.data) { // if loginResponse.data, if that is populated, let's check what happens 
-      console.log(loginResponse.data);
+      // console.log(loginResponse.data);
       
       // we have to fetch the user token from the loginResponse and save it in the localStorage
       const { token } = loginResponse.data.result;

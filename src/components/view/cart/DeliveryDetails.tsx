@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
-import { CartItemInterface } from '../../../interfaces';
+import { ApiResponse, CartItemInterface, UserInterface } from '../../../interfaces';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/redux/ReduxStorage';
 import { InputHelper } from '../../../helperMethods';
 import { MiniLoader } from '../common';
+import { useStripePaymentMutation } from '../../../APIs/PaymentAPI';
+import { useNavigate } from 'react-router-dom';
 
 
 function DeliveryDetails() {
@@ -14,6 +16,9 @@ function DeliveryDetails() {
     // then we have to define the state
     (state: RootState) => state.cartStore.cartItemsList ?? [] // and if it's null, return an empty array
   );
+
+  // here we can use the useSelector() hook again to get the user from the redux store
+  const userDataFromAuthenticationStore: UserInterface = useSelector((state: RootState) => state.authenticationStore);
 
   // we need two variables for the total items of one product, and the cart total for the all products amount
   let cartTotal = 0;
@@ -30,8 +35,8 @@ function DeliveryDetails() {
 
   // for values in the input fields for receive the delivery data
   const initialDeliveryData = {
-    name: "",
-    email: "",
+    name: userDataFromAuthenticationStore.fullName,
+    email: userDataFromAuthenticationStore.email,
     phone: ""
   };
   // when we have controlled components, we will have an onChange() event and we will pass the corresponding value to the corresponding field
@@ -53,10 +58,27 @@ function DeliveryDetails() {
   // this state is to add a loader when user click the final button to place the order
   const [loading, setLoading] = useState(false);
 
+  // here we're going to call the payment mutation
+  const [stripePayment] = useStripePaymentMutation();
+  // to redirect user to PaymentDetails page with the order data
+  const navigate = useNavigate();
+
   // submit event to place the order
   const handleSubmitPlaceOrder = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
+
+    // now we have to invoke the stripePayment mutation to retrieve the data
+    const { data }: ApiResponse = await stripePayment(userDataFromAuthenticationStore.userId);
+    // console.log(data);
+    
+    // and when we navigate to the PaymentDetails page, we can also pass a local state here
+    navigate('/PaymentDetails', {
+      state: { // here we're passing to the different components some values, but we're using a state which will be on navigate itself
+        apiDataResult: data?.result,
+        deliveryInput
+      }
+    });
   }
 
 

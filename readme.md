@@ -73,6 +73,9 @@
   - [5.13. Añadir la lógica de que sólo los usuarios identificados puedan añadir productos al carrito](#513-añadir-la-lógica-de-que-sólo-los-usuarios-identificados-puedan-añadir-productos-al-carrito)
   - [5.14. Cambiar el id estático del usuario "admin" por un id dinámico](#514-cambiar-el-id-estático-del-usuario-admin-por-un-id-dinámico)
     - [Prueba de ejecución](#prueba-de-ejecución-4)
+- [6. Procesamiento de los pagos con Stripe](#6-procesamiento-de-los-pagos-con-stripe)
+  - [6.1. Crear el endpoint para el pago](#61-crear-el-endpoint-para-el-pago)
+  - [6.2. LLamar al endpoint del pago y pasar los datos a una nueva vista](#62-llamar-al-endpoint-del-pago-y-pasar-los-datos-a-una-nueva-vista)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -98,6 +101,8 @@
     - [22. Distructuring technique with ellipsis](#22-distructuring-technique-with-ellipsis)
     - [23. react-toastify npm package](#23-react-toastify-npm-package)
     - [24. High Order Component - Authentication and Autorization](#24-high-order-component---authentication-and-autorization)
+    - [25. React Stripe.js reference](#25-react-stripejs-reference)
+    - [26. Passing parameter through pages with useNavigation() and receiving them with useLocation()](#26-passing-parameter-through-pages-with-usenavigation-and-receiving-them-with-uselocation)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [ProductList y ProductDetails](#productlist-y-productdetails)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -3039,6 +3044,134 @@ Los componentes/páginas donde lo he cambiado han sido:
 
 [Prueba de ejecución para probar el userId dinámico, el HOC, y las notificaciones toast](#prueba-de-ejecución-para-probar-el-userid-dinámico-el-hoc-y-las-notificaciones-toast)
 
+# 6. Procesamiento de los pagos con Stripe
+
+Entramos de lleno con el pago con Stripe (el método de pago online que ya habíamos implementado en la API anteriormente). Aquí la cosa estará en obtener la información que el usuario introduzca en los campos del carrito, para poder procesar un pago con ellos, y pasar después a la orden del pedido como tal.
+
+Lo primero que haremos será el hecho de autocompletar estos campos con la misma información que ya tenemos del usuario, por poder facilitarle un poco la cosa (aunque el usuario decida cambiar estos campos). Para ello, vamos a volver a nuestro componente del *DeliveryDetails.tsx*
+
+```tsx
+function DeliveryDetails() {
+  ...
+  // here we can use the useSelector() hook again to get the user from the redux store
+  const userDataFromAuthenticationStore: UserInterface = useSelector((state: RootState) => state.authenticationStore);
+  ...
+  // for values in the input fields for receive the delivery data
+  const initialDeliveryData = {
+    name: userDataFromAuthenticationStore.fullName,
+    email: userDataFromAuthenticationStore.email,
+    phone: ""
+  };
+  ...
+  return (
+    ...
+  )
+}
+```
+
+Para añadir Stripe a nuestra aplicación de React, vamos a acudir a la documentación de su propia web oficial, la cual nos guiará y facilitará mucho este proceso --> [React Stripe.js reference](https://stripe.com/docs/stripe-js/react)
+
+**Nota:** recuerda que el *ClientSecret* lo obtenemos de la respuesta del endpoint de la API, y la *SecretKey* es la que podemos volver a encontrar o bien en nuestro perfil de desarrollador de Stripe, o bien desde el *appsettings.json* de la API que habíamos desarrollado anteriormente.
+
+## 6.1. Crear el endpoint para el pago
+
+Una vez más, volvemos a nuestra carpeta de *APIs* para copiar/pegar el ProductAPI por ejemplo, y modificarlo por dentro para conectarlo con el endpoint que ya teníamos definido en nuestra API.
+
+```ts
+const paymentAPI = createApi({
+  reducerPath: "paymentAPI",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "https://efooddelivery-api.azurewebsites.net/api/"
+  }),
+  // tagTypes: [""], // we don't need any tagTypes
+  endpoints: (builder) => ({
+    stripePayment: builder.mutation({
+      query: (userId) => ({ // as we can see and remember, in our API endpoint we receive the userId as a parameter
+        url: "Payment", // the name for the endpoint in our API
+        method: 'POST',
+        params: {
+          userId: userId // so params we will pass the userId which we receive in the parameters
+        }
+      }),
+      // providesTags: [""] // we dom't need any providesTags
+    })
+  })
+});
+
+export const { useStripePaymentMutation } = paymentAPI;
+export default paymentAPI;
+```
+
+**Nota:** no olvides añadir este endpoint al almacenamiento de redux.
+
+## 6.2. LLamar al endpoint del pago y pasar los datos a una nueva vista
+
+Para llamar al endpoint de la API del pago y realizar el mismo, necesitamos sobretodo dos datos que serán claves en este proceso.
+
+Si recordamos cuando ya hicimos la prueba durante el desarrollo de la API, el endpoint del pago recuperaba el carrito del usuario y devolvía también un *ClientSecret* y un *PaymentAttempId*.
+
+Estos dos datos son los que necesitamos recuperar en el componmente del *DeliveryDetails* a la hora de pulsar el botón del *"Encargar Pedido"*, es decir, en el método de ese botón necesitamos llamar al endpoint que acabábamos de crear.
+
+Y una vez que recuperemos esos dos datos, los vamos a pasar a la nueva página que tenemos que crear para que el usuario realice el pago del pedido. Así que en la carpeta de *pages*, vamos a crera una nueva vista con el nombre de *PaymentDetails.tsx* por ejemplo. 
+
+Entonces, vamos a lo primero de todo, en el *DeliveryDetails.tsx*:
+
+```tsx
+...
+// here we're going to call the payment mutation
+const [stripePayment] = useStripePaymentMutation();
+// to redirect user to PaymentDetails page with the order data
+const navigate = useNavigate();
+
+// submit event to place the order
+const handleSubmitPlaceOrder = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+  setLoading(true);
+
+  // now we have to invoke the stripePayment mutation to retrieve the data
+  const { data }: ApiResponse = await stripePayment(userDataFromAuthenticationStore.userId);
+  console.log(data);
+
+  // and when we navigate to the PaymentDetails page, we can also pass a local state here
+  navigate('/PaymentDetails', {
+    state: { // here we're passing to the different components some values, but we're using a state which will be on navigate itself
+      apiDataResult: data?.result,
+      deliveryInput
+    }
+  });
+}
+...
+```
+
+![](./img/52.png)
+![](./img/53.png)
+
+Una vez que hemos redireccionado al usuario y estamos en la página de los detalles del pago... ¿cómo vamos a extraer los datos que hemos pasado entre vistas con el useNaviagtion()?... pues con el hook del useLocation() !!
+
+```tsx
+function PaymentDetails() {
+  // we are looking for the apiDataResult and deliveryInput, and from where we want that, we want to extract that from useLocation() hook
+  // that will make sure that whatever we're passing in the state when we navigate it's extracted and automatically populated
+  const {
+    state: {
+      apiDataResult,
+      deliveryInput
+    }
+  } = useLocation();
+
+  console.log(apiDataResult);
+  console.log(deliveryInput);
+
+  return (
+    <div>Payment Details</div>
+  )
+}
+```
+
+![](./img/54.png)
+
+Y con esto, ya el siguiente paso sería el de buscar una plantilla de Bootstrap de un formulario de pago para que el usuario introduzca su tarjeta de crédito/débito...
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -3088,6 +3221,10 @@ Los componentes/páginas donde lo he cambiado han sido:
 ### [23. react-toastify npm package](https://www.npmjs.com/package/react-toastify)
 
 ### [24. High Order Component - Authentication and Autorization](https://legacy.reactjs.org/docs/higher-order-components.html#)
+
+### [25. React Stripe.js reference](https://stripe.com/docs/stripe-js/react)
+
+### [26. Passing parameter through pages with useNavigation() and receiving them with useLocation()](https://refine.dev/blog/usenavigate-react-router-redirect/)
 
 # Pruebas de Ejecución
 
