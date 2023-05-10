@@ -1,5 +1,8 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import { CheckoutForm } from '../components/view/payments';
 
 
 function PaymentDetails() {
@@ -12,11 +15,22 @@ function PaymentDetails() {
     }
   } = useLocation();
 
-  console.log(apiDataResult);
-  console.log(deliveryInput);
+  // console.log(apiDataResult);
+  // console.log(deliveryInput);
+
+  // Make sure to call `loadStripe` outside of a component’s render to avoid
+  // recreating the `Stripe` object on every render.
+  const stripePromise = loadStripe('pk_test_51MspwoGRLxE2RSRugz0SSBg8T1DECm3fpmXbynumOSpFv2fzmhKaL3WBlcpRiuHsrXxdBXodlblgu01wQ6OgGm9z00W6tpZDPe');
+  const options = {
+    // passing the client secret obtained from the server
+    clientSecret: apiDataResult.clientSecret,
+  };
+
 
   return (
-    <div>Payment Details</div>
+    <Elements stripe={stripePromise} options={options}>
+      <CheckoutForm />
+    </Elements>
   )
 }
 

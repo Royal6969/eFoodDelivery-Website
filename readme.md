@@ -76,6 +76,7 @@
 - [6. Procesamiento de los pagos con Stripe](#6-procesamiento-de-los-pagos-con-stripe)
   - [6.1. Crear el endpoint para el pago](#61-crear-el-endpoint-para-el-pago)
   - [6.2. LLamar al endpoint del pago y pasar los datos a una nueva vista](#62-llamar-al-endpoint-del-pago-y-pasar-los-datos-a-una-nueva-vista)
+  - [6.3. Integrar Stripe en la vista de los detalles del pago](#63-integrar-stripe-en-la-vista-de-los-detalles-del-pago)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -3170,7 +3171,66 @@ function PaymentDetails() {
 
 ![](./img/54.png)
 
-Y con esto, ya el siguiente paso sería el de buscar una plantilla de Bootstrap de un formulario de pago para que el usuario introduzca su tarjeta de crédito/débito...
+Y con esto, ya el siguiente paso sería introducir una plantilla de pago para que el usuario introduzca su tarjeta de crédito/débito...aunque esto no lo haremos con Bootstrap, si no que es un componente el cual su código ya nos lo ofrece la misma documentación de Stripe.
+
+## 6.3. Integrar Stripe en la vista de los detalles del pago
+
+Desde la documentación del *React Stripe.js Reference*, vamos a copiar/pegar el código de prueba que nos viene en nuestra nueva página del *PaymentDetails.tsx*
+
+Pero también debemos tener en cuenta que esta página, contendrá dentro un formulario para que el usuario introduzca su tarjeta, y tal formulario irá dentro de un nuevo componente.
+
+Por lo tanto vamos primero a la carpeta de los componentes a crear una nueva subcarpeta llamada *payments*, por ejemplo, en la cual crearemos un nuevo componente llamada *CheckoutForm.tsx*, y en él introduciremos una plantilla que ya nos viene en la misma documentación un poco más abajo.
+
+```tsx
+import React from 'react'
+import { PaymentElement } from '@stripe/react-stripe-js';
+
+const CheckoutForm = () => {
+  return (
+    <form>
+      <PaymentElement />
+      <button>Submit</button>
+    </form>
+  );
+};
+
+export default CheckoutForm
+```
+
+Y ahora retomamos nuestro *PaymentDetails.tsx* para pegar el código que vimos primero en la documentación de Stripe
+
+```tsx
+function PaymentDetails() {
+  // we are looking for the apiDataResult and deliveryInput, and from where we want that, we want to extract that from useLocation() hook
+  // that will make sure that whatever we're passing in the state when we navigate it's extracted and automatically populated
+  const {
+    state: {
+      apiDataResult,
+      deliveryInput
+    }
+  } = useLocation();
+
+  // console.log(apiDataResult);
+  // console.log(deliveryInput);
+
+  // Make sure to call `loadStripe` outside of a component’s render to avoid
+  // recreating the `Stripe` object on every render.
+  const stripePromise = loadStripe('pk_test_51MspwoGRLxE2RSRugz0SSBg8T1DECm3fpmXbynumOSpFv2fzmhKaL3WBlcpRiuHsrXxdBXodlblgu01wQ6OgGm9z00W6tpZDPe');
+  const options = {
+    // passing the client secret obtained from the server
+    clientSecret: apiDataResult.clientSecret,
+  };
+
+  return (
+    <Elements stripe={stripePromise} options={options}>
+      <CheckoutForm />
+    </Elements>
+  )
+}
+```
+
+![](./img/55.png)
+![](./img/56.png)
 
 # Webgrafía y Enlaces de Interés
 
