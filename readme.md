@@ -77,6 +77,7 @@
   - [6.1. Crear el endpoint para el pago](#61-crear-el-endpoint-para-el-pago)
   - [6.2. LLamar al endpoint del pago y pasar los datos a una nueva vista](#62-llamar-al-endpoint-del-pago-y-pasar-los-datos-a-una-nueva-vista)
   - [6.3. Integrar Stripe en la vista de los detalles del pago](#63-integrar-stripe-en-la-vista-de-los-detalles-del-pago)
+  - [6.4.](#64)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -3189,7 +3190,10 @@ const CheckoutForm = () => {
   return (
     <form>
       <PaymentElement />
-      <button>Submit</button>
+      
+      <button className='btn btn-warning mt-4 w-100'>
+        Submit
+      </button>
     </form>
   );
 };
@@ -3231,6 +3235,109 @@ function PaymentDetails() {
 
 ![](./img/55.png)
 ![](./img/56.png)
+
+## 6.4. 
+
+Lo que ocurre con el subcomponente del Stripe es que tal como viene por defecto carece de estilos, y como este subcomponente es totalmente personalizable, vamos a darle un poco de más diseño. Aprovechando este momento, vamos a trasladar la parte de Stripe a un lado de la pantalla y en el otro lado vamos a poner un resumen del pedido, para que el usuario pueda ver en el directo y recordar lo que va a pagar.
+
+Para esa parte del resumen del pedido crearemos un nuevo componente llamado *OrderRecap.tsx*, por ejemplo. Y para este componente tipo caja-resumen, si que vamos a buscar alguna plantilla de Bootstrap por Google.
+
+Empezando por el *PaymentDetails.tsx*, los states que recibíamos y guardábamos aquí, tenemos que enviarlos como props hacia un nuevo componente que haga de tipo resumen del pedido...
+
+```tsx
+function PaymentDetails() {
+  ...
+  return (
+    <Elements stripe={stripePromise} options={options}>
+      <div className='container p-5'>
+        <div className='row'>
+          <div className='col-md-7'>
+            <OrderRecap  // we have to pass these props to the OrderRecap component
+              apiDataResult={apiDataResult} 
+              deliveryInput={deliveryInput} 
+            />
+          </div>
+
+          <div className='col-md-4 offset-md-1'>
+            <h3 className='text-warning'>Resumen del pedido</h3>
+            <div className='mt-2'>
+              <CheckoutForm />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Elements>
+  )
+}
+```
+
+... y crearemos un nuevo componente para el resumen del pedido llamado *OrderRecap.tsx*, por ejemplo, el cual recibirá como parámetros los props que envíamos antes desde el *PaymentDetails.tsx*
+
+```tsx
+function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) {
+  return (
+    <div>
+      {' '}
+      <h3 className='text-warning'>Resumen del pedido</h3>
+      
+      <div className='mt-3'>
+        <div className='border py-3 px-2'>Nombre: {deliveryInput.name}</div>
+        <div className='border py-3 px-2'>Email: {deliveryInput.email}</div>
+        <div className='border py-3 px-2'>Teléfono: {deliveryInput.phone}</div>
+        
+        <div className='border py-3 px-2'>
+          <h4 className='text-warning'>Productos</h4>
+          
+          <div className='p-3'>
+            {apiDataResult.cartItemsList?.map(
+              (cartItem: CartItemInterface, index: number) => {
+                return (
+                  <div className='d-flex'>
+                    <div className='d-flex w-100 justify-content-between'>
+                      <p>{cartItem.product?.name}</p>
+                      <p>{cartItem.quantity} x {cartItem.product?.price}€ =</p>
+                    </div>
+                    
+                    <p style={{ width: '70px', textAlign: 'right' }}>
+                      {(cartItem.quantity ?? 0) * (cartItem.product?.price ?? 0)}€
+                    </p>
+                  </div>
+                )
+              }
+            )
+          }
+            <hr />
+            
+            <h4 style={{ textAlign: 'right' }} className='text-danger'>
+              {apiDataResult.total?.toFixed(2)}€
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+Y la interfaz la cual utilizaremos para recibir los props será esta:
+
+```ts
+export default interface OrderRecapInterface {
+  apiDataResult: {
+    id?: number; // cart id
+    cartItemsList?: CartInterface[];
+    total?: number;
+  };
+
+  deliveryInput: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+}
+```
+
+![](./img/57.png)
 
 # Webgrafía y Enlaces de Interés
 

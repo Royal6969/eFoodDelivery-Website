@@ -6,7 +6,10 @@ const CheckoutForm = () => {
   return (
     <form>
       <PaymentElement />
-      <button>Submit</button>
+      
+      <button className='btn btn-warning mt-4 w-100'>
+        Submit
+      </button>
     </form>
   );
 };

@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { CheckoutForm } from '../components/view/payments';
+import { OrderRecap } from '../components/view/orders';
 
 
 function PaymentDetails() {
@@ -15,6 +16,9 @@ function PaymentDetails() {
     }
   } = useLocation();
 
+  // we need to create an interface to receive and save this two results
+  // it's not a global interface, but we can create also inside interfaces folder
+  // to create that interface, we have to check in console the content inside these states
   // console.log(apiDataResult);
   // console.log(deliveryInput);
 
@@ -29,7 +33,23 @@ function PaymentDetails() {
 
   return (
     <Elements stripe={stripePromise} options={options}>
-      <CheckoutForm />
+      <div className='container p-5'>
+        <div className='row'>
+          <div className='col-md-7'>
+            <OrderRecap  // we have to pass these props to the OrderRecap component
+              apiDataResult={apiDataResult} 
+              deliveryInput={deliveryInput} 
+            />
+          </div>
+
+          <div className='col-md-4 offset-md-1'>
+            <h3 className='text-warning'>Resumen del pedido</h3>
+            <div className='mt-2'>
+              <CheckoutForm />
+            </div>
+          </div>
+        </div>
+      </div>
     </Elements>
   )
 }
