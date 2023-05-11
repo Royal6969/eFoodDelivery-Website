@@ -79,6 +79,8 @@
   - [6.3. Integrar Stripe en la vista de los detalles del pago](#63-integrar-stripe-en-la-vista-de-los-detalles-del-pago)
   - [6.4. Componente del resumen del pedido y su interfaz](#64-componente-del-resumen-del-pedido-y-su-interfaz)
   - [6.5. Probando el procesamiento del pago con Stripe](#65-probando-el-procesamiento-del-pago-con-stripe)
+- [7. Página del pedido](#7-página-del-pedido)
+  - [7.1. Crear el endpoint del pedido](#71-crear-el-endpoint-del-pedido)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -3409,6 +3411,37 @@ const CheckoutForm = () => {
 **Nota:** para obtener una respuesta con todos los datos sobre el pago, necesitamos añadir la opción *redirect* a la función de *stripe.confirmPayment()*, lo cual podemos encontrar mejor explicado en la siguiente documentación de Stripe --> [Stripe Payment Intents --> stripe.confirmPayment(options)](https://stripe.com/docs/js/payment_intents)
 
 ![](./img/58.png)
+
+# 7. Página del pedido
+
+## 7.1. Crear el endpoint del pedido
+
+Para ello vamos a nuestra carpeta de *APIs* y copiamos/pegamos el del *PaymentAPI*, lo renombramos como *OrderAPI*, por ejemplo, y lo modificamos y adaptamos por dentro, según el endpint que ya teníamos en el Swagger.
+
+```ts
+const orderAPI = createApi({
+  reducerPath: "orderAPI",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "https://efooddelivery-api.azurewebsites.net/api/"
+  }),
+  // tagTypes: [""], // we don't need any tagTypes
+  endpoints: (builder) => ({
+    createOrder: builder.mutation({
+      query: (orderDetails) => ({ // when we post in API, we don't have any parameters, but we have to pass the complete object in the body
+        url: "Order",
+        method: 'POST',
+        // params: {} // we don't need the params here
+        headers: { "Content-type": "application/json" },
+        body: orderDetails
+      }),
+      // providesTags: [""] // we dom't need any providesTags
+    })
+  })
+});
+
+export const { useCreateOrderMutation } = orderAPI;
+export default orderAPI;
+```
 
 # Webgrafía y Enlaces de Interés
 
