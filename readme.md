@@ -81,6 +81,8 @@
   - [6.5. Probando el procesamiento del pago con Stripe](#65-probando-el-procesamiento-del-pago-con-stripe)
 - [7. Página del pedido](#7-página-del-pedido)
   - [7.1. Crear el endpoint del pedido](#71-crear-el-endpoint-del-pedido)
+  - [7.2. Crear un objeto con la respuesta heredada para poder crear el pedido](#72-crear-un-objeto-con-la-respuesta-heredada-para-poder-crear-el-pedido)
+  - [7.3. Crear el pedido](#73-crear-el-pedido)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -3279,7 +3281,7 @@ function PaymentDetails() {
 ... y crearemos un nuevo componente para el resumen del pedido llamado *OrderRecap.tsx*, por ejemplo, el cual recibirá como parámetros los props que envíamos antes desde el *PaymentDetails.tsx*
 
 ```tsx
-function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) {
+function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // receiving props from DeliveryDetails component
   return (
     <div>
       {' '}
@@ -3442,6 +3444,90 @@ const orderAPI = createApi({
 export const { useCreateOrderMutation } = orderAPI;
 export default orderAPI;
 ```
+
+## 7.2. Crear un objeto con la respuesta heredada para poder crear el pedido
+
+Recordando un poco atrás... En el *DeliveryDetails* estbámos recogiendo la respues del endpoint con la mutación que habíamos hecho antes, y la enviábamos con el hook del useNavigate() hacia el *PaymentDetails*. Aquí recibíamos la respuesta con el hook del useLocation(), y desde aquí se la podemos pasar como props a sus componentes hijos, el *OrderRecap* y el *CheckoutForm*. Y en el *CheckoutForm* con la respuesta transmitida también, creamos un objeto tipo pedido. Este objeto de pedido lo creamos de la respuesta que recibíamos y los detalles del pedido podemos crearlo con el "orderDetailsCreateDTO" que se encuentra de la misma también.
+
+```json
+  "clientName": "string",
+  "clientPhone": "string",
+  "clientEmail": "string",
+  "clientId": "string",
+  "orderTotal": 0,
+  "orderPaymentID": "string",
+  "orderStatus": "string",
+  "orderQuantityItems": 0,
+  "orderDetailsCreateDTO": [
+    {
+      "itemId": 0,
+      "itemQuantity": 0,
+      "itemName": "string",
+      "itemPrice": 99
+    }
+  ]
+```
+
+```tsx
+const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => { // receiving props from DeliveryDetails component
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isInProccess, setIsInProccess] = useState(false);
+
+  // the helper method to get the credit card
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    ...
+    if (result.error) {
+      // Show error to your customer (for example, payment details incomplete)
+      console.log(result.error.message);
+      toastNotifyHelper('Algo ha fallado durante el proceso de pago', 'error');
+      setIsInProccess(false);
+    } 
+    else {
+      // Your customer will be redirected to your `return_url`. For some payment
+      // methods like iDEAL, your customer will be redirected to an intermediate
+      // site first to authorize the payment, then redirected to the `return_url`.
+      console.log(result);
+
+      // create an array of orderDetailsCreateDTO
+      const orderDetailsCreateDTO: any = [];
+
+      // iterate inside prop apiDataResult received
+      apiDataResult.cartItemsList?.forEach(
+        (item: CartItemInterface) => {
+          const createDetails: any = {}; // creating a temporary object
+
+          createDetails['itemId'] = item.product?.id;
+          createDetails['itemQuantity'] = item.quantity;
+          createDetails['itemName'] = item.product?.name;
+          createDetails['itemPrice'] = item.product?.price;
+
+          orderDetailsCreateDTO.push(createDetails); // inserting the temporary object inside oredrDetailsCreateDTO array
+        }
+      )
+    }
+  };
+
+  return (
+    ...
+  );
+};
+```
+
+**Nota:** como vamos a usar "estados de pedidos" dinámicos, sería buena idea hacer un enumerable con ellos:
+
+```ts
+export enum StaticDetails_OrderStatus {
+  STATUS_PENDING = 'Pendiente',
+  STATUS_CONFIRMED = 'Confirmado',
+  STATUS_COOKING = 'En preparación',
+  STATUS_READY = 'Listo para llevar',
+  STATUS_COMPLETED = 'Pedido entregado',
+  STATUS_CANCELLED = 'Pedido cancelado'
+}
+```
+
+## 7.3. Crear el pedido
 
 # Webgrafía y Enlaces de Interés
 

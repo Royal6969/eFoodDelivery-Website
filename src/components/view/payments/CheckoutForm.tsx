@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { toastNotifyHelper } from '../../../helperMethods';
+import { CartItemInterface, OrderRecapInterface } from '../../../interfaces';
 
 
-const CheckoutForm = () => {
+const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => { // receiving props from DeliveryDetails component
   const stripe = useStripe();
   const elements = useElements();
   const [isInProccess, setIsInProccess] = useState(false);
@@ -43,6 +44,23 @@ const CheckoutForm = () => {
       // methods like iDEAL, your customer will be redirected to an intermediate
       // site first to authorize the payment, then redirected to the `return_url`.
       console.log(result);
+
+      // create an array of orderDetailsCreateDTO
+      const orderDetailsCreateDTO: any = [];
+
+      // iterate inside prop apiDataResult received
+      apiDataResult.cartItemsList?.forEach(
+        (item: CartItemInterface) => {
+          const createDetails: any = {}; // creating a temporary object
+
+          createDetails['itemId'] = item.product?.id;
+          createDetails['itemQuantity'] = item.quantity;
+          createDetails['itemName'] = item.product?.name;
+          createDetails['itemPrice'] = item.product?.price;
+
+          orderDetailsCreateDTO.push(createDetails); // inserting the temporary object inside oredrDetailsCreateDTO array
+        }
+      )
     }
   };
 

@@ -2,12 +2,10 @@ import React from 'react'
 import { CartItemInterface, OrderRecapInterface } from '../../../interfaces'
 
 
-function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) {
+function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // receiving props from DeliveryDetails component
   return (
     <div>
       {' '}
-      <h3 className='text-warning'>Resumen del pedido</h3>
-      
       <div className='mt-3'>
         <div className='border py-3 px-2'>Nombre: {deliveryInput.name}</div>
         <div className='border py-3 px-2'>Email: {deliveryInput.email}</div>
