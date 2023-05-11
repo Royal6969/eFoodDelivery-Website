@@ -20,7 +20,7 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) {
             {apiDataResult.cartItemsList?.map(
               (cartItem: CartItemInterface, index: number) => {
                 return (
-                  <div className='d-flex'>
+                  <div className='d-flex' key={index}>
                     <div className='d-flex w-100 justify-content-between'>
                       <p>{cartItem.product?.name}</p>
                       <p>{cartItem.quantity} x {cartItem.product?.price}€ =</p>

@@ -77,7 +77,8 @@
   - [6.1. Crear el endpoint para el pago](#61-crear-el-endpoint-para-el-pago)
   - [6.2. LLamar al endpoint del pago y pasar los datos a una nueva vista](#62-llamar-al-endpoint-del-pago-y-pasar-los-datos-a-una-nueva-vista)
   - [6.3. Integrar Stripe en la vista de los detalles del pago](#63-integrar-stripe-en-la-vista-de-los-detalles-del-pago)
-  - [6.4.](#64)
+  - [6.4. Componente del resumen del pedido y su interfaz](#64-componente-del-resumen-del-pedido-y-su-interfaz)
+  - [6.5. Probando el procesamiento del pago con Stripe](#65-probando-el-procesamiento-del-pago-con-stripe)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -105,6 +106,8 @@
     - [24. High Order Component - Authentication and Autorization](#24-high-order-component---authentication-and-autorization)
     - [25. React Stripe.js reference](#25-react-stripejs-reference)
     - [26. Passing parameter through pages with useNavigation() and receiving them with useLocation()](#26-passing-parameter-through-pages-with-usenavigation-and-receiving-them-with-uselocation)
+    - [27. Stripe --\> tarjetas de prueba por marcas](#27-stripe----tarjetas-de-prueba-por-marcas)
+    - [28. Stripe Payment Intents --\> stripe.confirmPayment(options)](#28-stripe-payment-intents----stripeconfirmpaymentoptions)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [ProductList y ProductDetails](#productlist-y-productdetails)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -3236,7 +3239,7 @@ function PaymentDetails() {
 ![](./img/55.png)
 ![](./img/56.png)
 
-## 6.4. 
+## 6.4. Componente del resumen del pedido y su interfaz
 
 Lo que ocurre con el subcomponente del Stripe es que tal como viene por defecto carece de estilos, y como este subcomponente es totalmente personalizable, vamos a darle un poco de más diseño. Aprovechando este momento, vamos a trasladar la parte de Stripe a un lado de la pantalla y en el otro lado vamos a poner un resumen del pedido, para que el usuario pueda ver en el directo y recordar lo que va a pagar.
 
@@ -3292,7 +3295,7 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) {
             {apiDataResult.cartItemsList?.map(
               (cartItem: CartItemInterface, index: number) => {
                 return (
-                  <div className='d-flex'>
+                  <div className='d-flex' key={index}>
                     <div className='d-flex w-100 justify-content-between'>
                       <p>{cartItem.product?.name}</p>
                       <p>{cartItem.quantity} x {cartItem.product?.price}€ =</p>
@@ -3338,6 +3341,74 @@ export default interface OrderRecapInterface {
 ```
 
 ![](./img/57.png)
+
+## 6.5. Probando el procesamiento del pago con Stripe
+
+LLegados a este punto, tenemos que ir a la documentación de Stripe y visitar la parte de *Testing* para copiar/pegar una tarjeta de VISA y poder probar a hacer un pago ficticio para comprobar si lo que llevamos hecho finalmente funciona o no.
+
+Pero antes de eso, debemos tener en cuenta que la API de Stripe, nos devolverá una respuesta, y esa respuesta necesitamos controlarla y manejarla... así que volvemos a la documentación de Stripe de sus referencias con React, para ir más abajo de donde lo dejamos, y ver que hooks podemos usar para la respuesta de Stripe --> [Stripe Hooks](https://stripe.com/docs/stripe-js/react#useelements-hook)
+
+Todo esto lo tenemos que hacer en nuestro componente del *CheckoutForm.tsx*, por supuesto.
+
+```tsx
+const CheckoutForm = () => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isInProccess, setIsInProccess] = useState(false);
+
+  // the helper method to get the credit card
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    // We don't want to let default form submission happen here,
+    // which would refresh the page.
+    event.preventDefault();
+
+    if (!stripe || !elements) {
+      // Stripe.js hasn't yet loaded.
+      // Make sure to disable form submission until Stripe.js has loaded.
+      return;
+    }
+
+    setIsInProccess(true);
+
+    const result = await stripe.confirmPayment({
+      //`Elements` instance that was used to create the Payment Element
+      elements,
+      confirmParams: {
+        return_url: 'https://example.com/order/123/complete',
+        // with this URL we have to redirect once the payment and everything is successful
+      },
+      redirect: 'if_required' // necessary to get a response with all payment data
+    });
+
+    if (result.error) {
+      // Show error to your customer (for example, payment details incomplete)
+      console.log(result.error.message);
+      toastNotifyHelper('Algo ha fallado durante el proceso de pago', 'error');
+      setIsInProccess(false);
+    } 
+    else {
+      // Your customer will be redirected to your `return_url`. For some payment
+      // methods like iDEAL, your customer will be redirected to an intermediate
+      // site first to authorize the payment, then redirected to the `return_url`.
+      console.log(result);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <PaymentElement />
+      
+      <button className='btn btn-warning mt-4 w-100'>
+        Submit
+      </button>
+    </form>
+  );
+};
+```
+
+**Nota:** para obtener una respuesta con todos los datos sobre el pago, necesitamos añadir la opción *redirect* a la función de *stripe.confirmPayment()*, lo cual podemos encontrar mejor explicado en la siguiente documentación de Stripe --> [Stripe Payment Intents --> stripe.confirmPayment(options)](https://stripe.com/docs/js/payment_intents)
+
+![](./img/58.png)
 
 # Webgrafía y Enlaces de Interés
 
@@ -3392,6 +3463,10 @@ export default interface OrderRecapInterface {
 ### [25. React Stripe.js reference](https://stripe.com/docs/stripe-js/react)
 
 ### [26. Passing parameter through pages with useNavigation() and receiving them with useLocation()](https://refine.dev/blog/usenavigate-react-router-redirect/)
+
+### [27. Stripe --> tarjetas de prueba por marcas](https://stripe.com/docs/testing#cards)
+
+### [28. Stripe Payment Intents --> stripe.confirmPayment(options)](https://stripe.com/docs/js/payment_intents)
 
 # Pruebas de Ejecución
 
