@@ -91,7 +91,7 @@ const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => 
         orderQuantityItems : totalItems,
         orderDetailsCreateDTO: orderDetailsCreateDTO,
       });
-      console.log(createOrderResponse); // to check if the new order object has been created successfully
+      // console.log(createOrderResponse); // to check if the new order object has been created successfully
 
       // if createOrderResponse is present and the status for order is "Confirmed", we want to redirect user to OrderConfirmed component
       if (createOrderResponse) {
@@ -99,7 +99,7 @@ const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => 
           navigate(`/order/OrderConfirmed/${createOrderResponse.data.result.orderId}`);
         }
         else {
-          navigate('/failed');
+          navigate('/PaymentFailed');
         }
       }
     }

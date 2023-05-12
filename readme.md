@@ -85,6 +85,7 @@
   - [7.3. Crear el pedido](#73-crear-el-pedido)
     - [Prueba de ejecución](#prueba-de-ejecución-5)
   - [7.4. Enviar el id del pedido y redireccionar al usuario a una página de confirmación](#74-enviar-el-id-del-pedido-y-redireccionar-al-usuario-a-una-página-de-confirmación)
+  - [7.5. Implementar las queries de los endpoint del GetOrder(userId) y GetOrder(orderId)](#75-implementar-las-queries-de-los-endpoint-del-getorderuserid-y-getorderorderid)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -3674,6 +3675,36 @@ function OrderConfirmed() {
 
 ![](./img/66.png)
 ![](./img/67.png)
+
+## 7.5. Implementar las queries de los endpoint del GetOrder(userId) y GetOrder(orderId)
+
+Volvemos al *OrderAPI.ts* para implementar estas dos queries:
+
+```ts
+const orderAPI = createApi({
+  ...
+  tagTypes: ["Orders"], // we need invalidate tagTypes after for getOrder()
+  endpoints: (builder) => ({
+    ...
+    // we want to define the endpoints for GetOrder(userId) (/api/Order/) and GetOrder(orderId) (/api/Order/{orderId})
+    getOrdersFromUser: builder.query({
+      query: (userId) => ({
+        url: "Order",
+        params: {
+          userId: userId
+        }
+      }),
+      providesTags: ["Orders"]
+    }),
+    getOrderDetailsById: builder.query({
+      query: (orderId) => ({
+        url: `Order/${orderId}`
+      }),
+      providesTags: ["Orders"]
+    }),
+  })
+});
+```
 
 # Webgrafía y Enlaces de Interés
 
