@@ -1,13 +1,20 @@
 import React, { useState } from 'react'
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { toastNotifyHelper } from '../../../helperMethods';
-import { CartItemInterface, OrderRecapInterface } from '../../../interfaces';
+import { ApiResponse, CartItemInterface, OrderRecapInterface } from '../../../interfaces';
+import { useCreateOrderMutation } from '../../../APIs/OrderAPI';
+import { StaticDetails_OrderStatus } from '../../../Utils/StaticDetails';
 
 
 const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => { // receiving props from DeliveryDetails component
   const stripe = useStripe();
   const elements = useElements();
   const [isInProccess, setIsInProccess] = useState(false);
+  const [createOrder] = useCreateOrderMutation();
+
+  // we need a console.log() to see and check what we have to receive and capture from inside apiDataResult 
+  // to create an order object (const createOrderResponse)
+  // console.log(apiDataResult);
 
   // the helper method to get the credit card
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -35,7 +42,7 @@ const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => 
 
     if (result.error) {
       // Show error to your customer (for example, payment details incomplete)
-      console.log(result.error.message);
+      // console.log(result.error.message);
       toastNotifyHelper('Algo ha fallado durante el proceso de pago', 'error');
       setIsInProccess(false);
     } 
@@ -43,10 +50,12 @@ const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => 
       // Your customer will be redirected to your `return_url`. For some payment
       // methods like iDEAL, your customer will be redirected to an intermediate
       // site first to authorize the payment, then redirected to the `return_url`.
-      console.log(result);
+      // console.log(result);
 
       // create an array of orderDetailsCreateDTO
       const orderDetailsCreateDTO: any = [];
+      let orderTotal = 0;
+      let totalItems = 0;
 
       // iterate inside prop apiDataResult received
       apiDataResult.cartItemsList?.forEach(
@@ -59,8 +68,28 @@ const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => 
           createDetails['itemPrice'] = item.product?.price;
 
           orderDetailsCreateDTO.push(createDetails); // inserting the temporary object inside oredrDetailsCreateDTO array
+
+          orderTotal += (item.quantity! * item.product?.price!);
+          totalItems += item.quantity!;
         }
-      )
+      );
+
+      // let's call the order API endpoint, where we have to create the order passing the complete object 
+      const createOrderResponse: ApiResponse = await createOrder({
+        clientName: deliveryInput.name,
+        clientPhone: deliveryInput.phone,
+        clientEmail: deliveryInput.email,
+        clientId: apiDataResult.userId,
+        orderTotal: orderTotal,
+        orderPaymentId: apiDataResult.paymentAttempId,
+        orderStatus: result.paymentIntent.status === "succeeded" 
+          ? StaticDetails_OrderStatus.STATUS_CONFIRMED
+          : StaticDetails_OrderStatus.STATUS_PENDING,
+          // typescript alredy knows that because these types are alredy defined inside the Stripe package that we added  
+        orderQuantityItems : totalItems,
+        orderDetailsCreateDTO: orderDetailsCreateDTO,
+      });
+      // console.log(createOrderResponse); // to check if the new order object has been created successfully
     }
   };
 

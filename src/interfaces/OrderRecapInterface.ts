@@ -5,6 +5,8 @@ export default interface OrderRecapInterface {
     id?: number; // cart id
     cartItemsList?: CartInterface[];
     total?: number;
+    userId?: string;
+    paymentAttempId?: string;
   };
 
   deliveryInput: {

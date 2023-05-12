@@ -83,6 +83,7 @@
   - [7.1. Crear el endpoint del pedido](#71-crear-el-endpoint-del-pedido)
   - [7.2. Crear un objeto con la respuesta heredada para poder crear el pedido](#72-crear-un-objeto-con-la-respuesta-heredada-para-poder-crear-el-pedido)
   - [7.3. Crear el pedido](#73-crear-el-pedido)
+    - [Prueba de ejecución](#prueba-de-ejecución-5)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -113,13 +114,16 @@
     - [27. Stripe --\> tarjetas de prueba por marcas](#27-stripe----tarjetas-de-prueba-por-marcas)
     - [28. Stripe Payment Intents --\> stripe.confirmPayment(options)](#28-stripe-payment-intents----stripeconfirmpaymentoptions)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
-  - [ProductList y ProductDetails](#productlist-y-productdetails)
+  - [Lista de productos y Detalles del producto](#lista-de-productos-y-detalles-del-producto)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
-  - [Cart](#cart)
+  - [Carrito](#carrito)
     - [Prueba de ejecución de creación y actualización del carrito a través del botón de añadir un producto](#prueba-de-ejecución-de-creación-y-actualización-del-carrito-a-través-del-botón-de-añadir-un-producto)
     - [Prueba de ejecución para probar las funcionalidades del carrito - Actualizar las cantidades de los productos y eliminar los productos](#prueba-de-ejecución-para-probar-las-funcionalidades-del-carrito---actualizar-las-cantidades-de-los-productos-y-eliminar-los-productos)
+  - [Autentificación y Autorización](#autentificación-y-autorización)
     - [Prueba de ejecución para probar la funcionalidad del Login y Logout](#prueba-de-ejecución-para-probar-la-funcionalidad-del-login-y-logout)
     - [Prueba de ejecución para probar el userId dinámico, el HOC, y las notificaciones toast](#prueba-de-ejecución-para-probar-el-userid-dinámico-el-hoc-y-las-notificaciones-toast)
+  - [Pedido](#pedido)
+    - [Prueba de ejecución para probar la creación de un objeto de pedido](#prueba-de-ejecución-para-probar-la-creación-de-un-objeto-de-pedido)
 - [Extras](#extras)
   - [Crear una interfaz para las respuesta de la API](#crear-una-interfaz-para-las-respuesta-de-la-api)
   - [Evitar perder el contenido del almacenamiento de Redux con los valores del token del usuario](#evitar-perder-el-contenido-del-almacenamiento-de-redux-con-los-valores-del-token-del-usuario)
@@ -3334,6 +3338,8 @@ export default interface OrderRecapInterface {
     id?: number; // cart id
     cartItemsList?: CartInterface[];
     total?: number;
+    userId?: string;
+    paymentAttempId?: string;
   };
 
   deliveryInput: {
@@ -3529,6 +3535,87 @@ export enum StaticDetails_OrderStatus {
 
 ## 7.3. Crear el pedido
 
+Para crear un nuevo objeto de pedido, vamos a necesitar hacer console.log() en algunos puntos para ir viendo cómo va siendo la respuesta y en base a ella, crear el objeto con el nombre de los campos correctos.
+
+Parea llegar  acrear correctamente este objeto de pedido necesitaremos:
+
+- usar la mutación que creamos en el endpoint del *OrderAPI*
+- crear un orderDetailsDTO y rellenarlo iterando los cartItemsList
+- crear efectivamente el objeto pedido en sí con los campos que recibimos en la respuesta
+
+```tsx
+const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => { // receiving props from DeliveryDetails component
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isInProccess, setIsInProccess] = useState(false);
+  const [createOrder] = useCreateOrderMutation();
+
+  // the helper method to get the credit card
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    ...
+    if (result.error) {
+      // Show error to your customer (for example, payment details incomplete)
+      // console.log(result.error.message);
+      toastNotifyHelper('Algo ha fallado durante el proceso de pago', 'error');
+      setIsInProccess(false);
+    } 
+    else {
+      // Your customer will be redirected to your `return_url`. For some payment
+      // methods like iDEAL, your customer will be redirected to an intermediate
+      // site first to authorize the payment, then redirected to the `return_url`.
+      // console.log(result);
+
+      // create an array of orderDetailsCreateDTO
+      const orderDetailsCreateDTO: any = [];
+      let orderTotal = 0;
+      let totalItems = 0;
+
+      // iterate inside prop apiDataResult received
+      apiDataResult.cartItemsList?.forEach(
+        (item: CartItemInterface) => {
+          const createDetails: any = {}; // creating a temporary object
+
+          createDetails['itemId'] = item.product?.id;
+          createDetails['itemQuantity'] = item.quantity;
+          createDetails['itemName'] = item.product?.name;
+          createDetails['itemPrice'] = item.product?.price;
+
+          orderDetailsCreateDTO.push(createDetails); // inserting the temporary object inside oredrDetailsCreateDTO array
+
+          orderTotal += (item.quantity! * item.product?.price!);
+          totalItems += item.quantity!;
+        }
+      );
+
+      // let's call the order API endpoint, where we have to create the order passing the complete object 
+      const createOrderResponse: ApiResponse = await createOrder({
+        clientName: deliveryInput.name,
+        clientPhone: deliveryInput.phone,
+        clientEmail: deliveryInput.email,
+        clientId: apiDataResult.userId,
+        orderTotal: orderTotal,
+        orderPaymentId: apiDataResult.paymentAttempId,
+        orderStatus: result.paymentIntent.status === "succeeded" 
+          ? StaticDetails_OrderStatus.STATUS_CONFIRMED
+          : StaticDetails_OrderStatus.STATUS_PENDING,
+          // typescript alredy knows that because these types are alredy defined inside the Stripe package that we added  
+        orderQuantityItems : totalItems,
+        orderDetailsCreateDTO: orderDetailsCreateDTO,
+      });
+      // console.log(createOrderResponse); // to check if the new order object has been created successfully
+    }
+  };
+
+  return (
+    ...
+  );
+};
+```
+
+### Prueba de ejecución
+
+[Prueba de ejecución para probar la creación de un objeto de pedido](#prueba-de-ejecución-para-probar-la-creación-de-un-objeto-de-pedido)
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -3589,13 +3676,13 @@ export enum StaticDetails_OrderStatus {
 
 # Pruebas de Ejecución
 
-## ProductList y ProductDetails
+## Lista de productos y Detalles del producto
 
 ### Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa
 
 [Prueba de Ejecución 1](https://user-images.githubusercontent.com/80839621/235106658-a548ae24-190b-4d47-99d9-f73c4b879118.mp4)
 
-## Cart
+## Carrito
 
 ### Prueba de ejecución de creación y actualización del carrito a través del botón de añadir un producto
 
@@ -3612,13 +3699,27 @@ export enum StaticDetails_OrderStatus {
 
 [Prueba de Ejecución 2](https://user-images.githubusercontent.com/80839621/235496943-e98669f0-402e-4401-bed8-a59d1ae4eb20.mp4)
 
+## Autentificación y Autorización
+
 ### Prueba de ejecución para probar la funcionalidad del Login y Logout
 
 [Prueba de Ejecución 3](https://user-images.githubusercontent.com/80839621/236282697-d3a808d0-7e18-4eec-adb6-71491f6fa8ec.mp4)
 
 ### Prueba de ejecución para probar el userId dinámico, el HOC, y las notificaciones toast
 
-[Prieba de Ejecución 4](https://user-images.githubusercontent.com/80839621/236813864-7b1477cd-744a-4f6d-be68-3a27b2985dd0.mp4)
+[Prueba de Ejecución 4](https://user-images.githubusercontent.com/80839621/236813864-7b1477cd-744a-4f6d-be68-3a27b2985dd0.mp4)
+
+## Pedido
+
+### Prueba de ejecución para probar la creación de un objeto de pedido
+
+![](./img/59.png)
+![](./img/60.png)
+![](./img/61.png)
+![](./img/62.png)
+![](./img/63.png)
+![](./img/64.png)
+![](./img/65.png)
 
 # Extras
 
