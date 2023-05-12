@@ -84,6 +84,7 @@
   - [7.2. Crear un objeto con la respuesta heredada para poder crear el pedido](#72-crear-un-objeto-con-la-respuesta-heredada-para-poder-crear-el-pedido)
   - [7.3. Crear el pedido](#73-crear-el-pedido)
     - [Prueba de ejecución](#prueba-de-ejecución-5)
+  - [7.4. Enviar el id del pedido y redireccionar al usuario a una página de confirmación](#74-enviar-el-id-del-pedido-y-redireccionar-al-usuario-a-una-página-de-confirmación)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -3615,6 +3616,64 @@ const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => 
 ### Prueba de ejecución
 
 [Prueba de ejecución para probar la creación de un objeto de pedido](#prueba-de-ejecución-para-probar-la-creación-de-un-objeto-de-pedido)
+
+## 7.4. Enviar el id del pedido y redireccionar al usuario a una página de confirmación
+
+Lo primero será agregar en el *CheckoutForm* el hook del useNavigate, para redireccionar al usuario hacia un nuevo componente de conformación del pedido. En este redireccionamiento, tenemos que pasar como parámetro en la ruta el id del pedido en cuestión.
+
+```tsx
+const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => { // receiving props from DeliveryDetails component
+  ...
+    // if createOrderResponse is present and the status for order is "Confirmed", we want to redirect user to OrderConfirmed component
+    if (createOrderResponse) {
+      if (createOrderResponse.data?.result.orderStatus === StaticDetails_OrderStatus.STATUS_CONFIRMED) {
+        navigate(`/order/OrderConfirmed/${createOrderResponse.data.result.orderId}`);
+      }
+      else {
+        navigate('/failed');
+      }
+    }
+  }
+    setIsInProccess(false);
+  };
+
+  return (
+    ...
+  );
+};
+```
+
+**Nota**: no olvides añadir la ruta al *App.tsx*
+
+Ahora creamos una nueva carpeta dentro de *pages* para las páginas que hagamos sobre los pedidos, y dentro de esta nueva carpeta crearemos la página del *OrderConfirmed.tsx*, en la cual copiaremos/pegaremos una plantilla de Bootstrap que encontremos por Google, y usaremos el hook del useParams() para recoger el id del pedido que estamos recibiendo a través de la ruta como parámetro (esto ya lo habíamos hecho en el *ProductDetails.tsx*).
+
+```tsx
+let orderConfirmedImage = require('../../assets/images/order-confirmed.jpg');
+
+function OrderConfirmed() {
+  // to get the orderId that we're receiving through the route we need to use the useParams() hook like we did in ProductDetails component
+  const { orderId } = useParams();
+
+  return (
+    <div className='w-100 text-center d-flex justify-content-center align-items-center'>
+      <div>
+        <i style={{ fontSize: '7rem' }} className='bi bi-check2-circle text-success'></i>
+
+        <div className='pb-5'>
+          <h2 className=' text-success'>¡Tu pedido ha sido confirmado!</h2>
+          <h5 className='mt-3'>Identificador del pedido: {orderId}</h5>
+          <p>En breves momentos, comenzaremos a preparar todo lo que nos has encargado.</p>
+          
+          <img src={orderConfirmedImage} style={{ width: '40%', borderRadius: '30px' }} alt=''></img>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+![](./img/66.png)
+![](./img/67.png)
 
 # Webgrafía y Enlaces de Interés
 

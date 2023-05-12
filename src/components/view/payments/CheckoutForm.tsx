@@ -4,6 +4,7 @@ import { toastNotifyHelper } from '../../../helperMethods';
 import { ApiResponse, CartItemInterface, OrderRecapInterface } from '../../../interfaces';
 import { useCreateOrderMutation } from '../../../APIs/OrderAPI';
 import { StaticDetails_OrderStatus } from '../../../Utils/StaticDetails';
+import { useNavigate } from 'react-router-dom';
 
 
 const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => { // receiving props from DeliveryDetails component
@@ -11,6 +12,7 @@ const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => 
   const elements = useElements();
   const [isInProccess, setIsInProccess] = useState(false);
   const [createOrder] = useCreateOrderMutation();
+  const navigate = useNavigate();
 
   // we need a console.log() to see and check what we have to receive and capture from inside apiDataResult 
   // to create an order object (const createOrderResponse)
@@ -89,8 +91,19 @@ const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => 
         orderQuantityItems : totalItems,
         orderDetailsCreateDTO: orderDetailsCreateDTO,
       });
-      // console.log(createOrderResponse); // to check if the new order object has been created successfully
+      console.log(createOrderResponse); // to check if the new order object has been created successfully
+
+      // if createOrderResponse is present and the status for order is "Confirmed", we want to redirect user to OrderConfirmed component
+      if (createOrderResponse) {
+        if (createOrderResponse.data?.result.orderStatus === StaticDetails_OrderStatus.STATUS_CONFIRMED) {
+          navigate(`/order/OrderConfirmed/${createOrderResponse.data.result.orderId}`);
+        }
+        else {
+          navigate('/failed');
+        }
+      }
     }
+    setIsInProccess(false);
   };
 
 
@@ -98,8 +111,16 @@ const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => 
     <form onSubmit={handleSubmit}>
       <PaymentElement />
       
-      <button className='btn btn-warning mt-4 w-100'>
-        Submit
+      <button 
+        className='btn btn-warning mt-4 w-100' 
+        disabled={!stripe || isInProccess} // we can find this in the Stripe documentation
+      >
+        <span id='button-text'>
+          {isInProccess
+            ? 'Procesando pago...'
+            : 'Pagar pedido'
+          }
+        </span>
       </button>
     </form>
   );
