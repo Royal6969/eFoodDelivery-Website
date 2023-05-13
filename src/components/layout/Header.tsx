@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CartItemInterface, UserInterface } from '../../interfaces';
 import { initialUserEmptyState, setUserLogged } from '../../store/redux/AuthenticationSlice';
 
-let appLogo = require('../../assets/images/eFoodDeliveryLogo.png');
 
+let appLogo = require('../../assets/images/eFoodDeliveryLogo.png');
 
 function Header() {
   // to call the setUserLogged slice and set it empty
@@ -74,6 +74,12 @@ function Header() {
                       </span>
                     )}
                   </i>
+                </NavLink>
+              </li>
+
+              <li className='nav-item'>
+                <NavLink className='nav-link' aria-current='page' to='/order/UserOrders'>
+                  Pedidos
                 </NavLink>
               </li>
 

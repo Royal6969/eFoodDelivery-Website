@@ -1,6 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
 import { Footer, Header } from '../components/layout';
-import { AccessRefused, AuthAdminTest, AuthCustomerTest, Cart, Home, Login, NotFound, OrderConfirmed, PaymentDetails, ProductDetails, Register } from '../pages';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetCartQuery } from '../APIs/CartAPI';
 import { setCart } from '../store/redux/CartSlice';
@@ -9,6 +8,20 @@ import jwt_decode from "jwt-decode";
 import { UserInterface } from '../interfaces';
 import { setUserLogged } from '../store/redux/AuthenticationSlice';
 import { RootState } from '../store/redux/ReduxStorage';
+import { 
+  AccessRefused, 
+  AuthAdminTest, 
+  AuthCustomerTest, 
+  Cart, 
+  Home, 
+  Login, 
+  NotFound, 
+  OrderConfirmed, 
+  UserOrders, 
+  PaymentDetails, 
+  ProductDetails, 
+  Register 
+} from '../pages';
 
 
 function App() {
@@ -72,6 +85,7 @@ function App() {
             <Route path='/Cart' element={<Cart />}></Route>
             <Route path='/PaymentDetails' element={<PaymentDetails />}></Route>
             <Route path='/order/OrderConfirmed/:orderId' element={<OrderConfirmed />}></Route>
+            <Route path='/order/UserOrders' element={<UserOrders />}></Route>
             
             <Route path='/AuthCustomerTest' element={<AuthCustomerTest />}></Route>
             <Route path='/AuthAdminTest' element={<AuthAdminTest />}></Route>

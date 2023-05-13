@@ -6,7 +6,7 @@ const orderAPI = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "https://efooddelivery-api.azurewebsites.net/api/"
   }),
-  tagTypes: ["Orders"], // we need invalidate tagTypes after for getOrder()
+  tagTypes: ["Orders"], // we need invalidate tagTypes after for getOrder() when we're posting
   endpoints: (builder) => ({
     createOrder: builder.mutation({
       query: (orderDetails) => ({ // when we post in API, we don't have any parameters, but we have to pass the complete object in the body
@@ -17,6 +17,7 @@ const orderAPI = createApi({
         body: orderDetails
       }),
       // providesTags: [""] // we dom't need any providesTags
+      invalidatesTags: ["Orders"]
     }),
     // we want to define the endpoints for GetOrder(userId) (/api/Order/) and GetOrder(orderId) (/api/Order/{orderId})
     getOrdersFromUser: builder.query({

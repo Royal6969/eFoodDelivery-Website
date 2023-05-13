@@ -86,6 +86,7 @@
     - [Prueba de ejecución](#prueba-de-ejecución-5)
   - [7.4. Enviar el id del pedido y redireccionar al usuario a una página de confirmación](#74-enviar-el-id-del-pedido-y-redireccionar-al-usuario-a-una-página-de-confirmación)
   - [7.5. Implementar las queries de los endpoint del GetOrder(userId) y GetOrder(orderId)](#75-implementar-las-queries-de-los-endpoint-del-getorderuserid-y-getorderorderid)
+  - [7.6. Página de la lista de pedidos del usuario](#76-página-de-la-lista-de-pedidos-del-usuario)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -3685,7 +3686,17 @@ const orderAPI = createApi({
   ...
   tagTypes: ["Orders"], // we need invalidate tagTypes after for getOrder()
   endpoints: (builder) => ({
-    ...
+    createOrder: builder.mutation({
+      query: (orderDetails) => ({ // when we post in API, we don't have any parameters, but we have to pass the complete object in the body
+        url: "Order",
+        method: 'POST',
+        // params: {} // we don't need the params here
+        headers: { "Content-type": "application/json" },
+        body: orderDetails
+      }),
+      // providesTags: [""] // we dom't need any providesTags
+      invalidatesTags: ["Orders"]
+    }),
     // we want to define the endpoints for GetOrder(userId) (/api/Order/) and GetOrder(orderId) (/api/Order/{orderId})
     getOrdersFromUser: builder.query({
       query: (userId) => ({
@@ -3705,6 +3716,104 @@ const orderAPI = createApi({
   })
 });
 ```
+
+## 7.6. Página de la lista de pedidos del usuario
+
+Dentro de la misma carpeta de las páginas relativas a los pedidos, vamos a crear una nueva vista para que un usuario pueda ver los pedidos que ha realizado, y la llamaremos *UserOrders.tsx*, por ejemplo. Una vez más volvemos a buscarnos cualquier plantilla de Bootstrap tipo listado, y añadimos el enrutado al *App* y ponemos un nuevo botón en el *Header* para acceder a esta nueva vista.
+
+En esta nueva vista, para recuperar un listado de los pedidos del usuario, tendremos que llamar a la query del *useGetOrdersFromUserQuery*, y luego iterar sobre los diferentes pedidos para llegar a mostrarlos todos.
+
+```tsx
+function UserOrders() {
+  // here we can use the useSelector() hook to get the userId from the redux store
+  const userId = useSelector((state: RootState) => state.authenticationStore.userId);
+  // we need to save the result back from the query and define a flag for when it's loading the response
+  const { data, isLoading } = useGetOrdersFromUserQuery(userId);
+
+  return (
+    <>
+      {isLoading && (
+        <BigLoader />
+      )}
+
+      {!isLoading && (
+        <div className="table p-5">
+          <h1 className="text-success">Lista de pedidos</h1>
+          
+          <div className="p-2">
+            <div className="row border">
+              <div className="col-1">ID</div>
+              <div className="col-3">Nombre</div>
+              <div className="col-2">Teléfono</div>
+              <div className="col-1">Total</div>
+              <div className="col-1">Productos</div>
+              <div className="col-2">Fecha</div>
+              <div className="col-2"></div>
+            </div>
+            
+            {data.result.map(
+              (order: OrderInterface) => {
+                return (
+                  <div className="row border" key={order.orderId}>
+                    <div className="col-1">{order.orderId}</div>
+                    <div className="col-3">{order.clientName}</div>
+                    <div className="col-2">{order.clientPhone}</div>
+                    <div className="col-1">{order.orderTotal!.toFixed(2)}€</div>
+                    <div className="col-1">{order.orderQuantityItems}</div>
+                    <div className="col-2">{new Date(order.orderDate!).toLocaleDateString()}</div>
+                    
+                    <div className="col-2">
+                      <button className="btn btn-warning">Details</button>
+                    </div>
+                  </div>
+                )
+              }
+            )}
+
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+```
+
+Para las interfaces del pedido y la de los detalles del pedido, podemos ir a nuestra API en Swagger y ejecutar el endpoint del GetOrders(userId) y copiamos/pegamos la respuesta en la web de "JSON to Typescript" y ya tendríamos rápidamente las interfaces.
+
+```ts
+export default interface OrderInterface {
+  md_uuid?: string
+  md_date?: string
+  orderId?: number
+  clientName?: string
+  clientPhone?: string
+  clientEmail?: string
+  clientId?: string
+  orderTotal?: number
+  orderDate?: string
+  orderPaymentID?: string
+  orderStatus?: string
+  orderQuantityItems?: number
+  user?: any
+  orderDetails?: OrderDetailInterface[]
+}
+
+export default interface OrderDetailInterface {
+  md_uuid?: string
+  md_date?: string
+  orderDetailsId?: number
+  orderId?: number
+  itemId?: number
+  itemQuantity?: number
+  itemName?: string
+  itemPrice?: number
+  product?: ProductInterface
+}
+```
+
+![](./img/68.png)
+![](./img/69.png)
+![](./img/70.png)
 
 # Webgrafía y Enlaces de Interés
 
