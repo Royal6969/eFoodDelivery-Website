@@ -87,6 +87,7 @@
   - [7.4. Enviar el id del pedido y redireccionar al usuario a una página de confirmación](#74-enviar-el-id-del-pedido-y-redireccionar-al-usuario-a-una-página-de-confirmación)
   - [7.5. Implementar las queries de los endpoint del GetOrder(userId) y GetOrder(orderId)](#75-implementar-las-queries-de-los-endpoint-del-getorderuserid-y-getorderorderid)
   - [7.6. Página de la lista de pedidos del usuario](#76-página-de-la-lista-de-pedidos-del-usuario)
+  - [7.7. Mover la lista de pedidos a un componente diferente en sí mismo](#77-mover-la-lista-de-pedidos-a-un-componente-diferente-en-sí-mismo)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -3814,6 +3815,100 @@ export default interface OrderDetailInterface {
 ![](./img/68.png)
 ![](./img/69.png)
 ![](./img/70.png)
+
+## 7.7. Mover la lista de pedidos a un componente diferente en sí mismo
+
+Como el hecho de mostrar una lista con los pedidos es algo que reutilizaríamos próximamente dentro del panel del administrador, tiene sentido que movamos la lista de pedidos que acabábamos de hacer a un componente diferente en sí mismo.
+
+De modo que vamos a crear el componente llamado *OrdersList.tsx* en la carpeta de *orders* de los componentes, y el plan sería pasar desde la página del *UserOrders* hacia abajo a su nuevo hijo, los props del *data* y el *isLoading*
+
+```tsx
+function UserOrders() {
+  // here we can use the useSelector() hook to get the userId from the redux store
+  const userId = useSelector((state: RootState) => state.authenticationStore.userId);
+  // we need to save the result back from the query and define a flag for when it's loading the response
+  const { data, isLoading } = useGetOrdersFromUserQuery(userId);
+
+  
+  return (
+    <>
+      {isLoading && (
+        <BigLoader />
+      )}
+
+      {!isLoading && (
+        <OrdersList 
+          data={data.result}
+          isLoading={isLoading}
+        />
+      )}
+    </>
+  )
+}
+```
+
+Para el *OrdersList* tan sólo tenemos que añadir los props en la cabecera de la función del componente, y pegar el contenido del *return()* que antes tenía el padre aquí en el hijo.
+
+```tsx
+function OrdersList({ data, isLoading }: OrdersListInterface) {
+  return (
+    <>
+      {isLoading && (
+        <BigLoader />
+      )}
+
+      {!isLoading && (
+        <div className="table p-5">
+          <h1 className="text-success">Lista de pedidos</h1>
+          
+          <div className="p-2">
+            <div className="row border">
+              <div className="col-1">ID</div>
+              <div className="col-3">Nombre</div>
+              <div className="col-2">Teléfono</div>
+              <div className="col-1">Total</div>
+              <div className="col-1">Productos</div>
+              <div className="col-2">Fecha</div>
+              <div className="col-2"></div>
+            </div>
+            
+            {data.map(
+              (order: OrderInterface) => {
+                return (
+                  <div className="row border" key={order.orderId}>
+                    <div className="col-1">{order.orderId}</div>
+                    <div className="col-3">{order.clientName}</div>
+                    <div className="col-2">{order.clientPhone}</div>
+                    <div className="col-1">{order.orderTotal!.toFixed(2)}€</div>
+                    <div className="col-1">{order.orderQuantityItems}</div>
+                    <div className="col-2">{new Date(order.orderDate!).toLocaleDateString()}</div>
+                    
+                    <div className="col-2">
+                      <button className="btn btn-warning">Details</button>
+                    </div>
+                  </div>
+                )
+              }
+            )}
+
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+```
+
+Y la interfaz que necesitamos crear para recibir el prop de la *data* del padre sería la seguiente:
+
+```ts
+export default interface OrdersListInterface {
+  data: OrderInterface[];
+  isLoading: boolean;
+}
+```
+
+Y con esto, ya la página del *UserOrders* volvería a funcionar exactamente como antes pero ahora con el componente del *OrdersList* en su interior. 
 
 # Webgrafía y Enlaces de Interés
 
