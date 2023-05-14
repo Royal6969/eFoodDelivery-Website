@@ -90,6 +90,7 @@
   - [7.7. Mover la lista de pedidos a un componente diferente en sí mismo](#77-mover-la-lista-de-pedidos-a-un-componente-diferente-en-sí-mismo)
   - [7.8. Crear otro tipo de resumen del pedido para el botón de los detalles de pedido](#78-crear-otro-tipo-de-resumen-del-pedido-para-el-botón-de-los-detalles-de-pedido)
   - [7.9. Aplicar colores en botones según el estado de los pedidos](#79-aplicar-colores-en-botones-según-el-estado-de-los-pedidos)
+  - [7.10. Implementar la lógica para el cambio de los estados del pedido](#710-implementar-la-lógica-para-el-cambio-de-los-estados-del-pedido)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -4004,6 +4005,53 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // 
 ```
 
 ![](./img/73.png)
+
+## 7.10. Implementar la lógica para el cambio de los estados del pedido
+
+Ahora ha llegado el momento de implementar la función de un botón que al hacer click, iría actualizando el estado del pedido al siguiente estado. Vamos a ir definiendo un poco cómo sería, según el posible estado en la lista enumerable de estados del archivo *StaticDetails*, y lo vamos a implementar en el componente del *Orderrecap*
+
+```tsx
+function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // receiving props from DeliveryDetails component
+  // calling our getOrderStatusColor helper method to change dynamically the status for the order status tag at top of screen
+  const orderStatusTagTypeColor = getOrderStatusColor(apiDataResult.status!);
+  // define useNavigate() hook for back button
+  const navigate = useNavigate();
+  // here we can use the useSelector() hook to get the user from the redux store
+  const userDataFromAuthenticationStore: UserInterface = useSelector((state: RootState) => state.authenticationStore);
+
+  // define constant to save the current order status and to allow change it
+  const nextOrderStatus: any = apiDataResult.status! === StaticDetails_OrderStatus.STATUS_CONFIRMED
+      // if the status is x, then create an object
+      ? { color: 'info', value: StaticDetails_OrderStatus.STATUS_COOKING }
+    : apiDataResult.status! === StaticDetails_OrderStatus.STATUS_COOKING
+      ? { color: 'warning', value: StaticDetails_OrderStatus.STATUS_READY }
+    : apiDataResult.status! === StaticDetails_OrderStatus.STATUS_READY
+      && { color: 'succes', value: StaticDetails_OrderStatus.STATUS_COMPLETED }
+
+  return (
+    <div>
+      ...
+      <div className='d-flex justify-content-between align-items-center mt-3'>
+        <button className='btn btn-secondary' onClick={() => navigate(-1)}>
+          Volver a los pedidos
+        </button>
+
+        {userDataFromAuthenticationStore.role == StaticDetails_Roles.ADMIN && (
+          <div className='d-flex'>
+            <button className='btn btn-danger mx-2'>
+              Cancelar Pedido
+            </button>
+            
+            <button className={`btn btn-${nextOrderStatus.color}`}>
+              {nextOrderStatus.value}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+```
 
 # Webgrafía y Enlaces de Interés
 
