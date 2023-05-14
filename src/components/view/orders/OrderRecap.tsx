@@ -82,7 +82,7 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // 
               Cancelar Pedido
             </button>
             
-            <button className={`btn btn-${nextOrderStatus.color}`}>
+            <button style={{ cursor: 'none' }} className={`btn btn-${nextOrderStatus.color}`}>
               {nextOrderStatus.value}
             </button>
           </div>

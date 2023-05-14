@@ -91,6 +91,7 @@
   - [7.8. Crear otro tipo de resumen del pedido para el botón de los detalles de pedido](#78-crear-otro-tipo-de-resumen-del-pedido-para-el-botón-de-los-detalles-de-pedido)
   - [7.9. Aplicar colores en botones según el estado de los pedidos](#79-aplicar-colores-en-botones-según-el-estado-de-los-pedidos)
   - [7.10. Implementar la lógica para el cambio de los estados del pedido](#710-implementar-la-lógica-para-el-cambio-de-los-estados-del-pedido)
+  - [7.11. Añadiendo también el estado del pedido en la lista de pedidos](#711-añadiendo-también-el-estado-del-pedido-en-la-lista-de-pedidos)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -3796,7 +3797,7 @@ export default interface OrderInterface {
   orderTotal?: number
   orderDate?: string
   orderPaymentID?: string
-  orderStatus?: string
+  orderStatus?: StaticDetails_OrderStatus
   orderQuantityItems?: number
   user?: any
   orderDetails?: OrderDetailInterface[]
@@ -4052,6 +4053,13 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // 
   )
 }
 ```
+
+## 7.11. Añadiendo también el estado del pedido en la lista de pedidos
+
+Justo lo que habíamos hecho antes en el *OrderRecap* para la etiqueta que mostraba el estado del pedido copn un color dinámico, es lo que también deberíamos de meter en el *OrdersList*, de modo que es tan sólo un copia/pega, añadiendo una columna más.
+
+![](./img/74.png)
+![](./img/75.png)
 
 # Webgrafía y Enlaces de Interés
 

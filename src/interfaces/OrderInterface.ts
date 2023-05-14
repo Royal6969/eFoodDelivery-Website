@@ -1,3 +1,4 @@
+import { StaticDetails_OrderStatus } from "../Utils/StaticDetails"
 import OrderDetailInterface from "./OrderDetailInterface"
 
 
@@ -12,7 +13,7 @@ export default interface OrderInterface {
   orderTotal?: number
   orderDate?: string
   orderPaymentID?: string
-  orderStatus?: string
+  orderStatus?: StaticDetails_OrderStatus
   orderQuantityItems?: number
   user?: any
   orderDetails?: OrderDetailInterface[]
