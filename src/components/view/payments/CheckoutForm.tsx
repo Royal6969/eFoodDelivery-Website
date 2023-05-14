@@ -64,10 +64,10 @@ const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => 
         (item: CartItemInterface) => {
           const createDetails: any = {}; // creating a temporary object
 
-          createDetails['itemId'] = item.product?.id;
-          createDetails['itemQuantity'] = item.quantity;
-          createDetails['itemName'] = item.product?.name;
-          createDetails['itemPrice'] = item.product?.price;
+          createDetails['productId'] = item.product?.id;
+          createDetails['quantity'] = item.quantity;
+          createDetails['name'] = item.product?.name;
+          createDetails['price'] = item.product?.price;
 
           orderDetailsCreateDTO.push(createDetails); // inserting the temporary object inside oredrDetailsCreateDTO array
 

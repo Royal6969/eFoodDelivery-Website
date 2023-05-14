@@ -3,6 +3,7 @@ import { CartItemInterface, OrderRecapInterface } from '../../../interfaces'
 
 
 function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // receiving props from DeliveryDetails component
+  console.log(apiDataResult);
   return (
     <div>
       {' '}
@@ -30,8 +31,7 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // 
                   </div>
                 )
               }
-            )
-          }
+            )}
             <hr />
             
             <h4 style={{ textAlign: 'right' }} className='text-danger'>

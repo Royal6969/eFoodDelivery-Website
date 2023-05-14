@@ -6,9 +6,9 @@ export default interface OrderDetailInterface {
   md_date?: string
   orderDetailsId?: number
   orderId?: number
-  itemId?: number
-  itemQuantity?: number
-  itemName?: string
-  itemPrice?: number
+  productId?: number
+  quantity?: number
+  name?: string
+  price?: number
   product?: ProductInterface
 }

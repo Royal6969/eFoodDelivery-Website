@@ -7,6 +7,7 @@ export default interface OrderRecapInterface {
     total?: number;
     userId?: string;
     paymentAttempId?: string;
+    status?: string;
   };
 
   deliveryInput: {

@@ -2,9 +2,14 @@ import React from 'react'
 import { BigLoader } from '../common'
 import { OrderInterface } from '../../../interfaces'
 import OrdersListInterface from '../../../interfaces/OrdersListInterface'
+import { useNavigate } from 'react-router-dom'
 
 
 function OrdersList({ data, isLoading }: OrdersListInterface) {
+  // we need the useNavigate() hook for the "Details" button in ecah order row
+  const navigate = useNavigate();
+
+
   return (
     <>
       {isLoading && (
@@ -38,7 +43,12 @@ function OrdersList({ data, isLoading }: OrdersListInterface) {
                     <div className="col-2">{new Date(order.orderDate!).toLocaleDateString()}</div>
                     
                     <div className="col-2">
-                      <button className="btn btn-warning">Details</button>
+                      <button 
+                        className="btn btn-warning"
+                        onClick={() => navigate('/order/OrderDetails/' + order.orderId)}
+                      >
+                        Details
+                      </button>
                     </div>
                   </div>
                 )

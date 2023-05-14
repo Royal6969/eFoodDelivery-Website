@@ -88,6 +88,7 @@
   - [7.5. Implementar las queries de los endpoint del GetOrder(userId) y GetOrder(orderId)](#75-implementar-las-queries-de-los-endpoint-del-getorderuserid-y-getorderorderid)
   - [7.6. Página de la lista de pedidos del usuario](#76-página-de-la-lista-de-pedidos-del-usuario)
   - [7.7. Mover la lista de pedidos a un componente diferente en sí mismo](#77-mover-la-lista-de-pedidos-a-un-componente-diferente-en-sí-mismo)
+  - [7.8. Crear otro tipo de resumen del pedido para el botón de los detalles de pedido](#78-crear-otro-tipo-de-resumen-del-pedido-para-el-botón-de-los-detalles-de-pedido)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -3507,10 +3508,10 @@ const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => 
         (item: CartItemInterface) => {
           const createDetails: any = {}; // creating a temporary object
 
-          createDetails['itemId'] = item.product?.id;
-          createDetails['itemQuantity'] = item.quantity;
-          createDetails['itemName'] = item.product?.name;
-          createDetails['itemPrice'] = item.product?.price;
+          createDetails['productId'] = item.product?.id;
+          createDetails['quantity'] = item.quantity;
+          createDetails['name'] = item.product?.name;
+          createDetails['price'] = item.product?.price;
 
           orderDetailsCreateDTO.push(createDetails); // inserting the temporary object inside oredrDetailsCreateDTO array
         }
@@ -3579,10 +3580,10 @@ const CheckoutForm = ({ apiDataResult, deliveryInput }: OrderRecapInterface) => 
         (item: CartItemInterface) => {
           const createDetails: any = {}; // creating a temporary object
 
-          createDetails['itemId'] = item.product?.id;
-          createDetails['itemQuantity'] = item.quantity;
-          createDetails['itemName'] = item.product?.name;
-          createDetails['itemPrice'] = item.product?.price;
+          createDetails['productId'] = item.product?.id;
+          createDetails['quantity'] = item.quantity;
+          createDetails['name'] = item.product?.name;
+          createDetails['price'] = item.product?.price;
 
           orderDetailsCreateDTO.push(createDetails); // inserting the temporary object inside oredrDetailsCreateDTO array
 
@@ -3804,10 +3805,10 @@ export default interface OrderDetailInterface {
   md_date?: string
   orderDetailsId?: number
   orderId?: number
-  itemId?: number
-  itemQuantity?: number
-  itemName?: string
-  itemPrice?: number
+  productId?: number
+  quantity?: number
+  name?: string
+  price?: number
   product?: ProductInterface
 }
 ```
@@ -3908,7 +3909,58 @@ export default interface OrdersListInterface {
 }
 ```
 
-Y con esto, ya la página del *UserOrders* volvería a funcionar exactamente como antes pero ahora con el componente del *OrdersList* en su interior. 
+Y con esto, ya la página del *UserOrders* volvería a funcionar exactamente como antes pero ahora con el componente del *OrdersList* en su interior.
+
+## 7.8. Crear otro tipo de resumen del pedido para el botón de los detalles de pedido
+
+La idea básica de esto, es que cuando un usuario haga click en el botón de "Detalles" de alguno de sus pedidos, poder presentarle una nueva página con los detalles del mismo.
+
+Desde el componente del *OrdersList* pasaremos el id del pedido a través de la ruta cuando el usuario navegue hacia la nueva vista del *OrderDetails*, y una vez aquí, recogeremos el orderId con el hook del useParams(), y pasaremos una vez más la *apiDataResult* y el *deliveryInput* hacia el componente que ya teníamos del *OrderRecap*
+
+```tsx
+function OrderDetails() {
+  // we will retrieve the orderId that we're receiving as a parameter inside the route
+  const { orderId } = useParams();
+  // now we have to use our endpoint for the query useGetOrderDetailsById()
+  const { data, isLoading } = useGetOrderDetailsByIdQuery(orderId);
+  // like we have in PaymentDetails page, now we have to pupulate the "DeliveryInput" and the "OrderDetails" props
+  let orderDetails, deliveryInput;
+  // console.log(data);
+
+  if (!isLoading && data?.result) {
+    console.log(data.result); // with this we can see and check what we need to take and manage
+
+    deliveryInput = {
+      name: data.result[0].clientName,
+      email: data.result[0].clientEmail,
+      phone: data.result[0].clientPhone,
+    }
+
+    orderDetails = {
+      id: data.result[0].orderId,
+      cartItemsList: data.result[0].orderDetails,
+      total: data.result[0].orderTotal,
+      status: data.result[0].orderStatus
+    }
+  }
+
+  return (
+    <div style={{ maxWidth: '750px' }} className='container mx-auto p-3 w-100'>
+      {!isLoading && orderDetails && deliveryInput && (
+        <OrderRecap  // we have to pass these props to the OrderRecap component that it was already receiving
+          apiDataResult={orderDetails} 
+          deliveryInput={deliveryInput} 
+        />
+      )}
+    </div>
+  )
+}
+```
+
+**Nota:** hemos tenido que añadir el campo del "status" a la interfaz del *CartRecapInterface*
+
+![](./img/71.png)
+![](./img/72.png)
 
 # Webgrafía y Enlaces de Interés
 

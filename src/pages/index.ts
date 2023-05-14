@@ -10,6 +10,7 @@ import AccessRefused from "./AccessRefused";
 import PaymentDetails from "./PaymentDetails";
 import OrderConfirmed from "./order/OrderConfirmed";
 import UserOrders from "./order/UserOrders";
+import OrderDetails from "./order/OrderDetails";
 
 
 export {
@@ -24,5 +25,6 @@ export {
   AccessRefused,
   PaymentDetails,
   OrderConfirmed,
-  UserOrders
+  UserOrders,
+  OrderDetails
 }
