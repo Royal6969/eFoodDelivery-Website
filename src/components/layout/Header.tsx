@@ -4,6 +4,7 @@ import { RootState } from '../../store/redux/ReduxStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import { CartItemInterface, UserInterface } from '../../interfaces';
 import { initialUserEmptyState, setUserLogged } from '../../store/redux/AuthenticationSlice';
+import { StaticDetails_Roles } from '../../Utils/StaticDetails';
 
 
 let appLogo = require('../../assets/images/eFoodDeliveryLogo.png');
@@ -60,28 +61,30 @@ function Header() {
                 </NavLink>
               </li>
 
-              <li className='nav-item'>
-                <NavLink className='nav-link' aria-current='page' to='/Cart'>
-                  <i className='bi bi-cart4' style={{ fontSize: '16.5px' }}>
-                    {/* **** conditional rendering to display the counter products badge **** */}
-                    {userData.userId && (
-                      <span  style={{ fontSize: '10px' }} className='translate-middle badge rounded-circle border border-light bg-danger'>
-                        {/* we can check the lenght of cart from redux storage and display items accordingly */}
-                        {cartFromReduxStorage?.length
-                          ? `${cartFromReduxStorage.length}`
-                          : ('')
-                        }
-                      </span>
-                    )}
-                  </i>
-                </NavLink>
-              </li>
-
-              <li className='nav-item'>
-                <NavLink className='nav-link' aria-current='page' to='/order/UserOrders'>
-                  Pedidos
-                </NavLink>
-              </li>
+              {userData.role == StaticDetails_Roles.ADMIN
+                ? (
+                  <li className='nav-item dropdown'>
+                    <a className='nav-link dropdown-toggle' href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
+                      Admin
+                    </a>
+                    <ul className='dropdown-menu'>
+                      <li style={{ cursor: 'pointer' }} className='dropdown-item' onClick={() => navigate('order/UserOrders')}>
+                        Pedidos del Admin
+                      </li>
+                      <li style={{ cursor: 'pointer' }} className='dropdown-item' onClick={() => navigate('order/AllUserOrders')}>
+                        Pedidos de Usuarios
+                      </li>
+                    </ul>
+                  </li>
+                )
+                : (
+                  <li className='nav-item'>
+                    <NavLink className='nav-link' aria-current='page' to='/order/UserOrders'>
+                      Pedidos
+                    </NavLink>
+                  </li>
+                )
+              }
 
             {/* 
               <li className='nav-item'>
@@ -97,15 +100,21 @@ function Header() {
               </li> 
             */}
 
-              <li className='nav-item dropdown'>
-                <a className='nav-link dropdown-toggle' href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
-                  Admin
-                </a>
-                <ul className='dropdown-menu'>
-                  <li><a className='dropdown-item' href='#'>Action</a></li>
-                  <li><a className='dropdown-item' href='#'>Another action</a></li>
-                  <li><a className='dropdown-item' href='#'>Something else here</a></li>
-                </ul>
+              <li className='nav-item'>
+                <NavLink className='nav-link' aria-current='page' to='/Cart'>
+                  <i className='bi bi-cart4' style={{ fontSize: '16.5px' }}>
+                    {/* **** conditional rendering to display the counter products badge **** */}
+                    {userData.userId && (
+                      <span  style={{ fontSize: '10px' }} className='translate-middle badge rounded-circle border border-light bg-danger'>
+                        {/* we can check the lenght of cart from redux storage and display items accordingly */}
+                        {cartFromReduxStorage?.length
+                          ? `${cartFromReduxStorage.length}`
+                          : ('')
+                        }
+                      </span>
+                    )}
+                  </i>
+                </NavLink>
               </li>
               
               <div style={{ marginLeft: 'auto' }} className='d-flex'>

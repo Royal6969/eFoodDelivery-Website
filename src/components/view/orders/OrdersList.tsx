@@ -47,7 +47,7 @@ function OrdersList({ data, isLoading }: OrdersListInterface) {
                         className="btn btn-warning"
                         onClick={() => navigate('/order/OrderDetails/' + order.orderId)}
                       >
-                        Details
+                        Detalles
                       </button>
                     </div>
                   </div>

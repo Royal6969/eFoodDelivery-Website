@@ -89,6 +89,7 @@
   - [7.6. Página de la lista de pedidos del usuario](#76-página-de-la-lista-de-pedidos-del-usuario)
   - [7.7. Mover la lista de pedidos a un componente diferente en sí mismo](#77-mover-la-lista-de-pedidos-a-un-componente-diferente-en-sí-mismo)
   - [7.8. Crear otro tipo de resumen del pedido para el botón de los detalles de pedido](#78-crear-otro-tipo-de-resumen-del-pedido-para-el-botón-de-los-detalles-de-pedido)
+  - [7.9. Aplicar colores en botones según el estado de los pedidos](#79-aplicar-colores-en-botones-según-el-estado-de-los-pedidos)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -3957,10 +3958,52 @@ function OrderDetails() {
 }
 ```
 
-**Nota:** hemos tenido que añadir el campo del "status" a la interfaz del *CartRecapInterface*
+**Nota:** hemos tenido que añadir el campo del "status" a la interfaz del *CartRecapInterface*... 
+```ts
+status?: StaticDetails_OrderStatus;
+```
 
 ![](./img/71.png)
 ![](./img/72.png)
+
+## 7.9. Aplicar colores en botones según el estado de los pedidos
+
+La cosa sería que en el componente del *OrdersList* pudiéramos aplicar distintos colores al botón "Detalles" según el estado en el que se encuentre tal pedido. Para ello, podemos crear un nuevo "HelperMethod", al cual llamaremos a su archivo el *OrderStatusColor.ts*, por ejemplo:
+
+```ts
+const getOrderStatusColor = (orderStatus: StaticDetails_OrderStatus) => {
+  return orderStatus === StaticDetails_OrderStatus.STATUS_CONFIRMED ? 'primary'
+       : orderStatus === StaticDetails_OrderStatus.STATUS_PENDING   ? 'secondary'
+       : orderStatus === StaticDetails_OrderStatus.STATUS_CANCELLED ? 'danger'
+       : orderStatus === StaticDetails_OrderStatus.STATUS_COMPLETED ? 'success'
+       : orderStatus === StaticDetails_OrderStatus.STATUS_COOKING   ? 'info'
+       : orderStatus === StaticDetails_OrderStatus.STATUS_READY    && 'warning'
+}
+```
+
+Y ahora vamos a implementar este método de ayuda en el componente del *OrderRecap*
+
+```tsx
+function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // receiving props from DeliveryDetails component
+  // calling our getOrderStatusColor helper method to change dynamically the status for the order status tag at top of screen
+  const orderStatusTagTypeColor = getOrderStatusColor(apiDataResult.status!);
+
+  return (
+    <div>
+      {' '}
+      <div className='d-flex justify-content-between align-items-center'>
+        <h3 className={`text-${orderStatusTagTypeColor}`}>Resumen del pedido</h3>
+        <span style={{ cursor: 'none' }} className={`btn btn-outline-${orderStatusTagTypeColor} fs-6`}>
+          {apiDataResult.status}
+        </span>
+      </div>
+      ...
+    </div>
+  )
+}
+```
+
+![](./img/73.png)
 
 # Webgrafía y Enlaces de Interés
 

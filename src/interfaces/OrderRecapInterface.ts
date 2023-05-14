@@ -1,3 +1,4 @@
+import { StaticDetails_OrderStatus } from "../Utils/StaticDetails";
 import CartInterface from "./CartInterface";
 
 export default interface OrderRecapInterface {
@@ -7,7 +8,7 @@ export default interface OrderRecapInterface {
     total?: number;
     userId?: string;
     paymentAttempId?: string;
-    status?: string;
+    status?: StaticDetails_OrderStatus;
   };
 
   deliveryInput: {
