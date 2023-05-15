@@ -11,6 +11,7 @@ import PaymentDetails from "./PaymentDetails";
 import OrderConfirmed from "./order/OrderConfirmed";
 import UserOrders from "./order/UserOrders";
 import OrderDetails from "./order/OrderDetails";
+import AllUsersOrders from "./order/AllUsersOrders";
 
 
 export {
@@ -26,5 +27,6 @@ export {
   PaymentDetails,
   OrderConfirmed,
   UserOrders,
-  OrderDetails
+  OrderDetails,
+  AllUsersOrders
 }

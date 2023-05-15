@@ -21,7 +21,8 @@ import {
   PaymentDetails, 
   ProductDetails, 
   Register, 
-  OrderDetails
+  OrderDetails,
+  AllUsersOrders
 } from '../pages';
 
 
@@ -87,6 +88,7 @@ function App() {
             <Route path='/PaymentDetails' element={<PaymentDetails />}></Route>
             <Route path='/order/OrderConfirmed/:orderId' element={<OrderConfirmed />}></Route>
             <Route path='/order/UserOrders' element={<UserOrders />}></Route>
+            <Route path='/order/AllUsersOrders' element={<AllUsersOrders />}></Route>
             <Route path='/order/OrderDetails/:orderId' element={<OrderDetails />}></Route>
 
             <Route path='/AuthCustomerTest' element={<AuthCustomerTest />}></Route>

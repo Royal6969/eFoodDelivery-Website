@@ -94,6 +94,8 @@
   - [7.11. Añadiendo también el estado del pedido en la lista de pedidos](#711-añadiendo-también-el-estado-del-pedido-en-la-lista-de-pedidos)
   - [7.12. Añadir una mutación tipo PUT en el endpoint del pedido par actualizar el estado](#712-añadir-una-mutación-tipo-put-en-el-endpoint-del-pedido-par-actualizar-el-estado)
   - [7.13. Actualizar el estado del pedido con los botones](#713-actualizar-el-estado-del-pedido-con-los-botones)
+  - [7.14. Crear la página de los pedidos de todos los usuarios para el administrador](#714-crear-la-página-de-los-pedidos-de-todos-los-usuarios-para-el-administrador)
+    - [Prueba de ejecución](#prueba-de-ejecución-6)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -134,6 +136,7 @@
     - [Prueba de ejecución para probar el userId dinámico, el HOC, y las notificaciones toast](#prueba-de-ejecución-para-probar-el-userid-dinámico-el-hoc-y-las-notificaciones-toast)
   - [Pedido](#pedido)
     - [Prueba de ejecución para probar la creación de un objeto de pedido](#prueba-de-ejecución-para-probar-la-creación-de-un-objeto-de-pedido)
+    - [Prueba de ejecución de toda la parte relativa a los pedidos, desde la creación de un pedido hasta su entrega](#prueba-de-ejecución-de-toda-la-parte-relativa-a-los-pedidos-desde-la-creación-de-un-pedido-hasta-su-entrega)
 - [Extras](#extras)
   - [Crear una interfaz para las respuesta de la API](#crear-una-interfaz-para-las-respuesta-de-la-api)
   - [Evitar perder el contenido del almacenamiento de Redux con los valores del token del usuario](#evitar-perder-el-contenido-del-almacenamiento-de-redux-con-los-valores-del-token-del-usuario)
@@ -4159,6 +4162,22 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // 
 
 **Nota:** en lugar de añadir capturas de pantalla para demostrar el test de esto, en muy poco realizaré un test de toda esta parte aportando la grabación de pantalla corrrespondiente.
 
+## 7.14. Crear la página de los pedidos de todos los usuarios para el administrador
+
+Para ello, vamos a copiar/pegar la página que ya tenemos del *UserOrders* y la renombramos como *AllUsersOrders* para empezar a modificarla por dentro.
+
+Simplemente lo que habría que hacer, es eliminar el hook del useSelector() para recuperar el usuario almacenado en Redux, ya que a la query de obtener los pedidos, ya no hace falta pasarle ningún parámetro (ya que sin parámetro de userId obtiene por defecto todos los pedidos de la BBDD).
+
+Lo probamos y podemos comprar que funciona perfectamente!
+
+![](./img/76.png)
+
+**Nota:** a esta página habrá que añadirle en un futuro alguna páginación, ya que en caso de que los datos de la aplicación crezcan, al recuperar un número indefinido de pedidos, se podría colapsar la aplicación... 
+
+### Prueba de ejecución
+
+[Prueba de ejecución de toda la parte relativa a los pedidos, desde la creación de un pedido hasta su entrega](#prueba-de-ejecución-de-toda-la-parte-relativa-a-los-pedidos-desde-la-creación-de-un-pedido-hasta-su-entrega)
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -4263,6 +4282,10 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // 
 ![](./img/63.png)
 ![](./img/64.png)
 ![](./img/65.png)
+
+### Prueba de ejecución de toda la parte relativa a los pedidos, desde la creación de un pedido hasta su entrega
+
+[Prueba de Ejecución 5](https://private-user-images.githubusercontent.com/80839621/238314899-5fbbd155-2357-40b7-8e9b-14e4c280b119.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJrZXkxIiwiZXhwIjoxNjg0MTQ1NjY4LCJuYmYiOjE2ODQxNDUzNjgsInBhdGgiOiIvODA4Mzk2MjEvMjM4MzE0ODk5LTVmYmJkMTU1LTIzNTctNDBiNy04ZTliLTE0ZTRjMjgwYjExOS5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBSVdOSllBWDRDU1ZFSDUzQSUyRjIwMjMwNTE1JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDIzMDUxNVQxMDA5MjhaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1lODFmNzkzMWRmZGUwOTZhMWUyMTc1M2I4OWFkYzVlY2U0M2Y3YTdmNjEwY2NjYzMzNWI2NGEwYzhlYmFmZjJmJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.Ogp-47syC7hPyUSv3BVqnY9mG8iaT5Yu2Bm4vf2kL7Q)
 
 # Extras
 
