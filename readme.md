@@ -93,6 +93,7 @@
   - [7.10. Implementar la lógica para el cambio de los estados del pedido](#710-implementar-la-lógica-para-el-cambio-de-los-estados-del-pedido)
   - [7.11. Añadiendo también el estado del pedido en la lista de pedidos](#711-añadiendo-también-el-estado-del-pedido-en-la-lista-de-pedidos)
   - [7.12. Añadir una mutación tipo PUT en el endpoint del pedido par actualizar el estado](#712-añadir-una-mutación-tipo-put-en-el-endpoint-del-pedido-par-actualizar-el-estado)
+  - [7.13. Actualizar el estado del pedido con los botones](#713-actualizar-el-estado-del-pedido-con-los-botones)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -4028,7 +4029,7 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // 
     : apiDataResult.status! === StaticDetails_OrderStatus.STATUS_COOKING
       ? { color: 'warning', value: StaticDetails_OrderStatus.STATUS_READY }
     : apiDataResult.status! === StaticDetails_OrderStatus.STATUS_READY
-      && { color: 'succes', value: StaticDetails_OrderStatus.STATUS_COMPLETED }
+      && { color: 'success', value: StaticDetails_OrderStatus.STATUS_COMPLETED }
 
   return (
     <div>
@@ -4077,6 +4078,86 @@ updateOrderById: builder.mutation({
   invalidatesTags: ["Orders"] // when we make an update request, we need to invalidate tags
 })
 ```
+
+## 7.13. Actualizar el estado del pedido con los botones
+
+Ahora tenemos que implementar dos funcionalidades para poder cambiar el estado del pedido. Una para el botón de "cancelar pedido", y la otra para el botón que actualiza el estado del pedido al siguiente. Por lo cual, volvemos al componente del *OrderRecap.tsx* para hacer esto.
+
+```tsx
+function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // receiving props from DeliveryDetails component
+  ...
+  // useState() hook to check if functions are in process or not
+  const [isLoading, setIsLoading] = useState(false);
+  // define a constant to call the update mutation for the order details
+  const [updateOrder] = useUpdateOrderByIdMutation();
+  ...
+  // helper method to update cancel status order 
+  const handleUpdateCancelOrderStatus = async () => {
+    setIsLoading(true);
+    
+    await updateOrder({
+      orderId: apiDataResult.id,
+      orderStatus: StaticDetails_OrderStatus.STATUS_CANCELLED
+    });
+
+    setIsLoading(false);
+  }
+
+  // helper method to update next status order
+  const handleUpdateNextOrderStatus = async () => {
+    setIsLoading(true);
+
+    await updateOrder({
+      orderId: apiDataResult.id,
+      orderStatus: nextOrderStatus.value
+    });
+
+    setIsLoading(false);
+  }
+
+  return (
+    <div>
+      {isLoading && (
+        <BigLoader />
+      )}
+
+      {!isLoading && (
+        <>
+          ...
+          <div className='d-flex justify-content-between align-items-center mt-3'>
+            <button className='btn btn-secondary' onClick={() => navigate(-1)}>
+              Volver a los pedidos
+            </button>
+
+            {userDataFromAuthenticationStore.role == StaticDetails_Roles.ADMIN && (
+              <div className='d-flex'>
+                {(apiDataResult.status! !== StaticDetails_OrderStatus.STATUS_CANCELLED) && (apiDataResult.status! !== StaticDetails_OrderStatus.STATUS_COMPLETED) && (
+                  <button 
+                    className='btn btn-danger mx-2'
+                    onClick={handleUpdateCancelOrderStatus}
+                  >
+                    Cancelar Pedido
+                  </button>
+                )}
+                
+                <button
+                  className={`btn btn-${nextOrderStatus.color}`}
+                  onClick={handleUpdateNextOrderStatus}
+                >
+                  {nextOrderStatus.value}
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+      
+    </div>
+  )
+}
+```
+
+**Nota:** en lugar de añadir capturas de pantalla para demostrar el test de esto, en muy poco realizaré un test de toda esta parte aportando la grabación de pantalla corrrespondiente.
 
 # Webgrafía y Enlaces de Interés
 

@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { ApiResponse, CartItemInterface, UserInterface } from '../../../interfaces';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/redux/ReduxStorage';
 import { InputHelper } from '../../../helperMethods';
 import { MiniLoader } from '../common';
 import { useStripePaymentMutation } from '../../../APIs/PaymentAPI';
 import { useNavigate } from 'react-router-dom';
+import { RootState } from '../../../store/redux/ReduxStorage';
 
 
 function DeliveryDetails() {
