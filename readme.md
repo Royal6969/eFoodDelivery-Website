@@ -92,6 +92,7 @@
   - [7.9. Aplicar colores en botones según el estado de los pedidos](#79-aplicar-colores-en-botones-según-el-estado-de-los-pedidos)
   - [7.10. Implementar la lógica para el cambio de los estados del pedido](#710-implementar-la-lógica-para-el-cambio-de-los-estados-del-pedido)
   - [7.11. Añadiendo también el estado del pedido en la lista de pedidos](#711-añadiendo-también-el-estado-del-pedido-en-la-lista-de-pedidos)
+  - [7.12. Añadir una mutación tipo PUT en el endpoint del pedido par actualizar el estado](#712-añadir-una-mutación-tipo-put-en-el-endpoint-del-pedido-par-actualizar-el-estado)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -4060,6 +4061,22 @@ Justo lo que habíamos hecho antes en el *OrderRecap* para la etiqueta que mostr
 
 ![](./img/74.png)
 ![](./img/75.png)
+
+## 7.12. Añadir una mutación tipo PUT en el endpoint del pedido par actualizar el estado
+
+Aunque ya hemos hecho la lógica para que el estado del pedido vaya cambiando su estado dinámicamente cuando un administrador lo pulse, nos falta lo que sería la funcionalidad en el endpoint del pedido, así que volvemos al *OrderAPI* para añadir esta nueva mutación del tipo PUT request.
+
+```ts
+updateOrderById: builder.mutation({
+  query: (newOrderDetails) => ({
+    url: 'Order/' + newOrderDetails.orderId, // we have to append the orderId in the route
+    method: 'PUT',
+    headers: { "Content-type": "application/json" },
+    body: newOrderDetails
+  }),
+  invalidatesTags: ["Orders"] // when we make an update request, we need to invalidate tags
+})
+```
 
 # Webgrafía y Enlaces de Interés
 
