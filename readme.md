@@ -96,6 +96,7 @@
   - [7.13. Actualizar el estado del pedido con los botones](#713-actualizar-el-estado-del-pedido-con-los-botones)
   - [7.14. Crear la página de los pedidos de todos los usuarios para el administrador](#714-crear-la-página-de-los-pedidos-de-todos-los-usuarios-para-el-administrador)
     - [Prueba de ejecución](#prueba-de-ejecución-6)
+- [8. Página de la gestión de los productos](#8-página-de-la-gestión-de-los-productos)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -4177,6 +4178,78 @@ Lo probamos y podemos comprar que funciona perfectamente!
 ### Prueba de ejecución
 
 [Prueba de ejecución de toda la parte relativa a los pedidos, desde la creación de un pedido hasta su entrega](#prueba-de-ejecución-de-toda-la-parte-relativa-a-los-pedidos-desde-la-creación-de-un-pedido-hasta-su-entrega)
+
+# 8. Página de la gestión de los productos
+
+Ahora la idea es hacer una página tipo para que el administrador pueda gestionar los productos del negocio, es decir, ha llegado la hora de hacer el CRUD de los productos!
+
+Dentro de *pages*, vamos a crear una nueva subcarpeta llamada *product*, por ejemplo, y ahí dentro creamos la nueva página del *AdminProductsList.tsx*
+
+Y para empezar, tan sólo tenemos que volver a utilizar la query del endpoint del *ProductAPI* que nos devuelve todos los productos, y mostrarlos pantalla dinámicamente iterando sobre los productos con un .map() y lo haremos sobre alguna plantilla de Bootstrap que encontremos por Google para listar productos con imágenes.
+
+```tsx
+function AdminProductsList() {
+  // copied/pasted from same functionality in ProductsList component
+  const { data, isLoading } = useGetProductsQuery(null);
+
+  return (
+    <>
+      {isLoading && (
+        <BigLoader />
+      )}
+
+      {!isLoading && (
+        <div className="table p-5">
+          <div className="d-flex align-items-center justify-content-between">
+            <h1 className="text-warning">Listado de productos</h1>
+            <button className="btn btn-info">Nuevo producto</button>
+          </div>
+          
+          <div className="p-2">
+            <div className="row border">
+              <div className="col-1">Imagen</div>
+              <div className="col-1">ID</div>
+              <div className="col-2">Nombre</div>
+              <div className="col-2">Categoría</div>
+              <div className="col-1">Precio</div>
+              <div className="col-2">Etiqueta</div>
+              <div className="col-3">Accciones</div>
+            </div>
+            
+            {data.result.map(
+              (product: ProductInterface) => {
+                return (
+                  <div className="row border" key={product.id}>
+                    <div className="col-1">
+                      <img style={{ width: "100%", maxWidth: "120px" }} src={product.image} alt='' />
+                    </div>
+                    <div className="col-1">{product.id}</div>
+                    <div className="col-2">{product.name}</div>
+                    <div className="col-2">{product.category}</div>
+                    <div className="col-1">{product.price}€</div>
+                    <div className="col-2">{product.tag}</div>
+                    <div className="col-3">
+                      <button className="btn btn-warning">
+                        <i className="bi bi-pencil-fill"></i>
+                      </button>
+                      <button className="btn btn-danger mx-2">
+                        <i className="bi bi-trash-fill"></i>
+                      </button>
+                    </div>
+                  </div>
+                )
+              })
+            }
+
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+```
+
+![](./img/77.png)
 
 # Webgrafía y Enlaces de Interés
 

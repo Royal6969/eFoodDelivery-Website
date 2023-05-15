@@ -12,6 +12,7 @@ import OrderConfirmed from "./order/OrderConfirmed";
 import UserOrders from "./order/UserOrders";
 import OrderDetails from "./order/OrderDetails";
 import AllUsersOrders from "./order/AllUsersOrders";
+import AdminProductsList from "./product/AdminProductsList";
 
 
 export {
@@ -28,5 +29,6 @@ export {
   OrderConfirmed,
   UserOrders,
   OrderDetails,
-  AllUsersOrders
+  AllUsersOrders,
+  AdminProductsList
 }

@@ -22,7 +22,8 @@ import {
   ProductDetails, 
   Register, 
   OrderDetails,
-  AllUsersOrders
+  AllUsersOrders,
+  AdminProductsList
 } from '../pages';
 
 
@@ -90,6 +91,7 @@ function App() {
             <Route path='/order/UserOrders' element={<UserOrders />}></Route>
             <Route path='/order/AllUsersOrders' element={<AllUsersOrders />}></Route>
             <Route path='/order/OrderDetails/:orderId' element={<OrderDetails />}></Route>
+            <Route path='/product/AdminProductsList' element={<AdminProductsList />}></Route>
 
             <Route path='/AuthCustomerTest' element={<AuthCustomerTest />}></Route>
             <Route path='/AuthAdminTest' element={<AuthAdminTest />}></Route>
