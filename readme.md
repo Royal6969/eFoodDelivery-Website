@@ -99,6 +99,7 @@
 - [8. Página de la gestión de los productos](#8-página-de-la-gestión-de-los-productos)
   - [8.1. Crear la página del listado de productos del admin](#81-crear-la-página-del-listado-de-productos-del-admin)
   - [8.2. Crear la página del formulario para la cración y edición de los productos](#82-crear-la-página-del-formulario-para-la-cración-y-edición-de-los-productos)
+  - [8.3. Gestión y validación de la subida de imágenes en el formulario de producto](#83-gestión-y-validación-de-la-subida-de-imágenes-en-el-formulario-de-producto)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -4365,6 +4366,71 @@ function ProductForm() {
 ```
 
 ![](./img/78.png)
+
+## 8.3. Gestión y validación de la subida de imágenes en el formulario de producto
+
+```tsx
+function ProductForm() {
+  ...
+  // if the product image uploaded is valid, we have to store that in the local storage, because we don't want to directly call the server
+  const [imageFileStored, setImageFileStored] = useState<any>(); // first one is the image that we want to store in the DB
+  const [imageFileDisplayed, setImageFileDisplayed] = useState<string>(''); // and next one, what is the image that we want to display?
+  // what we want to do is when we upload a new image, we want to change the image to be stored
+  ...
+  // we need a helper method to handle the image uploaded
+  const handleProductImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // we want to get the first image file, so we will add a condition and that will retrieve the first image file that we've uploaded in our contant
+    const imageFile = event.target.files && event.target.files[0];
+
+    if (imageFile) {
+      // console.log(imageFile);
+      // with this console.log(imageFile) when we upload an image, we realize its type is "image/png"
+      // so we can split this type here and get the value at first index to get the file extension
+      const imageType = imageFile.type.split('/')[1];
+      // then we can add an array of what are the valid image types that we want
+      const validImageTypes = ['jpeg', 'jpg', 'png'];
+      // after that, we can add a filter on the valid imageType and if the value that we have for each one of the type
+      // if that matches the imageType that we're looking for, then we will store that in a constant called isImageFileTypeValid
+      const isImageFileTypeValid = validImageTypes.filter((event) => {
+        return event === imageType;
+      });
+      // also we can valid the image file size, if we check again the log, we realize it has a size, which is a multiplication
+      // we can make a little condition to avoid admins to upload image files with bigger sizes
+      if (imageFile.size > 1000 * 1024) {
+        setImageFileStored('');
+        toastNotifyHelper('La imagen debe pesar menos de 1MB', 'error');
+        
+        return null;
+      }
+      // we can also check if type is valid or not
+      else if (isImageFileTypeValid.length === 0) {
+        setImageFileStored('');
+        toastNotifyHelper('La imagen debe estar en formato jpeg, jpg o png', 'error');
+        
+        return null;
+      }
+
+      // now what we have to do is validations are working, so if everything is valid, we need to upload that image and store that locally for now
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(imageFile); // what that expects is the blob inside there that we have in the constant file
+      setImageFileStored(imageFile);
+      // so basically when we load, we want to set the image taht needs to be displayed as well when fileReader on load is triggered
+      fileReader.onload = (event) => {
+        // when the fileReader has the new file here, we can extract that image
+        const fileImageURL = event.target?.result as string;
+        // what we want to do is we want to set the image URL inside the set image to be displayed
+        setImageFileDisplayed(fileImageURL);
+      }
+    }
+  }
+
+  return (
+    ...
+  )
+}
+```
+
+![](./img/79.png)
 
 # Webgrafía y Enlaces de Interés
 
