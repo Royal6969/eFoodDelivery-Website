@@ -100,6 +100,7 @@
   - [8.1. Crear la página del listado de productos del admin](#81-crear-la-página-del-listado-de-productos-del-admin)
   - [8.2. Crear la página del formulario para la cración y edición de los productos](#82-crear-la-página-del-formulario-para-la-cración-y-edición-de-los-productos)
   - [8.3. Gestión y validación de la subida de imágenes en el formulario de producto](#83-gestión-y-validación-de-la-subida-de-imágenes-en-el-formulario-de-producto)
+  - [8.4. Añadir las mutaciones para el POST, PUT y DELETE en el endpoint de producto](#84-añadir-las-mutaciones-para-el-post-put-y-delete-en-el-endpoint-de-producto)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -4431,6 +4432,40 @@ function ProductForm() {
 ```
 
 ![](./img/79.png)
+
+## 8.4. Añadir las mutaciones para el POST, PUT y DELETE en el endpoint de producto
+
+Vamos al endpoint del *ProductAPI* para añadir tres mutaciones. Una para el POST cuando creamos un producto, otra para el PUT cuando actualizamos un producto, y otra para el DELETE cuando eliminamos un producto. Para ello, podemos partir de la base de copiar/pegar el PUT del *OrderAPI*
+
+```ts
+createProduct: builder.mutation({
+  query: (productData) => ({
+    url: 'Product',
+    method: 'POST',
+    // headers: { "Content-type": "application/json" }, // optional in this case
+    body: productData
+  }),
+  invalidatesTags: ["Products"] // when we make a post request, we need to invalidate tags
+}),
+updateProductById: builder.mutation({
+  query: ({ productData, productId }) => ({
+    url: 'Product/' + productId, // we have to append the productId in the route
+    method: 'PUT',
+    // headers: { "Content-type": "application/json" }, // optional in this case
+    body: productData
+  }),
+  invalidatesTags: ["Products"] // when we make an update request, we need to invalidate tags
+}),
+DeleteProductById: builder.mutation({
+  query: (productId) => ({
+    url: 'Product/' + productId, // we have to append the productId in the route
+    method: 'DELETE',
+    // headers: { "Content-type": "application/json" }, // optional in this case
+    // body: productData // it doesn't need a body
+  }),
+  invalidatesTags: ["Products"] // when we make a delete request, we need to invalidate tags
+})
+```
 
 # Webgrafía y Enlaces de Interés
 
