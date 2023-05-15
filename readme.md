@@ -97,6 +97,8 @@
   - [7.14. Crear la página de los pedidos de todos los usuarios para el administrador](#714-crear-la-página-de-los-pedidos-de-todos-los-usuarios-para-el-administrador)
     - [Prueba de ejecución](#prueba-de-ejecución-6)
 - [8. Página de la gestión de los productos](#8-página-de-la-gestión-de-los-productos)
+  - [8.1. Crear la página del listado de productos del admin](#81-crear-la-página-del-listado-de-productos-del-admin)
+  - [8.2. Crear la página del formulario para la cración y edición de los productos](#82-crear-la-página-del-formulario-para-la-cración-y-edición-de-los-productos)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -2083,7 +2085,7 @@ Dentro de esta nueva carpeta llamada por ejemplo *helperMethods*, vamos a crear 
 // if you remember in the onChange(), we used to pass that event
 // also when a form submit, we pass that event and we say preventDefault() to avoid submitting that form
 // so here, first we can get that event, and next we can get a data
-const InputHelper = (event: React.ChangeEvent<HTMLInputElement>, data: any) => { // so that way our change event will be functional for the input elements
+const InputHelper = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, data: any) => { // so that way our change event will be functional for the input elements
   // first we want to spread out the data that we receive here
   const tempData: any = { ...data }; // destructuring technique
   
@@ -4183,6 +4185,8 @@ Lo probamos y podemos comprar que funciona perfectamente!
 
 Ahora la idea es hacer una página tipo para que el administrador pueda gestionar los productos del negocio, es decir, ha llegado la hora de hacer el CRUD de los productos!
 
+## 8.1. Crear la página del listado de productos del admin
+
 Dentro de *pages*, vamos a crear una nueva subcarpeta llamada *product*, por ejemplo, y ahí dentro creamos la nueva página del *AdminProductsList.tsx*
 
 Y para empezar, tan sólo tenemos que volver a utilizar la query del endpoint del *ProductAPI* que nos devuelve todos los productos, y mostrarlos pantalla dinámicamente iterando sobre los productos con un .map() y lo haremos sobre alguna plantilla de Bootstrap que encontremos por Google para listar productos con imágenes.
@@ -4247,9 +4251,120 @@ function AdminProductsList() {
     </>
   )
 }
+
+export default checkAdminAuth(AdminProductsList)
 ```
 
 ![](./img/77.png)
+
+## 8.2. Crear la página del formulario para la cración y edición de los productos
+
+Este formulario de los productos lo utilizaremos tanto como para la creación de un producto como para su edición, y a esta nueva página de producto la llamaremos *ProductForm.tsx*, por ejemplo. 
+
+Para esta nueva página, igualmente como siempre, nos buscamos la plantilla de Bootstrap que más nos guste. Y en el *App* tenemos que definir dos rutas para esta misma página, una sin que se pase el productId como parámetro, y otra pasando el productId como parámetro, y la primera sería para crear un producto y la segunda para editar un producto, respectivamente.
+
+Para el tema de recoger lo que el usuario escribe en los inputs, tan sólo tenemos que ir a la página del *Register.tsx* y copiar/pegar lo que ya hicimos allí con los inputs usando nuestro propio helper method de los inputs.
+
+```tsx
+function ProductForm() {
+  // useState for the input fields to create/edit a product... copied/paste from Register.tsx
+  const [productInputs, setProductInputs] = useState({
+    name: '',
+    description: '',
+    tag: '',
+    category: '',
+    price: ''
+  });
+
+  // now we have to use our helper method called InputHandler... copied/pasted from Register.tsx
+  const handleProductInputs = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const tempData = InputHelper(event, productInputs);
+    setProductInputs(tempData);
+  }
+
+  return (
+    <div className='container p-3'>
+      <h3 className='offset-2 px-2 text-warning'>Añadir producto</h3>
+      
+      <form method='post' encType='multipart/form-data'>
+        <div className='row mt-3'>
+          <div className='col-md-5 offset-2'>
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Nombre'
+              required
+              name='name'
+              value={productInputs.name}
+              onChange={handleProductInputs}
+            />
+            
+            <textarea
+              style={{ resize: 'none' }}
+              className='form-control mt-3'
+              placeholder='Descripción'
+              rows={5}
+              name='description'
+              value={productInputs.description}
+              onChange={handleProductInputs}
+            ></textarea>
+            
+            <input
+              type='text'
+              className='form-control mt-3'
+              placeholder='Etiqueta'
+              name='tag'
+              value={productInputs.tag}
+              onChange={handleProductInputs}
+            />
+            
+            <input
+              type='text'
+              className='form-control mt-3'
+              placeholder='Categoría'
+              name='category'
+              value={productInputs.category}
+              onChange={handleProductInputs}
+            />
+            
+            <input
+              type='number'
+              className='form-control mt-3'
+              required
+              placeholder='Precio'
+              name='price'
+              value={productInputs.price}
+              onChange={handleProductInputs}
+            />
+            
+            <input type='file' className='form-control mt-3' />
+            
+            <div className='text-center'>
+              <button
+                style={{ width: '50%' }}
+                className='btn btn-warning mt-5'
+                type='submit'
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+          
+          <div className='col-md-5 text-center'>
+            <img
+              style={{ width: '100%', borderRadius: '30px' }}
+              src='https://via.placeholder.com/150'
+              alt=''
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+  )
+}
+```
+
+![](./img/78.png)
 
 # Webgrafía y Enlaces de Interés
 

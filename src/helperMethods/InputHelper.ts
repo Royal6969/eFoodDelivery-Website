@@ -5,7 +5,7 @@ import React from 'react'
 // if you remember in the onChange(), we used to pass that event
 // also when a form submit, we pass that event and we say preventDefault() to avoid submitting that form
 // so here, first we can get that event, and next we can get a data
-const InputHelper = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, data: any) => { // so that way our change event will be functional for the input elements
+const InputHelper = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, data: any) => { // so that way our change event will be functional for the input elements
   // first we want to spread out the data that we receive here
   const tempData: any = { ...data }; // destructuring technique
   

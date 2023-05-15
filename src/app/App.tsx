@@ -23,7 +23,8 @@ import {
   Register, 
   OrderDetails,
   AllUsersOrders,
-  AdminProductsList
+  AdminProductsList,
+  ProductForm
 } from '../pages';
 
 
@@ -92,6 +93,8 @@ function App() {
             <Route path='/order/AllUsersOrders' element={<AllUsersOrders />}></Route>
             <Route path='/order/OrderDetails/:orderId' element={<OrderDetails />}></Route>
             <Route path='/product/AdminProductsList' element={<AdminProductsList />}></Route>
+            <Route path='/product/ProductForm' element={<ProductForm />}></Route>
+            <Route path='/product/ProductForm/:productId' element={<ProductForm />}></Route>
 
             <Route path='/AuthCustomerTest' element={<AuthCustomerTest />}></Route>
             <Route path='/AuthAdminTest' element={<AuthAdminTest />}></Route>

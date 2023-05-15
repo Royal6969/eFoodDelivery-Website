@@ -13,6 +13,7 @@ import UserOrders from "./order/UserOrders";
 import OrderDetails from "./order/OrderDetails";
 import AllUsersOrders from "./order/AllUsersOrders";
 import AdminProductsList from "./product/AdminProductsList";
+import ProductForm from "./product/ProductForm";
 
 
 export {
@@ -30,5 +31,6 @@ export {
   UserOrders,
   OrderDetails,
   AllUsersOrders,
-  AdminProductsList
+  AdminProductsList,
+  ProductForm
 }
