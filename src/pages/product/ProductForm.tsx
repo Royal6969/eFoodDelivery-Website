@@ -1,9 +1,18 @@
 import React, { useState } from 'react'
 import { checkAdminAuth } from '../../HOC'
 import { InputHelper, toastNotifyHelper } from '../../helperMethods';
+import { useCreateProductMutation } from '../../APIs/ProductAPI';
+import { useNavigate } from 'react-router-dom';
 
 
 function ProductForm() {
+  // define useState() hook to set loading when this page needs
+  const [isLoading, setIsLoading] = useState(false);
+  // define useNavigate() hook to redirect admin user to AdminProductsList page once the new product object has been created
+  const navigate = useNavigate();
+  // define the mutation for POST endpoint to create a new product
+  const [createProduct] = useCreateProductMutation();
+
   // useState for the input fields to create/edit a product... copied/paste from Register.tsx
   const [productInputs, setProductInputs] = useState({
     name: '',
@@ -71,12 +80,45 @@ function ProductForm() {
     }
   }
 
+  // define a helper method to handle the submit button to create a new product
+  const handleCreateOrUpdateProduct = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    // check if there is no image uploaded
+    if (!imageFileStored) {
+      toastNotifyHelper('Por favor, tienes que subir una imagen del producto', 'error');
+      setIsLoading(false);
+      return null;
+    }
+
+    // then we have to construct the FormData
+    const productFormData = new FormData();
+    productFormData.append('Name', productInputs.name);
+    productFormData.append('Description', productInputs.description);
+    productFormData.append('Tag', productInputs.tag);
+    productFormData.append('Category', productInputs.category);
+    productFormData.append('Price', productInputs.price);
+    productFormData.append('Image', imageFileStored);
+
+    // now once we have the form data populated, we need to invoke the mutation for create products
+    const createProductResponse = await createProduct(productFormData);
+
+    // check if response is present to redirect admin user to AdminProductsList page
+    if (createProductResponse) {
+      setIsLoading(false);
+      navigate('/product/AdminProductsList');
+    }
+
+    setIsLoading(false);
+  }
+
 
   return (
     <div className='container p-3'>
       <h3 className='offset-2 px-2 text-warning'>Añadir producto</h3>
       
-      <form method='post' encType='multipart/form-data'>
+      <form method='post' encType='multipart/form-data' onSubmit={handleCreateOrUpdateProduct}>
         <div className='row mt-3'>
           <div className='col-md-5 offset-2'>
             <input

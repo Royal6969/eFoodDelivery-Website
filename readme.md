@@ -101,6 +101,7 @@
   - [8.2. Crear la página del formulario para la cración y edición de los productos](#82-crear-la-página-del-formulario-para-la-cración-y-edición-de-los-productos)
   - [8.3. Gestión y validación de la subida de imágenes en el formulario de producto](#83-gestión-y-validación-de-la-subida-de-imágenes-en-el-formulario-de-producto)
   - [8.4. Añadir las mutaciones para el POST, PUT y DELETE en el endpoint de producto](#84-añadir-las-mutaciones-para-el-post-put-y-delete-en-el-endpoint-de-producto)
+  - [8.5. Implementar la funcionalidad de crear un producto](#85-implementar-la-funcionalidad-de-crear-un-producto)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -4466,6 +4467,48 @@ DeleteProductById: builder.mutation({
   invalidatesTags: ["Products"] // when we make a delete request, we need to invalidate tags
 })
 ```
+
+## 8.5. Implementar la funcionalidad de crear un producto
+
+Volvemos a la página de *ProductForm.tsx* para implementar la funcionalidad de crear un nuevo producto
+
+```tsx
+// define a helper method to handle the submit button to create a new product
+const handleCreateOrUpdateProduct = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+  setIsLoading(true);
+
+  // check if there is no image uploaded
+  if (!imageFileStored) {
+    toastNotifyHelper('Por favor, tienes que subir una imagen del producto', 'error');
+    setIsLoading(false);
+    return null;
+  }
+
+  // then we have to construct the FormData
+  const productFormData = new FormData();
+  productFormData.append('Name', productInputs.name);
+  productFormData.append('Description', productInputs.description);
+  productFormData.append('Tag', productInputs.tag);
+  productFormData.append('Category', productInputs.category);
+  productFormData.append('Price', productInputs.price);
+  productFormData.append('Image', imageFileStored);
+
+  // now once we have the form data populated, we need to invoke the mutation for create products
+  const createProductResponse = await createProduct(productFormData);
+
+  // check if response is present to redirect admin user to AdminProductsList page
+  if (createProductResponse) {
+    setIsLoading(false);
+    navigate('/product/AdminProductsList');
+  }
+
+  setIsLoading(false);
+}
+```
+
+![](./img/80.png)
+![](./img/81.png)
 
 # Webgrafía y Enlaces de Interés
 
