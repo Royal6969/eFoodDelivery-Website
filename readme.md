@@ -102,6 +102,8 @@
   - [8.3. Gestión y validación de la subida de imágenes en el formulario de producto](#83-gestión-y-validación-de-la-subida-de-imágenes-en-el-formulario-de-producto)
   - [8.4. Añadir las mutaciones para el POST, PUT y DELETE en el endpoint de producto](#84-añadir-las-mutaciones-para-el-post-put-y-delete-en-el-endpoint-de-producto)
   - [8.5. Implementar la funcionalidad de crear un producto](#85-implementar-la-funcionalidad-de-crear-un-producto)
+  - [8.6. Implementar la funcionalidad de editar un producto](#86-implementar-la-funcionalidad-de-editar-un-producto)
+    - [Prueba de ejecución](#prueba-de-ejecución-7)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -143,6 +145,8 @@
   - [Pedido](#pedido)
     - [Prueba de ejecución para probar la creación de un objeto de pedido](#prueba-de-ejecución-para-probar-la-creación-de-un-objeto-de-pedido)
     - [Prueba de ejecución de toda la parte relativa a los pedidos, desde la creación de un pedido hasta su entrega](#prueba-de-ejecución-de-toda-la-parte-relativa-a-los-pedidos-desde-la-creación-de-un-pedido-hasta-su-entrega)
+  - [CRUD de Producto](#crud-de-producto)
+    - [Prueba de ejecución para probar la funcionalidad de editar un producto](#prueba-de-ejecución-para-probar-la-funcionalidad-de-editar-un-producto)
 - [Extras](#extras)
   - [Crear una interfaz para las respuesta de la API](#crear-una-interfaz-para-las-respuesta-de-la-api)
   - [Evitar perder el contenido del almacenamiento de Redux con los valores del token del usuario](#evitar-perder-el-contenido-del-almacenamiento-de-redux-con-los-valores-del-token-del-usuario)
@@ -4509,6 +4513,102 @@ const handleCreateOrUpdateProduct = async (event: React.FormEvent<HTMLFormElemen
 
 ![](./img/80.png)
 ![](./img/81.png)
+![](./img/82.png)
+
+## 8.6. Implementar la funcionalidad de editar un producto
+
+Para editar un producto, dejamos definido en el *AdminProductsList* que el productId se pasara como parámetro por la ruta, de modo que en el *ProductForm* tendremos que recogerlo con el hook del useParams(). Después con ese productId llamaremos a la mutación de actualizar el producto. Y para que al navegar a tal producto en concreto ya nos aparezcan sus datos colocados en los campos, usaremos el hook del useEffect()
+
+```tsx
+function ProductForm() {
+  ...
+  // define the mutation for PUT endpoint to update a product
+  const [updateProduct] = useUpdateProductByIdMutation();
+  // define useParams() hook to receive the productId through the route
+  const { productId } = useParams();
+  // once we have the productId, we need to call the query for GetProductById(productId)
+  const { data } = useGetProductByIdQuery(productId);
+
+  // whenever the data is populated here, we want to useEffect() on that and we want to load all the state,
+  // which will be the local state for all the input parameters and that is the setProductInputs we will invoke that
+  useEffect(() => {
+    if (data && data.result) {
+      // if data is populated then we basically can create a temp data with all the values that we need, and we can assign that
+      const productTempData = {
+        name: data.result.name,
+        description: data.result.description,
+        tag: data.result.tag,
+        category: data.result.category,
+        price: data.result.price
+      }
+
+      setProductInputs(productTempData);
+      // finally, when we're setting the data, we also need to populate the image with the URL inside image field that we get in the response
+      setImageFileDisplayed(data.result.image);
+    }
+  
+  }, [data]); // this useEffect() will be called when the data is modified
+  ...
+  // define a helper method to handle the submit button to create a new product
+  const handleCreateOrUpdateProduct = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    // check if there is no image uploaded and check that productId should not be present
+    if (!imageFileStored && !productId) {
+      toastNotifyHelper('Por favor, tienes que subir una imagen del producto', 'error');
+      setIsLoading(false);
+      return null;
+    }
+
+    // then we have to construct the FormData
+    const productFormData = new FormData();
+    productFormData.append('Name', productInputs.name);
+    productFormData.append('Description', productInputs.description);
+    productFormData.append('Tag', productInputs.tag);
+    productFormData.append('Category', productInputs.category);
+    productFormData.append('Price', productInputs.price);
+    // when we're updating, if the imageFileStored is empty, the we don't want to append that file
+    if (imageFileDisplayed) 
+      productFormData.append('Image', imageFileStored);
+
+    // define a variable to save the response
+    let productResponse;
+    
+    // to check in what scenario we are, we can check if the productId is present or not
+    if (productId) { // update scenario
+      productFormData.append('Id', productId);
+      // once we have the productId appended, we need to invoke the mutation for update products
+      productResponse = await updateProduct({
+        data: productFormData,
+        productId
+      });
+    }
+    else { // create scenario
+      // now once we have the form data populated, we need to invoke the mutation for create products
+      productResponse = await createProduct(productFormData);
+      // we can also check response to see if it was success or error, and notify accordingly
+      toastNotifyHelper('El nuevo producto ha sido creado correctamente', 'success');
+    }
+
+    // check if response is present to redirect admin user to AdminProductsList page
+    if (productResponse) {
+      setIsLoading(false);
+      navigate('/product/AdminProductsList');
+    }
+
+    setIsLoading(false);
+  }
+
+  return (
+    ...
+  )
+}
+```
+
+### Prueba de ejecución
+
+[Prueba de ejecución para probar la funcionalidad de editar un producto](#prueba-de-ejecución-para-probar-la-funcionalidad-de-editar-un-producto)
 
 # Webgrafía y Enlaces de Interés
 
@@ -4618,6 +4718,16 @@ const handleCreateOrUpdateProduct = async (event: React.FormEvent<HTMLFormElemen
 ### Prueba de ejecución de toda la parte relativa a los pedidos, desde la creación de un pedido hasta su entrega
 
 [Prueba de Ejecución 5](https://private-user-images.githubusercontent.com/80839621/238314899-5fbbd155-2357-40b7-8e9b-14e4c280b119.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJrZXkxIiwiZXhwIjoxNjg0MTQ1NjY4LCJuYmYiOjE2ODQxNDUzNjgsInBhdGgiOiIvODA4Mzk2MjEvMjM4MzE0ODk5LTVmYmJkMTU1LTIzNTctNDBiNy04ZTliLTE0ZTRjMjgwYjExOS5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBSVdOSllBWDRDU1ZFSDUzQSUyRjIwMjMwNTE1JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDIzMDUxNVQxMDA5MjhaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1lODFmNzkzMWRmZGUwOTZhMWUyMTc1M2I4OWFkYzVlY2U0M2Y3YTdmNjEwY2NjYzMzNWI2NGEwYzhlYmFmZjJmJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.Ogp-47syC7hPyUSv3BVqnY9mG8iaT5Yu2Bm4vf2kL7Q)
+
+## CRUD de Producto
+
+### Prueba de ejecución para probar la funcionalidad de editar un producto
+
+![](./img/83.png)
+![](./img/84.png)
+![](./img/85.png)
+![](./img/86.png)
+![](./img/87.png)
 
 # Extras
 

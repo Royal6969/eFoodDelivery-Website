@@ -25,20 +25,20 @@ const productAPI = createApi({
       providesTags: ["Products"]
     }),
     createProduct: builder.mutation({
-      query: (productData) => ({
+      query: (data) => ({
         url: 'Product',
         method: 'POST',
         // headers: { "Content-type": "application/json" }, // optional in this case
-        body: productData
+        body: data
       }),
       invalidatesTags: ["Products"] // when we make a post request, we need to invalidate tags
     }),
     updateProductById: builder.mutation({
-      query: ({ productData, productId }) => ({
+      query: ({ data, productId }) => ({
         url: 'Product/' + productId, // we have to append the productId in the route
         method: 'PUT',
         // headers: { "Content-type": "application/json" }, // optional in this case
-        body: productData
+        body: data
       }),
       invalidatesTags: ["Products"] // when we make an update request, we need to invalidate tags
     }),
@@ -47,7 +47,7 @@ const productAPI = createApi({
         url: 'Product/' + productId, // we have to append the productId in the route
         method: 'DELETE',
         // headers: { "Content-type": "application/json" }, // optional in this case
-        // body: productData // it doesn't need a body
+        // body: data // it doesn't need a body
       }),
       invalidatesTags: ["Products"] // when we make a delete request, we need to invalidate tags
     })

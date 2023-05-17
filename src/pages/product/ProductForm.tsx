@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { checkAdminAuth } from '../../HOC'
 import { InputHelper, toastNotifyHelper } from '../../helperMethods';
-import { useCreateProductMutation } from '../../APIs/ProductAPI';
-import { useNavigate } from 'react-router-dom';
+import { useCreateProductMutation, useGetProductByIdQuery, useUpdateProductByIdMutation } from '../../APIs/ProductAPI';
+import { useNavigate, useParams } from 'react-router-dom';
+import { BigLoader } from '../../components/view/common';
 
 
 function ProductForm() {
@@ -12,6 +13,33 @@ function ProductForm() {
   const navigate = useNavigate();
   // define the mutation for POST endpoint to create a new product
   const [createProduct] = useCreateProductMutation();
+  // define the mutation for PUT endpoint to update a product
+  const [updateProduct] = useUpdateProductByIdMutation();
+  // define useParams() hook to receive the productId through the route
+  const { productId } = useParams();
+  // once we have the productId, we need to call the query for GetProductById(productId)
+  const { data } = useGetProductByIdQuery(productId);
+
+  // whenever the data is populated here, we want to useEffect() on that and we want to load all the state,
+  // which will be the local state for all the input parameters and that is the setProductInputs we will invoke that
+  useEffect(() => {
+    if (data && data.result) {
+      // if data is populated then we basically can create a temp data with all the values that we need, and we can assign that
+      const productTempData = {
+        name: data.result.name,
+        description: data.result.description,
+        tag: data.result.tag,
+        category: data.result.category,
+        price: data.result.price
+      }
+
+      setProductInputs(productTempData);
+      // finally, when we're setting the data, we also need to populate the image with the URL inside image field that we get in the response
+      setImageFileDisplayed(data.result.image);
+    }
+  
+  }, [data]); // this useEffect() will be called when the data is modified
+  
 
   // useState for the input fields to create/edit a product... copied/paste from Register.tsx
   const [productInputs, setProductInputs] = useState({
@@ -85,8 +113,8 @@ function ProductForm() {
     event.preventDefault();
     setIsLoading(true);
 
-    // check if there is no image uploaded
-    if (!imageFileStored) {
+    // check if there is no image uploaded and check that productId should not be present
+    if (!imageFileStored && !productId) {
       toastNotifyHelper('Por favor, tienes que subir una imagen del producto', 'error');
       setIsLoading(false);
       return null;
@@ -99,13 +127,31 @@ function ProductForm() {
     productFormData.append('Tag', productInputs.tag);
     productFormData.append('Category', productInputs.category);
     productFormData.append('Price', productInputs.price);
-    productFormData.append('Image', imageFileStored);
+    // when we're updating, if the imageFileStored is empty, the we don't want to append that file
+    if (imageFileDisplayed) 
+      productFormData.append('Image', imageFileStored);
 
-    // now once we have the form data populated, we need to invoke the mutation for create products
-    const createProductResponse = await createProduct(productFormData);
+    // define a variable to save the response
+    let productResponse;
+    
+    // to check in what scenario we are, we can check if the productId is present or not
+    if (productId) { // update scenario
+      productFormData.append('Id', productId);
+      // once we have the productId appended, we need to invoke the mutation for update products
+      productResponse = await updateProduct({
+        data: productFormData,
+        productId
+      });
+    }
+    else { // create scenario
+      // now once we have the form data populated, we need to invoke the mutation for create products
+      productResponse = await createProduct(productFormData);
+      // we can also check response to see if it was success or error, and notify accordingly
+      toastNotifyHelper('El nuevo producto ha sido creado correctamente', 'success');
+    }
 
     // check if response is present to redirect admin user to AdminProductsList page
-    if (createProductResponse) {
+    if (productResponse) {
       setIsLoading(false);
       navigate('/product/AdminProductsList');
     }
@@ -115,12 +161,21 @@ function ProductForm() {
 
 
   return (
-    <div className='container p-3'>
-      <h3 className='offset-2 px-2 text-warning'>Añadir producto</h3>
+    <div className='container mt-3 p-3 bg-light'>
+      {isLoading && (
+        <BigLoader />
+      )}
+
+      <h3 className='px-2 text-warning'>
+        {productId
+          ? 'Añadir producto'
+          : 'Editar producto'
+        }
+      </h3>
       
       <form method='post' encType='multipart/form-data' onSubmit={handleCreateOrUpdateProduct}>
         <div className='row mt-3'>
-          <div className='col-md-5 offset-2'>
+          <div className='col-md-7'>
             <input
               type='text'
               className='form-control'
@@ -132,7 +187,7 @@ function ProductForm() {
             />
             
             <textarea
-            style={{ resize: 'none' }}
+              style={{ resize: 'none' }}
               className='form-control mt-3'
               placeholder='Descripción'
               rows={5}
@@ -174,15 +229,28 @@ function ProductForm() {
               className='form-control mt-3'
               onChange={handleProductImage}
             />
-            
-            <div className='text-center'>
-              <button
-                style={{ width: '50%' }}
-                className='btn btn-warning mt-5'
-                type='submit'
-              >
-                Guardar
-              </button>
+
+            <div className="row">
+              <div className="col-6">
+                <button
+                  className='btn btn-warning mt-3 form-control'
+                  type='submit'
+                >
+                  {productId
+                    ? 'Editar'
+                    : 'Crear'
+                  }
+                </button>
+              </div>
+
+              <div className="col-6">
+                <a 
+                  className='btn btn-secondary mt-3 form-control' 
+                  onClick={() => navigate('/product/AdminProductsList')}
+                >
+                  Volver a los productos
+                </a>
+              </div>
             </div>
           </div>
           
