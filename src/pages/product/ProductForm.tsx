@@ -4,7 +4,17 @@ import { InputHelper, toastNotifyHelper } from '../../helperMethods';
 import { useCreateProductMutation, useGetProductByIdQuery, useUpdateProductByIdMutation } from '../../APIs/ProductAPI';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BigLoader } from '../../components/view/common';
+import { StaticDetails_ProductCategory } from '../../Utils/StaticDetails';
 
+
+// define local array with product categories
+const productCategories = [
+  StaticDetails_ProductCategory.CATEGORY_BREAKFAST,
+  StaticDetails_ProductCategory.CATEGORY_LUNCH,
+  StaticDetails_ProductCategory.CATEGORY_DINNER,
+  StaticDetails_ProductCategory.CATEGORY_DESSERT,
+  StaticDetails_ProductCategory.CATEGORY_DRINK
+]
 
 function ProductForm() {
   // define useState() hook to set loading when this page needs
@@ -46,9 +56,12 @@ function ProductForm() {
     name: '',
     description: '',
     tag: '',
-    category: '',
+    category: productCategories[0], // breakfast category selected by default
     price: ''
   });
+
+  // useState for the category field to create/edit a product, to select one of them in a dropdown button
+  const [categoryInput, setCategoryInput] = useState();
 
   // if the product image uploaded is valid, we have to store that in the local storage, because we don't want to directly call the server
   const [imageFileStored, setImageFileStored] = useState<any>(); // first one is the image that we want to store in the DB
@@ -124,7 +137,7 @@ function ProductForm() {
     const productFormData = new FormData();
     productFormData.append('Name', productInputs.name);
     productFormData.append('Description', productInputs.description);
-    productFormData.append('Tag', productInputs.tag);
+    productFormData.append('Tag', productInputs.tag ?? ''); // if tag is null, we store an empty string
     productFormData.append('Category', productInputs.category);
     productFormData.append('Price', productInputs.price);
     // when we're updating, if the imageFileStored is empty, the we don't want to append that file
@@ -205,14 +218,19 @@ function ProductForm() {
               onChange={handleProductInputs}
             />
             
-            <input
-              type='text'
-              className='form-control mt-3'
+            <select
+              className='form-control mt-3 form-control'
               placeholder='Categoría'
               name='category'
               value={productInputs.category}
               onChange={handleProductInputs}
-            />
+            >
+              {productCategories.map(
+                (category) => (
+                  <option value={category}>{category}</option>
+                ))
+              }
+            </select>
             
             <input
               type='number'

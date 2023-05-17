@@ -104,6 +104,7 @@
   - [8.5. Implementar la funcionalidad de crear un producto](#85-implementar-la-funcionalidad-de-crear-un-producto)
   - [8.6. Implementar la funcionalidad de editar un producto](#86-implementar-la-funcionalidad-de-editar-un-producto)
     - [Prueba de ejecución](#prueba-de-ejecución-7)
+  - [8.7. Implementar un botón dropdown para seleccionar una categoría ya existente](#87-implementar-un-botón-dropdown-para-seleccionar-una-categoría-ya-existente)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -4609,6 +4610,33 @@ function ProductForm() {
 ### Prueba de ejecución
 
 [Prueba de ejecución para probar la funcionalidad de editar un producto](#prueba-de-ejecución-para-probar-la-funcionalidad-de-editar-un-producto)
+
+## 8.7. Implementar un botón dropdown para seleccionar una categoría ya existente
+
+A la hora de crear/editar un producto, respecto al campo de la categoría, tiene más sentido predefinir una serie de categorías, y que el administrador tan sólo tenga que seleccionar una de ellas, y que no tenga que introducirla manualmente. Para ello, necesitamos un nuevo enumerable en nuestro archivo del *StaticDetails*
+
+```ts
+export enum StaticDetails_ProductCategory {
+  CATEGORY_BREAKFAST = 'Desayuno',
+  CATEGORY_LUNCH = 'Almuerzo',
+  CATEGORY_DINNER = 'Cena',
+  CATEGORY_DESSERT = 'Postre',
+  CATEGORY_DRINK = 'Bebida'
+}
+```
+
+Y luego en el useState() de guarda los inputs del productInputs, especificamos un valor por defecto del array (el primero, el de Desayuno)
+
+```tsx
+// useState for the input fields to create/edit a product... copied/paste from Register.tsx
+const [productInputs, setProductInputs] = useState({
+  name: '',
+  description: '',
+  tag: '',
+  category: productCategories[0], // breakfast category selected by default
+  price: ''
+});
+```
 
 # Webgrafía y Enlaces de Interés
 
