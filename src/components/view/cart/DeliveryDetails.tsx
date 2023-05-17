@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ApiResponse, CartItemInterface, UserInterface } from '../../../interfaces';
 import { useSelector } from 'react-redux';
 import { InputHelper } from '../../../helperMethods';
@@ -54,6 +54,16 @@ function DeliveryDetails() {
     setDeliveryInput(tempData);
   }
   // and after that, all we have to do is call this method inside each input element
+
+  // we can define a useEffect() hook to avoid to lose data in input fields if the user refresh the page
+  useEffect(() => {
+    setDeliveryInput({
+      name: userDataFromAuthenticationStore.fullName,
+      email: userDataFromAuthenticationStore.email,
+      phone: ''
+    })
+  }, [userDataFromAuthenticationStore])
+  
 
   // this state is to add a loader when user click the final button to place the order
   const [loading, setLoading] = useState(false);

@@ -1,9 +1,10 @@
 import React from 'react'
-import { useGetProductsQuery } from '../../APIs/ProductAPI';
+import { useDeleteProductByIdMutation, useGetProductsQuery } from '../../APIs/ProductAPI';
 import { BigLoader } from '../../components/view/common';
 import { ProductInterface } from '../../interfaces';
 import { checkAdminAuth } from '../../HOC';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 
 function AdminProductsList() {
@@ -11,6 +12,21 @@ function AdminProductsList() {
   const { data, isLoading } = useGetProductsQuery(null);
   // to go to ProductForm page we need the useNavigate() hook
   const navigate = useNavigate();
+  // define the mutation for DELETE endpoint to delete a product
+  const [deleteProduct] = useDeleteProductByIdMutation();
+
+  // copied/paste from React Promise Toast Notifications
+  const handleDeleteProduct = async (productId: number) => {
+    toast.promise(
+      deleteProduct(productId),
+      {
+        pending: 'Intentando eliminar el producto...',
+        success: 'Producto eliminado correctamente',
+        error: 'Error al eliminar el producto'
+      },
+      { theme: 'dark' }
+    )
+  }
 
 
   return (
@@ -49,6 +65,7 @@ function AdminProductsList() {
                     <div className='col-1'>
                       <img style={{ width: '100%', maxWidth: '120px' }} src={product.image} alt='' />
                     </div>
+                    
                     <div className='col-1'>{product.id}</div>
                     <div className='col-2'>{product.name}</div>
                     <div className='col-2'>{product.category}</div>
@@ -58,7 +75,11 @@ function AdminProductsList() {
                       <button className='btn btn-warning'>
                         <i className='bi bi-pencil-fill' onClick={() => navigate('/product/ProductForm/' + product.id)}></i>
                       </button>
-                      <button className='btn btn-danger mx-2'>
+
+                      <button 
+                        className='btn btn-danger mx-2'
+                        onClick={() => handleDeleteProduct(product.id)}
+                      >
                         <i className='bi bi-trash-fill'></i>
                       </button>
                     </div>

@@ -105,6 +105,7 @@
   - [8.6. Implementar la funcionalidad de editar un producto](#86-implementar-la-funcionalidad-de-editar-un-producto)
     - [Prueba de ejecución](#prueba-de-ejecución-7)
   - [8.7. Implementar un botón dropdown para seleccionar una categoría ya existente](#87-implementar-un-botón-dropdown-para-seleccionar-una-categoría-ya-existente)
+  - [8.8. Implementar la funcionalidad de eliminar un producto (sin confirmación activa)](#88-implementar-la-funcionalidad-de-eliminar-un-producto-sin-confirmación-activa)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -134,6 +135,7 @@
     - [26. Passing parameter through pages with useNavigation() and receiving them with useLocation()](#26-passing-parameter-through-pages-with-usenavigation-and-receiving-them-with-uselocation)
     - [27. Stripe --\> tarjetas de prueba por marcas](#27-stripe----tarjetas-de-prueba-por-marcas)
     - [28. Stripe Payment Intents --\> stripe.confirmPayment(options)](#28-stripe-payment-intents----stripeconfirmpaymentoptions)
+    - [29. Handling promises with react toast notifications](#29-handling-promises-with-react-toast-notifications)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [Lista de productos y Detalles del producto](#lista-de-productos-y-detalles-del-producto)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -4638,6 +4640,28 @@ const [productInputs, setProductInputs] = useState({
 });
 ```
 
+## 8.8. Implementar la funcionalidad de eliminar un producto (sin confirmación activa)
+
+Para eliminar un producto desde la misma lista de productos sin una confirmación activa, tan sólo tendríamos que definir la mutación del DELETE del endpoint del *ProductAPI*, y podríamos utilizar las *[Promise toast notifications](https://fkhadra.github.io/react-toastify/promise/)*
+
+```tsx
+// define the mutation for DELETE endpoint to delete a product
+const [deleteProduct] = useDeleteProductByIdMutation();
+
+// copied/paste from React Promise Toast Notifications
+const handleDeleteProduct = async (productId: number) => {
+  toast.promise(
+    deleteProduct(productId),
+    {
+      pending: 'Intentando eliminar el producto...',
+      success: 'Producto eliminado correctamente',
+      error: 'Error al eliminar el producto'
+    },
+    { theme: 'dark' }
+  )
+}
+```
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -4695,6 +4719,8 @@ const [productInputs, setProductInputs] = useState({
 ### [27. Stripe --> tarjetas de prueba por marcas](https://stripe.com/docs/testing#cards)
 
 ### [28. Stripe Payment Intents --> stripe.confirmPayment(options)](https://stripe.com/docs/js/payment_intents)
+
+### [29. Handling promises with react toast notifications](https://fkhadra.github.io/react-toastify/promise/)
 
 # Pruebas de Ejecución
 
