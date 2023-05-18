@@ -110,6 +110,7 @@
     - [Prueba de ejecución](#prueba-de-ejecución-8)
 - [9. Mejorando el Home](#9-mejorando-el-home)
   - [9.1. Añadiendo un banner](#91-añadiendo-un-banner)
+  - [9.2. Recoger y almacenar en Redux lo que escriba el ususario en el campo de búsqueda](#92-recoger-y-almacenar-en-redux-lo-que-escriba-el-ususario-en-el-campo-de-búsqueda)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -4831,6 +4832,65 @@ Para los estilos, en vez de crear un archivo de css específicamente para el Ban
 ```
 
 ![](./img/89.png)
+
+## 9.2. Recoger y almacenar en Redux lo que escriba el ususario en el campo de búsqueda
+
+Para manejar el input de la búsqueda, podemos crear un useState() para capturar y guardar lo que escriba del usuario, y después añadiremos una nueva acción de búsqueda y filtrado al reducer del producto.
+
+De modo que, primero en el *ProductSlice.ts*
+
+```ts
+export const productSlice = createSlice({
+  ...
+  reducers: { // here we want the reducers that will be responsible for managing the state
+    ...
+    setProductSearch: (state, action) => {
+      state.bannerSearch = action.payload;
+    }
+  }
+});
+```
+
+Y luego en el *Banner.tsx*
+
+```tsx
+function Banner() {
+  // define a local state with the name of value for the searchBox
+  const [searchInput, setSearchInput] = useState('');
+  // define the useDispatch() hook to call the productSearch in product reducers
+  const dispatch = useDispatch();
+
+  const handleProductSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // whenever the serach input updates, we want to dispatch productSearch event
+    dispatch(setProductSearch(event.target.value));
+    // save the input value in the local state
+    setSearchInput(event.target.value);
+  }
+
+  return (
+    <div className='custom-banner'>
+      <div style={{ width: '400px', height: '30vh' }} className='m-auto d-flex align-items-center'>
+        <div className='d-flex align-items-center' style={{ width: '100%' }}>
+          <input
+            type={'text'}
+            style={{ width: '100%', padding: '20px 20px' }}
+            className='form-control rounded-pill'
+            placeholder='Busca tus platos favoritos 😋'
+            value={searchInput}
+            onChange={handleProductSearch}
+          />
+
+          <span style={{ position: 'relative', left: '-43px' }}>
+            <i className='bi bi-search'></i>
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+![](./img/90.png)
 
 # Webgrafía y Enlaces de Interés
 
