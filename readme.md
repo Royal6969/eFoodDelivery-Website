@@ -113,6 +113,7 @@
   - [9.2. Recoger y almacenar en Redux lo que escriba el ususario en el campo de búsqueda](#92-recoger-y-almacenar-en-redux-lo-que-escriba-el-ususario-en-el-campo-de-búsqueda)
   - [9.3. Implementar la lógica de la búsqueda con filtrado](#93-implementar-la-lógica-de-la-búsqueda-con-filtrado)
   - [9.4. Obtener las categorías de cada producto y mostrarlas en botones](#94-obtener-las-categorías-de-cada-producto-y-mostrarlas-en-botones)
+  - [9.5. Implementar la lógica del filtrado por categorías y mostrar sólo los productos de la categoría seleccionada](#95-implementar-la-lógica-del-filtrado-por-categorías-y-mostrar-sólo-los-productos-de-la-categoría-seleccionada)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -5042,6 +5043,115 @@ function ProductsList() {
 ```
 
 ![](./img/92.png)
+
+## 9.5. Implementar la lógica del filtrado por categorías y mostrar sólo los productos de la categoría seleccionada
+
+Continuando ahora con lo anterior, debemos crear una nueva función para recoger la categoría que el usuario seleccione, y en base a ella, mostrar sólo los productos que pertenezcan a esa categoría
+
+```tsx
+function ProductsList() {
+  ...
+  // we can add a useEffect() based on the value of serachProduct
+  // so whenever that is updated, we want to set the local product
+  useEffect(() => {
+    if (data && data.result) {
+      // define a constant to save and call the result for our filtered search
+      const tempProductsArray = handleFilteredSearch(searchProduct, selectCategory);
+      // then we want to set the local products with the tempProductsArray
+      setProducts(tempProductsArray);
+    }
+  }, [searchProduct]);
+  
+  // define a helper method to handle the filtered search
+  const handleFilteredSearch = (search: string, category: string) => {
+    // let tempProducts = [...data.result];
+    // we need to handle the functionality so it handles both, the category and the search that we have
+    let tempProducts = category === 'Todo'
+      ? [...data.result]
+      : data.result.filter((product: ProductInterface) => 
+        product.category.toUpperCase() === category.toUpperCase()
+      );
+    // basically if category is 'Todo', we will select all the products, 
+    // but if that isn't the case, we will filter based on the category,
+    // and we will store that in a temporary array
+
+    // now we implement the serach functionality
+    if (search) { // if search is populated...
+      // ... then we want to search for that particular field in our products and filter that
+      // we're going to filter only for product name
+      const tempSearchedProducts = [...tempProducts];
+      tempProducts = tempSearchedProducts.filter(
+        (product: ProductInterface) => product.name.toUpperCase().includes(search.toUpperCase())
+      );
+    }
+    
+    return tempProducts;
+  }
+
+  // define a helper method to handle the category that user selects
+  const handleCategorySelected = (index: number) => {
+    // we want to get all the buttons based on that class 'category-buttons'
+    const categoryButtons = document.querySelectorAll('.category-buttons');
+    let category; // category will basically populate which category is currently selected
+
+    categoryButtons.forEach(
+      (button, indexAUX) => {
+        if (indexAUX === index) { // in that case we want to add the active class
+          button.classList.add('active');
+          
+          if (indexAUX === 0) { // in that case we have to set the category
+            category = 'Todo';
+          }
+          else {
+            category = categoriesList[indexAUX];
+          }
+          // once we get that, then we can populate our local state for the selected category
+          setSelectCategory(category);
+
+          // when we're updating the category, we should call the handleFilteredSearch
+          const tempFilters = handleFilteredSearch(searchProduct, category);
+          // once we get teh result back here, we have to set the products
+          setProducts(tempFilters);
+        }
+        else { // in else part here, we have to remove the active class from all teh other buttons
+          button.classList.remove('active');
+        }
+      }
+    )
+  }
+  ...
+  return (
+    <div className='container row'>
+      <div className="my-3">
+        <ul className="nav w-100 d-flex justify-content-center">
+          {categoriesList.map(
+            (category, index) => (
+              <li className='nav-item' key={index}>
+                <button 
+                  className={`nav-link p-0 pb-2 category-buttons fs-5 ${index === 0 && 'active'}`}
+                  onClick={() => handleCategorySelected(index)}
+                  // basically index will be if we have five categories... so whatever category is selected we will pass that index
+                >
+                  {category}
+                </button>
+              </li>
+            )
+          )}
+        </ul>
+      </div>
+
+      {products.length > 0 && products.map(
+        // but now Typescript doesn't know what is the type here
+        (product: ProductInterface, index: number) => ( // so it says you can write any here, but we know product will be of type ProductInterface and the index will be a Number
+          <ProductCard product={product} key={index} />
+        )
+      )}
+    </div>
+  )
+}
+```
+
+![](./img/93.png)
 
 # Webgrafía y Enlaces de Interés
 

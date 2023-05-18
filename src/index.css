@@ -103,7 +103,7 @@ code {
 /* ********************************** Banner component ends ********************************** */
 
 /* ********************************** Buttons for categories starts ********************************** */
-.custom-buttons {
+.category-buttons {
   border: 0;
   background: transparent;
   color: #212529 !important;
@@ -111,7 +111,7 @@ code {
   /* border-radius: 20px; */
 }
 
-.custom-buttons.active {
+.category-buttons.active {
   border-bottom: 3px solid #198754;
   color: #198754 !important;
 }

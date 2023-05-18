@@ -58,15 +58,25 @@ function ProductsList() {
   useEffect(() => {
     if (data && data.result) {
       // define a constant to save and call the result for our filtered search
-      const tempProductsArray = handleFilteredSearch(searchProduct);
+      const tempProductsArray = handleFilteredSearch(searchProduct, selectCategory);
       // then we want to set the local products with the tempProductsArray
       setProducts(tempProductsArray);
     }
   }, [searchProduct]);
   
   // define a helper method to handle the filtered search
-  const handleFilteredSearch = (search: string) => {
-    let tempProducts = [...data.result];
+  const handleFilteredSearch = (search: string, category: string) => {
+    // let tempProducts = [...data.result];
+    // we need to handle the functionality so it handles both, the category and the search that we have
+    let tempProducts = category === 'Todo'
+      ? [...data.result]
+      : data.result.filter((product: ProductInterface) => 
+        product.category.toUpperCase() === category.toUpperCase()
+      );
+    // basically if category is 'Todo', we will select all the products, 
+    // but if that isn't the case, we will filter based on the category,
+    // and we will store that in a temporary array
+
     // now we implement the serach functionality
     if (search) { // if search is populated...
       // ... then we want to search for that particular field in our products and filter that
@@ -78,6 +88,38 @@ function ProductsList() {
     }
     
     return tempProducts;
+  }
+
+  // define a helper method to handle the category that user selects
+  const handleCategorySelected = (index: number) => {
+    // we want to get all the buttons based on that class 'category-buttons'
+    const categoryButtons = document.querySelectorAll('.category-buttons');
+    let category; // category will basically populate which category is currently selected
+
+    categoryButtons.forEach(
+      (button, indexAUX) => {
+        if (indexAUX === index) { // in that case we want to add the active class
+          button.classList.add('active');
+          
+          if (indexAUX === 0) { // in that case we have to set the category
+            category = 'Todo';
+          }
+          else {
+            category = categoriesList[indexAUX];
+          }
+          // once we get that, then we can populate our local state for the selected category
+          setSelectCategory(category);
+
+          // when we're updating the category, we should call the handleFilteredSearch
+          const tempFilters = handleFilteredSearch(searchProduct, category);
+          // once we get teh result back here, we have to set the products
+          setProducts(tempFilters);
+        }
+        else { // in else part here, we have to remove the active class from all teh other buttons
+          button.classList.remove('active');
+        }
+      }
+    )
   }
 
   // note that initially, data will not have all the value because it's still loading that using the query right now, so data will be undefined
@@ -96,7 +138,11 @@ function ProductsList() {
           {categoriesList.map(
             (category, index) => (
               <li className='nav-item' key={index}>
-                <button className={`nav-link p-0 pb-2 custom-buttons fs-5 ${index === 0 && 'active'}`}>
+                <button 
+                  className={`nav-link p-0 pb-2 category-buttons fs-5 ${index === 0 && 'active'}`}
+                  onClick={() => handleCategorySelected(index)}
+                  // basically index will be if we have five categories... so whatever category is selected we will pass that index
+                >
                   {category}
                 </button>
               </li>
