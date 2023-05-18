@@ -14,6 +14,11 @@ function ProductsList() {
   const [products, setProducts] = useState<ProductInterface[]>([]); // let's uncomment this that we had before to make the filter search
   // this state will be storing all the products that we retrieve
 
+  // for manage the categories, we have to add two states more
+  // first one will be to load list of all the categories and second one will be to know which category is selected
+  const [selectCategory, setSelectCategory] = useState('Todo');
+  const [categoriesList, setCategoriesList] = useState(['']);
+
   // for that we will have to add the import for dispath hook and we will have to create a constant for dispatch
   const dispatch = useDispatch(); // with dispatch we can call actions in the reducers
 
@@ -31,8 +36,21 @@ function ProductsList() {
       // so if that is populated then, we want to dispatch an event to populate or rather call the setProduct
       dispatch(setProduct(data.result)); // when we're dispatching, we need the payload, and that payload will be reiceived in data.result
       setProducts(data.result);
-    }
-  // now with this new useEffect() that we have, we don't want it to load every time the component is rendered
+
+      // when we're loading the data right here, we want to create an array of categories and we want to populate that inside teh setCategoriesList
+      const tempCategoriesList = ['Todo'];
+      // then other categories, we want to get them dynamically from our data we have those categories
+      data.result.forEach(
+        (product: ProductInterface) => {
+          if (tempCategoriesList.indexOf(product.category) === -1) { // that means that it doesn't exists in our temp array
+            tempCategoriesList.push(product.category); // and then we can push that in tempCategoriesList
+          }
+        }
+      );
+      // populate categoriesList
+      setCategoriesList(tempCategoriesList);
+    } 
+    // now with this new useEffect() that we have, we don't want it to load every time the component is rendered
   }, [isLoading]); // we only want it to be execute when the value os isLoading is updated
 
   // we can add a useEffect() based on the value of serachProduct
@@ -73,6 +91,20 @@ function ProductsList() {
   
   return (
     <div className='container row'>
+      <div className="my-3">
+        <ul className="nav w-100 d-flex justify-content-center">
+          {categoriesList.map(
+            (category, index) => (
+              <li className='nav-item' key={index}>
+                <button className={`nav-link p-0 pb-2 custom-buttons fs-5 ${index === 0 && 'active'}`}>
+                  {category}
+                </button>
+              </li>
+            )
+          )}
+        </ul>
+      </div>
+
       {/* we want to work if the products length is greater that 0, and in that case, we want the conditional rendering and iterate through the products */}
   
       {/* {data.result.length > 0 && data.result.map(
@@ -82,12 +114,12 @@ function ProductsList() {
         )
       )} */} 
 
-        {products.length > 0 && products.map(
-          // but now Typescript doesn't know what is the type here
-          (product: ProductInterface, index: number) => ( // so it says you can write any here, but we know product will be of type ProductInterface and the index will be a Number
-            <ProductCard product={product} key={index} />
-          )
-        )}
+      {products.length > 0 && products.map(
+        // but now Typescript doesn't know what is the type here
+        (product: ProductInterface, index: number) => ( // so it says you can write any here, but we know product will be of type ProductInterface and the index will be a Number
+          <ProductCard product={product} key={index} />
+        )
+      )}
     </div>
   )
 }

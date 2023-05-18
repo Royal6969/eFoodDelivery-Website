@@ -112,6 +112,7 @@
   - [9.1. Añadiendo un banner](#91-añadiendo-un-banner)
   - [9.2. Recoger y almacenar en Redux lo que escriba el ususario en el campo de búsqueda](#92-recoger-y-almacenar-en-redux-lo-que-escriba-el-ususario-en-el-campo-de-búsqueda)
   - [9.3. Implementar la lógica de la búsqueda con filtrado](#93-implementar-la-lógica-de-la-búsqueda-con-filtrado)
+  - [9.4. Obtener las categorías de cada producto y mostrarlas en botones](#94-obtener-las-categorías-de-cada-producto-y-mostrarlas-en-botones)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -4983,6 +4984,64 @@ function ProductsList() {
 ```
 
 ![](./img/91.png)
+
+## 9.4. Obtener las categorías de cada producto y mostrarlas en botones
+
+```tsx
+function ProductsList() {
+  ...
+  // for manage the categories, we have to add two states more
+  // first one will be to load list of all the categories and second one will be to know which category is selected
+  const [selectCategory, setSelectCategory] = useState('Todo');
+  const [categoriesList, setCategoriesList] = useState(['']);
+  ...
+  useEffect(() => {
+    if (!isLoading) { // that means the data is populated using the redux query, it has fetched it from our API
+      // so if that is populated then, we want to dispatch an event to populate or rather call the setProduct
+      dispatch(setProduct(data.result)); // when we're dispatching, we need the payload, and that payload will be reiceived in data.result
+      setProducts(data.result);
+
+      // when we're loading the data right here, we want to create an array of categories and we want to populate that inside teh setCategoriesList
+      const tempCategoriesList = ['Todo'];
+      // then other categories, we want to get them dynamically from our data we have those categories
+      data.result.forEach(
+        (product: ProductInterface) => {
+          if (tempCategoriesList.indexOf(product.category) === -1) { // that means that it doesn't exists in our temp array
+            tempCategoriesList.push(product.category); // and then we can push that in tempCategoriesList
+          }
+        }
+      );
+      // populate categoriesList
+      setCategoriesList(tempCategoriesList);
+    } 
+    // now with this new useEffect() that we have, we don't want it to load every time the component is rendered
+  }, [isLoading]); // we only want it to be execute when the value os isLoading is updated
+  ...
+  }
+  ...
+
+  return (
+    <div className='container row'>
+      <div className="my-3">
+        <ul className="nav w-100 d-flex justify-content-center">
+          {categoriesList.map(
+            (category, index) => (
+              <li className='nav-item' key={index}>
+                <button className={`nav-link p-0 pb-2 custom-buttons fs-5 ${index === 0 && 'active'}`}>
+                  {category}
+                </button>
+              </li>
+            )
+          )}
+        </ul>
+      </div>
+      ...
+    </div>
+  )
+}
+```
+
+![](./img/92.png)
 
 # Webgrafía y Enlaces de Interés
 
