@@ -105,7 +105,9 @@
   - [8.6. Implementar la funcionalidad de editar un producto](#86-implementar-la-funcionalidad-de-editar-un-producto)
     - [Prueba de ejecución](#prueba-de-ejecución-7)
   - [8.7. Implementar un botón dropdown para seleccionar una categoría ya existente](#87-implementar-un-botón-dropdown-para-seleccionar-una-categoría-ya-existente)
-  - [8.8. Implementar la funcionalidad de eliminar un producto (sin confirmación activa)](#88-implementar-la-funcionalidad-de-eliminar-un-producto-sin-confirmación-activa)
+  - [8.8. Implementar la funcionalidad de eliminar un producto (sin confirmación activa, desde el mismo AdminProductList)](#88-implementar-la-funcionalidad-de-eliminar-un-producto-sin-confirmación-activa-desde-el-mismo-adminproductlist)
+  - [8.9. Implementar la funcionalidad de eliminar un producto (con confirmación activa, desde una nueva página)](#89-implementar-la-funcionalidad-de-eliminar-un-producto-con-confirmación-activa-desde-una-nueva-página)
+    - [Prueba de ejecución](#prueba-de-ejecución-8)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -150,6 +152,7 @@
     - [Prueba de ejecución de toda la parte relativa a los pedidos, desde la creación de un pedido hasta su entrega](#prueba-de-ejecución-de-toda-la-parte-relativa-a-los-pedidos-desde-la-creación-de-un-pedido-hasta-su-entrega)
   - [CRUD de Producto](#crud-de-producto)
     - [Prueba de ejecución para probar la funcionalidad de editar un producto](#prueba-de-ejecución-para-probar-la-funcionalidad-de-editar-un-producto)
+    - [Prueba de ejecución para probar todas las funcionalidades del CRUD de producto](#prueba-de-ejecución-para-probar-todas-las-funcionalidades-del-crud-de-producto)
 - [Extras](#extras)
   - [Crear una interfaz para las respuesta de la API](#crear-una-interfaz-para-las-respuesta-de-la-api)
   - [Evitar perder el contenido del almacenamiento de Redux con los valores del token del usuario](#evitar-perder-el-contenido-del-almacenamiento-de-redux-con-los-valores-del-token-del-usuario)
@@ -4640,7 +4643,7 @@ const [productInputs, setProductInputs] = useState({
 });
 ```
 
-## 8.8. Implementar la funcionalidad de eliminar un producto (sin confirmación activa)
+## 8.8. Implementar la funcionalidad de eliminar un producto (sin confirmación activa, desde el mismo AdminProductList)
 
 Para eliminar un producto desde la misma lista de productos sin una confirmación activa, tan sólo tendríamos que definir la mutación del DELETE del endpoint del *ProductAPI*, y podríamos utilizar las *[Promise toast notifications](https://fkhadra.github.io/react-toastify/promise/)*
 
@@ -4661,6 +4664,126 @@ const handleDeleteProduct = async (productId: number) => {
   )
 }
 ```
+
+## 8.9. Implementar la funcionalidad de eliminar un producto (con confirmación activa, desde una nueva página)
+
+```tsx
+function DeleteConfirmation() {
+  // define useParams() hook to receive the productId through the route
+  const { productId } = useParams();
+  // once we have the productId, we need to call the query for GetProductById(productId)
+  const { data } = useGetProductByIdQuery(productId);
+  // console.log(data);
+
+  // define useState() hook to set loading when this page needs
+  const [isLoading, setIsLoading] = useState(false);
+  // define useNavigate() hook to redirect admin user to AdminProductsList page once the new product object has been created
+  const navigate = useNavigate();
+  // define the mutation for DELETE endpoint to delete a product
+  const [deleteProduct] = useDeleteProductByIdMutation();
+
+  // useState for the input fields to delete a product writing its id
+  const [deleteInput, setDeleteInput] = useState({
+    id: ''
+  });
+
+  // now we have to use our helper method called InputHelper... copied/pasted from Register.tsx
+  const handleDeleteInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const tempData = InputHelper(event, deleteInput);
+    setDeleteInput(tempData);
+  }
+
+  const handleDeleteProduct = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    if (productId === deleteInput.id) {
+      const deleteResponse = await deleteProduct(productId);
+
+      if (deleteResponse) {
+        setIsLoading(false);
+        navigate('/product/AdminProductsList');
+        toastNotifyHelper('Producto eliminado correctamente', 'success');
+      }
+    }
+    else {
+      toastNotifyHelper('El producto NO se ha eliminado', 'error');
+      setIsLoading(false);
+    }
+
+    setIsLoading(false);
+  }
+
+
+  return (
+    <div className='container mt-3 p-3 bg-light'>
+
+      <h3 className='mb-3 px-2 text-warning'>
+        ¿Estás seguro de que quieres eliminar este producto?
+      </h3>
+      
+      {data && (
+        <>
+          <p>Nombre del producto: <span style={{color: 'red'}}>{data.result?.name}</span>&nbsp;</p>
+          <p>ID del producto: <span style={{color: 'red'}}>{data.result?.id}</span>&nbsp;</p>
+        </>
+      )}
+
+      <form method='post' encType='multipart/form-data' onSubmit={handleDeleteProduct}>
+        <div className='row mt-3'>
+          <div className='col-md-7'>
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Id del Producto'
+              required
+              name='id'
+              value={deleteInput.id}
+              onChange={handleDeleteInput}
+            />
+
+          <div className='col-md-8 mt-3 text-center'>
+            {data && (
+              <img
+                style={{ width: '100%', borderRadius: '30px' }}
+                src={data.result?.image}
+                alt=''
+              />
+            )}
+          </div>
+
+            <div className="row">
+              <div className="col-6">
+                <button
+                  className='btn btn-warning mt-3 form-control'
+                  type='submit'
+                >
+                  Eliminar
+                </button>
+              </div>
+
+              <div className="col-6">
+                <a 
+                  className='btn btn-secondary mt-3 form-control' 
+                  onClick={() => navigate('/product/AdminProductsList')}
+                >
+                  Volver a los productos
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  )
+}
+```
+
+![](./img/88.png)
+
+### Prueba de ejecución
+
+[Prueba de ejecución para probar todas las funcionalidades del CRUD de producto](#prueba-de-ejecución-para-probar-todas-las-funcionalidades-del-crud-de-producto)
 
 # Webgrafía y Enlaces de Interés
 
@@ -4782,6 +4905,10 @@ const handleDeleteProduct = async (productId: number) => {
 ![](./img/85.png)
 ![](./img/86.png)
 ![](./img/87.png)
+
+### Prueba de ejecución para probar todas las funcionalidades del CRUD de producto
+
+[Prueba de Ejecución 6](https://private-user-images.githubusercontent.com/80839621/239195845-ef47afde-0959-4d04-9fc6-5d82b22dcaf2.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJrZXkxIiwiZXhwIjoxNjg0NDAyMTQ2LCJuYmYiOjE2ODQ0MDE4NDYsInBhdGgiOiIvODA4Mzk2MjEvMjM5MTk1ODQ1LWVmNDdhZmRlLTA5NTktNGQwNC05ZmM2LTVkODJiMjJkY2FmMi5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBSVdOSllBWDRDU1ZFSDUzQSUyRjIwMjMwNTE4JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDIzMDUxOFQwOTI0MDZaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT00YWMzZGQyOTNlMmU5ZjY3NWZmZmY4YWU1ODMwMzc1NzJiYmYzZmQ3MjM3MTZhNTk3ZWUzNjZkMTYzN2ZlNzZkJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.w4AtVBhYSpcWtmMiVKfGY5NPaqRKmgIJvS2q2hYwA9w)
 
 # Extras
 

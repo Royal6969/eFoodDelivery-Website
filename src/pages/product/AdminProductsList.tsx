@@ -12,6 +12,7 @@ function AdminProductsList() {
   const { data, isLoading } = useGetProductsQuery(null);
   // to go to ProductForm page we need the useNavigate() hook
   const navigate = useNavigate();
+/*
   // define the mutation for DELETE endpoint to delete a product
   const [deleteProduct] = useDeleteProductByIdMutation();
 
@@ -27,7 +28,7 @@ function AdminProductsList() {
       { theme: 'dark' }
     )
   }
-
+*/
 
   return (
     <>
@@ -73,14 +74,20 @@ function AdminProductsList() {
                     <div className='col-2'>{product.tag}</div>
                     <div className='col-3'>
                       <button className='btn btn-warning'>
-                        <i className='bi bi-pencil-fill' onClick={() => navigate('/product/ProductForm/' + product.id)}></i>
+                        <i 
+                          className='bi bi-pencil-fill' 
+                          onClick={() => navigate('/product/ProductForm/' + product.id)}
+                        ></i>
                       </button>
 
                       <button 
                         className='btn btn-danger mx-2'
-                        onClick={() => handleDeleteProduct(product.id)}
+                        // onClick={() => handleDeleteProduct(product.id)} // to delete without confirmation
                       >
-                        <i className='bi bi-trash-fill'></i>
+                        <i 
+                          className='bi bi-trash-fill'
+                          onClick={() => navigate('/product/DeleteConfirmation/' + product.id)}
+                        ></i>
                       </button>
                     </div>
                   </div>

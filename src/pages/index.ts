@@ -14,6 +14,7 @@ import OrderDetails from "./order/OrderDetails";
 import AllUsersOrders from "./order/AllUsersOrders";
 import AdminProductsList from "./product/AdminProductsList";
 import ProductForm from "./product/ProductForm";
+import DeleteConfirmation from "./product/DeleteConfirmation";
 
 
 export {
@@ -32,5 +33,6 @@ export {
   OrderDetails,
   AllUsersOrders,
   AdminProductsList,
-  ProductForm
+  ProductForm,
+  DeleteConfirmation
 }

@@ -52,7 +52,7 @@ function Register() {
       toastNotifyHelper(registerResponse.error.data.errorsList[0], 'error')
     }
 
-    setIsLoading(true);
+    setIsLoading(false);
   }
 
   return (

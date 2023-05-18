@@ -68,7 +68,7 @@ function ProductForm() {
   const [imageFileDisplayed, setImageFileDisplayed] = useState<string>(''); // and next one, what is the image that we want to display?
   // what we want to do is when we upload a new image, we want to change the image to be stored
 
-  // now we have to use our helper method called InputHandler... copied/pasted from Register.tsx
+  // now we have to use our helper method called InputHelper... copied/pasted from Register.tsx
   const handleProductInputs = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const tempData = InputHelper(event, productInputs);
     setProductInputs(tempData);
@@ -155,6 +155,8 @@ function ProductForm() {
         data: productFormData,
         productId
       });
+      // we can also check response to see if it was success or error, and notify accordingly
+      toastNotifyHelper('El producto ha sido modificado correctamente', 'success');
     }
     else { // create scenario
       // now once we have the form data populated, we need to invoke the mutation for create products
@@ -181,8 +183,8 @@ function ProductForm() {
 
       <h3 className='px-2 text-warning'>
         {productId
-          ? 'Añadir producto'
-          : 'Editar producto'
+          ? 'Editar producto'
+          : 'Añadir producto'
         }
       </h3>
       

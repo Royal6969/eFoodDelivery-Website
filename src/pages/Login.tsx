@@ -70,20 +70,19 @@ function Login() {
       // console.log(loginResponse.error.data.errorsList[0]);
       // setErrorMessage(loginResponse.error.data.errorsList[0]);
       toastNotifyHelper(loginResponse.error.data.errorsList[0], 'error');
-      setLoading(false);
     }
 
-    setLoading(true);
+    setLoading(false);
   }
 
 
   return (
     <div className='container text-center'>
-    {/* 
+     
       {loading && (
         <BigLoader />
       )} 
-    */}
+    
       <form onSubmit={handleLoginUser} method='post'>
         <h1 className='mt-5'>Login</h1>
         
