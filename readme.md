@@ -108,6 +108,8 @@
   - [8.8. Implementar la funcionalidad de eliminar un producto (sin confirmación activa, desde el mismo AdminProductList)](#88-implementar-la-funcionalidad-de-eliminar-un-producto-sin-confirmación-activa-desde-el-mismo-adminproductlist)
   - [8.9. Implementar la funcionalidad de eliminar un producto (con confirmación activa, desde una nueva página)](#89-implementar-la-funcionalidad-de-eliminar-un-producto-con-confirmación-activa-desde-una-nueva-página)
     - [Prueba de ejecución](#prueba-de-ejecución-8)
+- [9. Mejorando el Home](#9-mejorando-el-home)
+  - [9.1. Añadiendo un banner](#91-añadiendo-un-banner)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -746,7 +748,7 @@ function ProductCard(props: Props) { // right here we have to write the product 
             {props.product.description}
           </p>
           <div className='row text-center'>
-            <h4>{props.product.price}€</h4>
+            <h4>{props.product.price.toFixed(2)}€</h4>
           </div>
         </div>
       </div>
@@ -4784,6 +4786,51 @@ function DeleteConfirmation() {
 ### Prueba de ejecución
 
 [Prueba de ejecución para probar todas las funcionalidades del CRUD de producto](#prueba-de-ejecución-para-probar-todas-las-funcionalidades-del-crud-de-producto)
+
+# 9. Mejorando el Home
+
+Aunque el Home se puede mejorar de muchas formas, vamos a centrar los esfuerzos en priorizar un banner, y un filtrado y ordenado de la barra de búsqueda del banner.
+
+## 9.1. Añadiendo un banner
+
+Búscamos un banner por Google y cogemos el que más nos guste. Creamos un nuevo componente llamado *Banner.tsx*, por ejemplo, dentro de su carpeta correspondiente y en la subcarpeta de *common*, y llamamos a este nuevo componente al principio del *Home.tsx*
+
+```tsx
+function Banner() {
+  return (
+    <div className="custom-banner">
+      <div style={{ width: "400px", height: "30vh" }} className="m-auto d-flex align-items-center">
+        <div className="d-flex align-items-center" style={{ width: "100%" }}>
+          <input
+            type={"text"}
+            style={{ width: "100%", padding: "20px 20px" }}
+            className="form-control rounded-pill"
+            placeholder="Busca tus platos favoritos 😋"
+          />
+
+          <span style={{ position: "relative", left: "-43px" }}>
+            <i className="bi bi-search"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+Para los estilos, en vez de crear un archivo de css específicamente para el Banner, podríamos poner sus estilos en el *index.css*
+
+```css
+.custom-banner {
+  background: linear-gradient(to right, #2c536499, #203a4399, #0f202799), url("/src/assets/images/food.jpg") center;
+  background-size: cover;
+  width: 100%;
+  height: 30vh;
+  overflow: hidden;
+}
+```
+
+![](./img/89.png)
 
 # Webgrafía y Enlaces de Interés
 

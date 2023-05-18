@@ -102,7 +102,7 @@ function ProductCard(props: Props) { // right here we have to write the product 
             {props.product.description}
           </p>
           <div className='row text-center'>
-            <h4>{props.product.price}€</h4>
+            <h4>{props.product.price.toFixed(2)}€</h4>
           </div>
         </div>
       </div>
