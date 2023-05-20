@@ -163,6 +163,7 @@
 - [Extras](#extras)
   - [Crear una interfaz para las respuesta de la API](#crear-una-interfaz-para-las-respuesta-de-la-api)
   - [Evitar perder el contenido del almacenamiento de Redux con los valores del token del usuario](#evitar-perder-el-contenido-del-almacenamiento-de-redux-con-los-valores-del-token-del-usuario)
+  - [Cómo aplazar la llamada a un endpoint en función de un orden de llamadas](#cómo-aplazar-la-llamada-a-un-endpoint-en-función-de-un-orden-de-llamadas)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
     - [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](#enlace-a-trello---espacio-de-trabajo-y-tablero-del-proyecto-efooddelivery-website)
 
@@ -5437,6 +5438,44 @@ En el *App.tsx* tendríamos que descodificar el token de nuevo y llamar al slice
       }));
     }
   }, []);
+```
+
+## Cómo aplazar la llamada a un endpoint en función de un orden de llamadas
+
+Me di cuenta de que viendo la sección de Network del inspeccionar del Chrome, mi aplicación llamaba dos veces al endpoint de obtener el carrito. Esto sucedía porque desde el *App.tsx* se lanazaba inmediatamente, antes incluso de que se pudiese obtener el id del usuario logeado. De modo que he tenido que buscar cómo aplazar esa llamada del carrito para qwue se produzca una vez que ya se tiene el id del usuario.
+
+En el *App.tsx* he añadido un useState() de tipo booleano para saltarme esta llamada al carrito, y con un useEffect(), he hecho que la llamada se produzca una vez que se tiene el is del usuario
+
+```tsx
+function App() {
+  ...
+  // define a local state for skip the re-call request to the cart endpoint like I said below
+  const [skipGetCart, setSkipGetCart] = useState(true);
+  // now, based on the skip state, we can tell the query on when it should skip making a request
+
+  // next we need to get the cart first with the cartAPI and its query
+  // in the begining, our userId was hardcoded as the parameter
+  // but at this point, it's time to replace the static user id for the dynamic user id wich belong to the user who is logged in
+  const { data, isLoading } = useGetCartQuery(
+    userDataFromAuthenticationStore.userId, 
+    { skip: skipGetCart } // by default the value is true, but when the value is false, then it will go and fetch the query
+  );
+  // but if we check the network section from inspect, we notice we're calling twice to cart endpoint 
+  // initially when the userId is empty, it's going to fetch a query with empty userId, 
+  // but we don't want that, and because we have that using query here, we cannot add it inside if condition, because then things won't work
+  // it has to be at the root level... and to fix that we have to add a local state to skip setting the cart
+  ...
+  // we have to define another useEffect() to set true the setSkipGetCart
+  useEffect(() => {
+    if (userDataFromAuthenticationStore.userId) {
+      setSkipGetCart(false);
+    }
+  });
+
+  return (
+    ...
+  );
+}
 ```
 
 ## Enlace al espacio de trabajo y al tablero del proyecto en Trello

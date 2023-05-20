@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import { Route, Routes } from 'react-router-dom';
 import { Footer, Header } from '../components/layout';
 import { useDispatch, useSelector } from 'react-redux';
@@ -37,10 +38,21 @@ function App() {
   // so for that we will have to extract the authenticationStore with the useSelector() hook
   const userDataFromAuthenticationStore: UserInterface = useSelector((state: RootState) => state.authenticationStore);
 
+  // define a local state for skip the re-call request to the cart endpoint like I said below
+  const [skipGetCart, setSkipGetCart] = useState(true);
+  // now, based on the skip state, we can tell the query on when it should skip making a request
+
   // next we need to get the cart first with the cartAPI and its query
   // in the begining, our userId was hardcoded as the parameter
   // but at this point, it's time to replace the static user id for the dynamic user id wich belong to the user who is logged in
-  const { data, isLoading } = useGetCartQuery(userDataFromAuthenticationStore.userId);
+  const { data, isLoading } = useGetCartQuery(
+    userDataFromAuthenticationStore.userId, 
+    { skip: skipGetCart } // by default the value is true, but when the value is false, then it will go and fetch the query
+  );
+  // but if we check the network section from inspect, we notice we're calling twice to cart endpoint 
+  // initially when the userId is empty, it's going to fetch a query with empty userId, 
+  // but we don't want that, and because we have that using query here, we cannot add it inside if condition, because then things won't work
+  // it has to be at the root level... and to fix that we have to add a local state to skip setting the cart
   
   // to avoid losing the Redux store content for the token decoded we have to repopulate with useEffect()
   // this useEffect() should be execute when the app is rendered
@@ -73,6 +85,12 @@ function App() {
   }, [data]);
   // that way, when we update the cart, it automatically dispatches and sets the new cart
 
+  // we have to define another useEffect() to set true the setSkipGetCart
+  useEffect(() => {
+    if (userDataFromAuthenticationStore.userId) {
+      setSkipGetCart(false);
+    }
+  });
 
   return (
     <div>
