@@ -114,6 +114,7 @@
   - [9.3. Implementar la lógica de la búsqueda con filtrado](#93-implementar-la-lógica-de-la-búsqueda-con-filtrado)
   - [9.4. Obtener las categorías de cada producto y mostrarlas en botones](#94-obtener-las-categorías-de-cada-producto-y-mostrarlas-en-botones)
   - [9.5. Implementar la lógica del filtrado por categorías y mostrar sólo los productos de la categoría seleccionada](#95-implementar-la-lógica-del-filtrado-por-categorías-y-mostrar-sólo-los-productos-de-la-categoría-seleccionada)
+  - [9.6. Implementar la lógica de la ordenación de los productos](#96-implementar-la-lógica-de-la-ordenación-de-los-productos)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -5152,6 +5153,108 @@ function ProductsList() {
 ```
 
 ![](./img/93.png)
+
+## 9.6. Implementar la lógica de la ordenación de los productos
+
+La idea de esta funcionalidad, es crear una serie de sub-etiquetas para ordenar los productos de diferentes formas, en base a ciertos criterios típicos como el precio en ascendente/descendente, o alfabéticamente ascendente/descendente.
+
+Empezaremos agregando un nuevo enumerable a nuestra archivo del *StaticDetails*
+
+```ts
+export enum StaticDetails_ProductSortCriteria {
+  SORT_PRODUCTS_BY_PRICE_LOW_TO_HIGH = 'Precio: Más barato - Más caro',
+  SORT_PRODUCTS_BY_PRICE_HIGH_TO_LOW = 'Precio: Más caro - Más barato',
+  SORT_PRODUCTS_BY_NAME_A_TO_Z = 'Nombre: A - Z',
+  SORT_PRODUCTS_BY_NAME_Z_TO_A = 'Nombre: Z - A'
+}
+```
+
+Ahora volvemos al *ProductsList.tsx* para implementar la lógica de esta funcionalidad
+
+```tsx
+function ProductsList() {
+  ...
+  // define a useState() hook for sorting and set the default one to be 'Nombre: A-Z'
+  const [sortCriteria, setSortCriteria] = useState(StaticDetails_ProductSortCriteria.SORT_PRODUCTS_BY_NAME_A_TO_Z);
+  ...
+  // create a constant here for sorting which will have an array of all the sort types that we want
+  const sortOptions: Array<StaticDetails_ProductSortCriteria> = [
+    StaticDetails_ProductSortCriteria.SORT_PRODUCTS_BY_NAME_A_TO_Z,
+    StaticDetails_ProductSortCriteria.SORT_PRODUCTS_BY_NAME_Z_TO_A,
+    StaticDetails_ProductSortCriteria.SORT_PRODUCTS_BY_PRICE_LOW_TO_HIGH,
+    StaticDetails_ProductSortCriteria.SORT_PRODUCTS_BY_PRICE_HIGH_TO_LOW
+  ];
+  ...
+    // now we implement the sort functionality
+    if (sortCriteria === StaticDetails_ProductSortCriteria.SORT_PRODUCTS_BY_NAME_A_TO_Z) {
+      tempProducts.sort(
+        (product1: ProductInterface, product2: ProductInterface) => product1.name.toUpperCase().charCodeAt(0) - product2.name.toUpperCase().charCodeAt(0)
+      )
+    }
+    if (sortCriteria === StaticDetails_ProductSortCriteria.SORT_PRODUCTS_BY_NAME_Z_TO_A) {
+      tempProducts.sort(
+        (product1: ProductInterface, product2: ProductInterface) => product2.name.toUpperCase().charCodeAt(0) - product1.name.toUpperCase().charCodeAt(0)
+      )
+    }
+    if (sortCriteria === StaticDetails_ProductSortCriteria.SORT_PRODUCTS_BY_PRICE_LOW_TO_HIGH) {
+      tempProducts.sort(
+        (product1: ProductInterface, product2: ProductInterface) => product1.price - product2.price
+      )
+    }
+    if (sortCriteria === StaticDetails_ProductSortCriteria.SORT_PRODUCTS_BY_PRICE_HIGH_TO_LOW) {
+      tempProducts.sort(
+        (product1: ProductInterface, product2: ProductInterface) => product2.price - product1.price
+      )
+    }
+    
+    return tempProducts;
+  }
+  ...
+  // define a helper method to handle the sort criteria that user selects
+  const handleSortCriteriaSelected = (index: number) => {
+    setSortCriteria(sortOptions[index]); // that way we will know what is the sort option that user has selected
+    // after that we want to invoke the handle filter with the sort type and let that one function handle everything
+    //now we need to populate the handleSortCriteriaSelected
+    // then we have the sortOption right here, so we can call handleFilteredSearch
+    const tempProductsFilteredAndSorted = handleFilteredSearch(searchProduct, selectCategory, sortOptions[index]);
+    setProducts(tempProductsFilteredAndSorted);
+  }
+  ...
+  return (
+    <div className='container row'>
+      <div className='my-3'>
+        <ul className='nav w-100 d-flex justify-content-center'>
+          ...
+          <li style={{ marginLeft: 'auto' }} className='nav-item dropdown'>
+            <div className='nav-link dropdown-toggle text-dark fs-6 border' data-bs-toggle='dropdown' aria-expanded='false' role='button'>
+              {sortCriteria}
+            </div>
+
+            <ul className='dropdown-menu'>
+              {sortOptions.map(
+                (criteria, index) => (
+                  <li 
+                    className='dropdown-item' 
+                    key={index} 
+                    onClick={() => handleSortCriteriaSelected(index)}
+                  >
+                    {criteria}
+                  </li>
+                )
+              )}
+            </ul>
+          </li>
+        </ul>
+      </div>
+    ...
+    </div>
+  )
+}
+```
+
+![](./img/94.png)
+![](./img/95.png)
+![](./img/96.png)
 
 # Webgrafía y Enlaces de Interés
 
