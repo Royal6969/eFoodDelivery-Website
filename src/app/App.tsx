@@ -76,7 +76,7 @@ function App() {
 
   // then we can hve the useEffect() once the loading is complete
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && data) {
       // if the loading is complete, then we want to dispatch and set our shopping cart
       dispatch(setCart(data.result?.cartItemsList));
       console.log(data.result);
@@ -90,7 +90,7 @@ function App() {
     if (userDataFromAuthenticationStore.userId) {
       setSkipGetCart(false);
     }
-  });
+  }, [userDataFromAuthenticationStore]);
 
   return (
     <div>

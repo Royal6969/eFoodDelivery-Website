@@ -4,7 +4,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const orderAPI = createApi({
   reducerPath: "orderAPI",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://efooddelivery-api.azurewebsites.net/api/"
+    baseUrl: "https://efooddelivery-api.azurewebsites.net/api/",
+    // to set the headers accordingly with tags [Authorize] in the API, we need to send a token back to the request, and that way our API will validate that
+    prepareHeaders: (headers: Headers, api) => { // we need to get the token that we have and we have to pass that whenever we call the API endpoint
+      const tokenStored = localStorage.getItem('token'); // we need to access and get our token
+      tokenStored && headers.append('Authorization', 'Bearer ' + tokenStored) // Athorization is the header that we have to set when we're calling the APi
+    }
   }),
   tagTypes: ["Orders"], // we need invalidate tagTypes after for getOrder() when we're posting
   endpoints: (builder) => ({

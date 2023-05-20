@@ -164,6 +164,7 @@
   - [Crear una interfaz para las respuesta de la API](#crear-una-interfaz-para-las-respuesta-de-la-api)
   - [Evitar perder el contenido del almacenamiento de Redux con los valores del token del usuario](#evitar-perder-el-contenido-del-almacenamiento-de-redux-con-los-valores-del-token-del-usuario)
   - [Cómo aplazar la llamada a un endpoint en función de un orden de llamadas](#cómo-aplazar-la-llamada-a-un-endpoint-en-función-de-un-orden-de-llamadas)
+    - [Añadir la cabecera de la autorización en los endpoints de las entidades](#añadir-la-cabecera-de-la-autorización-en-los-endpoints-de-las-entidades)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
     - [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](#enlace-a-trello---espacio-de-trabajo-y-tablero-del-proyecto-efooddelivery-website)
 
@@ -5476,6 +5477,27 @@ function App() {
     ...
   );
 }
+```
+
+### Añadir la cabecera de la autorización en los endpoints de las entidades
+
+Cuando empecé a desarrollar la API, al principio no puse las etiquetas de validación de [Authorize] en ningún método. Pero ahora las había puesto, y resulta que al re-publicar la API y al volver a ejecutar esta aplicación web cliente, las pantallas me salían en blanco y ya nada funcionaba (401)... ¿qué estaba pasando?
+
+Lo que ocurre es que, cuando en la API definimos la seguridad (validación) de accesos mediante roles [Authorize(Role=x)] o simplemente poniendo la etiqueta [Authorize], después en la aplicación web cliente, en los endpoints, al principio después del baseURL, debemos definir también la cabecera (preparedHeaders) y dentro de ello, tenemos que meterle el token del usuario, especificando su tipo (Bearer)
+
+```ts
+const productAPI = createApi({
+  reducerPath: "productAPI",  // a name to identify it
+  baseQuery: fetchBaseQuery({ // to configure the baseQuery and here we want to fetch the baseQuery using a baseURL
+    // we set here the same URL that we used in ProductList but without the endpoint
+    baseUrl: "https://efooddelivery-api.azurewebsites.net/api/", // when we define the query endpoint, we will append the product there
+    // to set the headers accordingly with tags [Authorize] in the API, we need to send a token back to the request, and that way our API will validate that
+    prepareHeaders: (headers: Headers, api) => { // we need to get the token that we have and we have to pass that whenever we call the API endpoint
+      const tokenStored = localStorage.getItem('token'); // we need to access and get our token
+      tokenStored && headers.append('Authorization', 'Bearer ' + tokenStored) // Athorization is the header that we have to set when we're calling the APi
+    }
+  }),
+  ...
 ```
 
 ## Enlace al espacio de trabajo y al tablero del proyecto en Trello

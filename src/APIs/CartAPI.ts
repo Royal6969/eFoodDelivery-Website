@@ -5,8 +5,13 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const cartAPI = createApi({
   reducerPath: "cartAPI",  // a name to identify it
   baseQuery: fetchBaseQuery({ // to configure the baseQuery and here we want to fetch the baseQuery using a baseURL
-    baseUrl: "https://efooddelivery-api.azurewebsites.net/api/" // we set here the same URL that we used in ProductList but without the endpoint
-    // when we define the query endpoint, we will append the user there
+    // we set here the same URL that we used in ProductList but without the endpoint
+    baseUrl: "https://efooddelivery-api.azurewebsites.net/api/", // when we define the query endpoint, we will append the user there
+    // to set the headers accordingly with tags [Authorize] in the API, we need to send a token back to the request, and that way our API will validate that
+    prepareHeaders: (headers: Headers, api) => { // we need to get the token that we have and we have to pass that whenever we call the API endpoint
+      const tokenStored = localStorage.getItem('token'); // we need to access and get our token
+      tokenStored && headers.append('Authorization', 'Bearer ' + tokenStored) // Athorization is the header that we have to set when we're calling the APi
+    }
   }),
   tagTypes: ["Carts"],
   endpoints: (builder) => ({  // when we build the endpoint, we have the arrow function where will get the builder object
