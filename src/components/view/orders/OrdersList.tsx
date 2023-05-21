@@ -23,10 +23,11 @@ function OrdersList({ data, isLoading }: OrdersListInterface) {
             <div className="row border">
               <div className="col-1">ID</div>
               <div className="col-2">Nombre</div>
-              <div className="col-2">Teléfono</div>
+              <div className="col-2">Email</div>
+              <div className="col-1">Teléfono</div>
               <div className="col-1">Total</div>
               <div className="col-1">Productos</div>
-              <div className="col-2">Fecha</div>
+              <div className="col-1">Fecha</div>
               <div className="col-2">Estado</div>
               <div className="col-1"></div>
             </div>
@@ -40,10 +41,11 @@ function OrdersList({ data, isLoading }: OrdersListInterface) {
                   <div className="row border" key={order.orderId}>
                     <div className="col-1">{order.orderId}</div>
                     <div className="col-2">{order.clientName}</div>
-                    <div className="col-2">{order.clientPhone}</div>
+                    <div className="col-2">{order.clientEmail}</div>
+                    <div className="col-1">{order.clientPhone}</div>
                     <div className="col-1">{order.orderTotal!.toFixed(2)}€</div>
                     <div className="col-1">{order.orderQuantityItems}</div>
-                    <div className="col-2">{new Date(order.orderDate!).toLocaleDateString()}</div>
+                    <div className="col-1">{new Date(order.orderDate!).toLocaleDateString()}</div>
                     <div className="col-2">
                       <span className={`badge bg-${orderStatusTagTypeColor}`}>{order.orderStatus}</span>
                     </div>
