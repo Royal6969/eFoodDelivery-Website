@@ -112,6 +112,7 @@
 - [10. Mejorando el la lista de productos y la lista de pedidos del admin](#10-mejorando-el-la-lista-de-productos-y-la-lista-de-pedidos-del-admin)
   - [10.1. Añadir los filtros de búsqueda a la interfaz de los pedidos](#101-añadir-los-filtros-de-búsqueda-a-la-interfaz-de-los-pedidos)
   - [10.2. Implementar el filtrado de búsqueda](#102-implementar-el-filtrado-de-búsqueda)
+  - [10.2.](#102)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -5270,6 +5271,99 @@ function AllUsersOrders() {
 ![](./img/112.png)
 ![](./img/113.png)
 ![](./img/114.png)
+
+## 10.2. 
+
+Tenemos que tener en cuenta que los filtros anteriores, los estábamos llevando a cabo en local... es decir, debemos de pasar estos filtros a la API a través del endpoint de carrito. De modo que vamos al *OrderAPI.ts* para añadir los parámetros nuevos
+
+```ts
+getOrdersFromUser: builder.query({
+  query: ({ userId, orderSearch, orderStatus }) => ({ // now I have to pass the new parameters for filtered search in AllOrdersUsers
+    url: "Order",
+    params: {
+      // userId: userId // and the new way to set params will be spreading them
+      ...(userId && {userId}), // if userId is populated, only then we will pass userId, orderSearch or orderStatus
+      ...(orderSearch && {orderSearch}),
+      ...(orderStatus && {orderStatus})
+    }
+  }),
+  providesTags: ["Orders"]
+}),
+```
+
+Después debemos de volver al *AllUsersOrders* para modificar el state del *searchFilters* por uno nuevo...
+
+```tsx
+function AllUsersOrders() {
+  // define a local state to set the filters for when user click the search button
+  const [searchFilters, setSearchFilters] = useState({ orderSearch: '', orderStatus: '' });
+  // define another local state to store the filtered data for all the orders
+  const [orderDataFiltered, setOrderDataFiltered] = useState([]);
+  // after passing the new parameters for filter in the get order mutation below
+  // we realize now we're calling the API every time we type something we we want to avoid that with a local state
+  // and call the API only when the button is clicked
+  const [searchCallingApiFilters, setSearchCallingApiFilters] = useState({
+    orderSearch: '',
+    orderStatus: ''
+  });
+
+  // we need to save the result back from the query and define a flag for when it's loading the response
+  // we don't need the useSelector() hook here to retrieve the user stored, so instead passing a userId, we'll pass an empty string to fetch all orders of all users
+  // const { data, isLoading } = useGetOrdersFromUserQuery('');
+  const { data, isLoading } = useGetOrdersFromUserQuery({ // now we have to pass the object with userId, orderSearch and orderStatus
+    // now when we're getting all the orders, we don't want to pass userId, but we want everything else 
+    // and those filters are inside the setSearchFilters so we can navigate or rather spread the filter here
+    // ...(searchFilters && {
+    ...(searchCallingApiFilters && { 
+      // before we used searchFilters to fetch locally, but now, and based on the API filters above this, we will fetch the data from our API
+      orderSearch: searchCallingApiFilters.orderSearch,
+      orderStatus: searchCallingApiFilters.orderStatus
+    }) // if that is populated, then we want to pass the object with search string
+  }); 
+  ...
+  // also we need to define another helper method to handle all the search filters selected when user click the search button
+  const handleInputFilters = () => {
+    /*
+    const orderTempData = data.result.filter(
+      (order: OrderInterface) => { // we will filter inside orders with name, email and phone
+        if ((order.clientName && order.clientName.includes(searchFilters.orderSearch)) ||
+            (order.clientEmail && order.clientEmail.includes(searchFilters.orderSearch)) ||
+            (order.clientPhone && order.clientPhone.includes(searchFilters.orderSearch))
+        ) {
+          return order;
+        }
+      }
+    );
+
+    // then once we have the tempOrderData, we will apply the filter for our order status dropdown
+    const finalOrdersArray = orderTempData.filter(
+      (order: OrderInterface) =>
+        searchFilters.orderStatus !== ''
+          ? order.orderStatus === searchFilters.orderStatus
+          : order
+    );
+
+    // and finally, whatever we have in the final array that we will set as the order data
+    // setOrderDataFiltered(finalOrdersArray);
+    */
+
+    // now with searchCallingApiFilters, rather than we had before, I will set the api filters with the orderSearch and the orderStatus
+    setSearchCallingApiFilters({
+      orderSearch: searchFilters.orderSearch,
+      orderStatus: searchFilters.orderStatus
+    })
+    // because if you examine searchFilters it's a controlled component, and we can set the api filters directly
+    // and once that filters are modified, it will automatically re-fetch the data
+  }
+  ...
+  
+  return (
+    ...
+  )
+}
+```
+
+Y ahora si vamos al inspeccionar y a la sección de Network, podemos ver que cada vez que le damos al botón de buscar, se realiza la llamada a la API.
 
 # Webgrafía y Enlaces de Interés
 
