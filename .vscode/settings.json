@@ -1,0 +1,5 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/4224a0ae-e84a-48d5-b140-385936566818/resourceGroups/eFoodDelivery/providers/Microsoft.Web/sites/eFoodDelivery-Website",
+    "appService.deploySubpath": ".",
+    "appService.showBuildDuringDeployPrompt": false
+}

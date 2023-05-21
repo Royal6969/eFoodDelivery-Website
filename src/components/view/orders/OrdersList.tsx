@@ -19,8 +19,6 @@ function OrdersList({ data, isLoading }: OrdersListInterface) {
 
       {!isLoading && (
         <div className="table p-5">
-          <h1 className="text-success">Lista de pedidos</h1>
-          
           <div className="p-2">
             <div className="row border">
               <div className="col-1">ID</div>

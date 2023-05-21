@@ -21,10 +21,16 @@ function UserOrders() {
       )}
 
       {!isLoading && (
-        <OrdersList 
-          data={data.result}
-          isLoading={isLoading}
-        />
+        <>
+          <div className='d-flex align-items-center justify-content-between mx-5 mt-5'>
+            <h1 className="text-success">Mis pedidos</h1>
+          </div>
+          
+          <OrdersList 
+            data={data.result}
+            isLoading={isLoading}
+          />
+        </>
       )}
     </>
   )

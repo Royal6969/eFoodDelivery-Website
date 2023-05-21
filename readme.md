@@ -9,7 +9,7 @@
     - [Limpiar](#limpiar)
       - [App.tsx](#apptsx)
       - [index.tsx](#indextsx)
-    - [index.html](#indexhtml)
+      - [index.html](#indexhtml)
   - [0.3. Instalar Bootstrap y Bootstrap Icons](#03-instalar-bootstrap-y-bootstrap-icons)
     - [src --\> index.tsx](#src----indextsx)
   - [0.4 Primera prueba de ejecución del proyecto](#04-primera-prueba-de-ejecución-del-proyecto)
@@ -24,8 +24,7 @@
   - [2.1. pages --\> Home.tsx](#21-pages----hometsx)
   - [2.2. components --\> products --\> ProductList.tsx y ProductCard.tsx](#22-components----products----productlisttsx-y-productcardtsx)
   - [2.3. Prueba de ejecución con la API desplegada](#23-prueba-de-ejecución-con-la-api-desplegada)
-  - [2.4. Interfaz de la página del Home](#24-interfaz-de-la-página-del-home)
-    - [ProductCard.tsx](#productcardtsx)
+  - [2.4. Componente de la carta del producto en la interfaz de la página del Home](#24-componente-de-la-carta-del-producto-en-la-interfaz-de-la-página-del-home)
   - [2.5. Añadiendo el routing y la página 404](#25-añadiendo-el-routing-y-la-página-404)
 - [3. Página de los Detalles del Producto](#3-página-de-los-detalles-del-producto)
   - [3.1. Añadir Redux y Redux Toolkit](#31-añadir-redux-y-redux-toolkit)
@@ -41,21 +40,17 @@
     - [Prueba de Ejecución](#prueba-de-ejecución-1)
   - [4.4. Añadir un producto al carrito desde el ProductCard](#44-añadir-un-producto-al-carrito-desde-el-productcard)
   - [4.5. Añadir un mini-loader al botón de añadir un producto al carrito en el ProductCard](#45-añadir-un-mini-loader-al-botón-de-añadir-un-producto-al-carrito-en-el-productcard)
-  - [4.6. Componente del Mini-Loader](#46-componente-del-mini-loader)
-  - [4.7. Componmente del BigLoader](#47-componmente-del-bigloader)
-  - [4.8. Creando las interfaces del carrito y de los items del carrito](#48-creando-las-interfaces-del-carrito-y-de-los-items-del-carrito)
-    - [CartIterface.ts](#cartiterfacets)
-    - [CartItemInterface](#cartiteminterface)
-  - [4.9. Slice para el carrito](#49-slice-para-el-carrito)
-  - [4.10. Crear la vista de la página del Carrito](#410-crear-la-vista-de-la-página-del-carrito)
-  - [4.11. Desarrollando el componente del CartRecap](#411-desarrollando-el-componente-del-cartrecap)
-  - [4.12. Añadir más reducers a nuestro slice del carrito](#412-añadir-más-reducers-a-nuestro-slice-del-carrito)
-  - [4.13. Implementando las nuevas funcionalidades en el componente del resumen del carrito](#413-implementando-las-nuevas-funcionalidades-en-el-componente-del-resumen-del-carrito)
+  - [4.6. Creando las interfaces del carrito y de los items del carrito](#46-creando-las-interfaces-del-carrito-y-de-los-items-del-carrito)
+  - [4.7. Slice para el carrito](#47-slice-para-el-carrito)
+  - [4.8. Crear la vista de la página del Carrito](#48-crear-la-vista-de-la-página-del-carrito)
+  - [4.9. Desarrollando el componente del CartRecap](#49-desarrollando-el-componente-del-cartrecap)
+  - [4.10. Añadir más reducers a nuestro slice del carrito](#410-añadir-más-reducers-a-nuestro-slice-del-carrito)
+  - [4.11. Implementando las nuevas funcionalidades en el componente del resumen del carrito](#411-implementando-las-nuevas-funcionalidades-en-el-componente-del-resumen-del-carrito)
     - [Prueba de ejecución](#prueba-de-ejecución-2)
-  - [4.14. Mostrar el número de productos en el icono del carrito](#414-mostrar-el-número-de-productos-en-el-icono-del-carrito)
-  - [4.15. Mostrar los detalles del pedido a la derecha en el carrito](#415-mostrar-los-detalles-del-pedido-a-la-derecha-en-el-carrito)
-  - [4.16. Desarrollar los métodos de ayuda para los campos a rellenar del DeliveryDetails](#416-desarrollar-los-métodos-de-ayuda-para-los-campos-a-rellenar-del-deliverydetails)
-  - [4.17. Añadiendo un mini-loader cuando el botón de encargar el pedido es pulsado](#417-añadiendo-un-mini-loader-cuando-el-botón-de-encargar-el-pedido-es-pulsado)
+  - [4.12. Mostrar el número de productos en el icono del carrito](#412-mostrar-el-número-de-productos-en-el-icono-del-carrito)
+  - [4.13. Mostrar los detalles del pedido a la derecha en el carrito](#413-mostrar-los-detalles-del-pedido-a-la-derecha-en-el-carrito)
+  - [4.14. Desarrollar los métodos de ayuda para los campos a rellenar del DeliveryDetails](#414-desarrollar-los-métodos-de-ayuda-para-los-campos-a-rellenar-del-deliverydetails)
+  - [4.15. Añadiendo un mini-loader cuando el botón de encargar el pedido es pulsado](#415-añadiendo-un-mini-loader-cuando-el-botón-de-encargar-el-pedido-es-pulsado)
 - [5. Autentificación y Autorización de Usuarios](#5-autentificación-y-autorización-de-usuarios)
   - [5.1. Páginas del Login y el Register](#51-páginas-del-login-y-el-register)
   - [5.2. Crear las nuevas mutations para los nuevos endpoint del login y el register](#52-crear-las-nuevas-mutations-para-los-nuevos-endpoint-del-login-y-el-register)
@@ -67,11 +62,10 @@
   - [5.8. Alternar botones de acceso en el Header y bienvenida al usuario](#58-alternar-botones-de-acceso-en-el-header-y-bienvenida-al-usuario)
   - [5.9. Funcionalidad del Logout](#59-funcionalidad-del-logout)
     - [Prueba de ejecución](#prueba-de-ejecución-3)
-  - [5.10. Añadir las notificaciones *Toast*](#510-añadir-las-notificaciones-toast)
-  - [5.11. Autentificación del usuario con High-Order-Component (HOC)](#511-autentificación-del-usuario-con-high-order-component-hoc)
-  - [5.12. Autorización del usuario con High-Order-Component (HOC)](#512-autorización-del-usuario-con-high-order-component-hoc)
-  - [5.13. Añadir la lógica de que sólo los usuarios identificados puedan añadir productos al carrito](#513-añadir-la-lógica-de-que-sólo-los-usuarios-identificados-puedan-añadir-productos-al-carrito)
-  - [5.14. Cambiar el id estático del usuario "admin" por un id dinámico](#514-cambiar-el-id-estático-del-usuario-admin-por-un-id-dinámico)
+  - [5.10. Autentificación del usuario con High-Order-Component (HOC)](#510-autentificación-del-usuario-con-high-order-component-hoc)
+  - [5.11. Autorización del usuario con High-Order-Component (HOC)](#511-autorización-del-usuario-con-high-order-component-hoc)
+  - [5.12. Añadir la lógica de que sólo los usuarios identificados puedan añadir productos al carrito](#512-añadir-la-lógica-de-que-sólo-los-usuarios-identificados-puedan-añadir-productos-al-carrito)
+  - [5.13. Cambiar el id estático del usuario "admin" por un id dinámico](#513-cambiar-el-id-estático-del-usuario-admin-por-un-id-dinámico)
     - [Prueba de ejecución](#prueba-de-ejecución-4)
 - [6. Procesamiento de los pagos con Stripe](#6-procesamiento-de-los-pagos-con-stripe)
   - [6.1. Crear el endpoint para el pago](#61-crear-el-endpoint-para-el-pago)
@@ -96,7 +90,7 @@
   - [7.13. Actualizar el estado del pedido con los botones](#713-actualizar-el-estado-del-pedido-con-los-botones)
   - [7.14. Crear la página de los pedidos de todos los usuarios para el administrador](#714-crear-la-página-de-los-pedidos-de-todos-los-usuarios-para-el-administrador)
     - [Prueba de ejecución](#prueba-de-ejecución-6)
-- [8. Página de la gestión de los productos](#8-página-de-la-gestión-de-los-productos)
+- [8. Página del admin para la gestión de los productos](#8-página-del-admin-para-la-gestión-de-los-productos)
   - [8.1. Crear la página del listado de productos del admin](#81-crear-la-página-del-listado-de-productos-del-admin)
   - [8.2. Crear la página del formulario para la cración y edición de los productos](#82-crear-la-página-del-formulario-para-la-cración-y-edición-de-los-productos)
   - [8.3. Gestión y validación de la subida de imágenes en el formulario de producto](#83-gestión-y-validación-de-la-subida-de-imágenes-en-el-formulario-de-producto)
@@ -115,6 +109,8 @@
   - [9.4. Obtener las categorías de cada producto y mostrarlas en botones](#94-obtener-las-categorías-de-cada-producto-y-mostrarlas-en-botones)
   - [9.5. Implementar la lógica del filtrado por categorías y mostrar sólo los productos de la categoría seleccionada](#95-implementar-la-lógica-del-filtrado-por-categorías-y-mostrar-sólo-los-productos-de-la-categoría-seleccionada)
   - [9.6. Implementar la lógica de la ordenación de los productos](#96-implementar-la-lógica-de-la-ordenación-de-los-productos)
+- [10. Mejorando el la lista de productos y la lista de pedidos del admin](#10-mejorando-el-la-lista-de-productos-y-la-lista-de-pedidos-del-admin)
+  - [10.1. Añadir los filtros de búsqueda a la interfaz de los pedidos](#101-añadir-los-filtros-de-búsqueda-a-la-interfaz-de-los-pedidos)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -162,11 +158,14 @@
     - [Prueba de ejecución para probar todas las funcionalidades del CRUD de producto](#prueba-de-ejecución-para-probar-todas-las-funcionalidades-del-crud-de-producto)
 - [Extras](#extras)
   - [Crear una interfaz para las respuesta de la API](#crear-una-interfaz-para-las-respuesta-de-la-api)
+  - [Componente del Mini-Loader](#componente-del-mini-loader)
+  - [Componmente del BigLoader](#componmente-del-bigloader)
   - [Evitar perder el contenido del almacenamiento de Redux con los valores del token del usuario](#evitar-perder-el-contenido-del-almacenamiento-de-redux-con-los-valores-del-token-del-usuario)
+  - [Añadir las notificaciones *Toast*](#añadir-las-notificaciones-toast)
   - [Cómo aplazar la llamada a un endpoint en función de un orden de llamadas](#cómo-aplazar-la-llamada-a-un-endpoint-en-función-de-un-orden-de-llamadas)
-    - [Añadir la cabecera de la autorización en los endpoints de las entidades](#añadir-la-cabecera-de-la-autorización-en-los-endpoints-de-las-entidades)
+  - [Añadir la cabecera de la autorización en los endpoints de las entidades](#añadir-la-cabecera-de-la-autorización-en-los-endpoints-de-las-entidades)
+  - [Despliegue de la aplicación en Azure](#despliegue-de-la-aplicación-en-azure)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
-    - [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](#enlace-a-trello---espacio-de-trabajo-y-tablero-del-proyecto-efooddelivery-website)
 
 
 # 0. Crear una aplicaión de React con Typescript
@@ -305,7 +304,7 @@ root.render(
 );
 ```
 
-### index.html
+#### index.html
 
 ```html
 <!DOCTYPE html>
@@ -698,9 +697,9 @@ Para ello, tan sólo tengo que ir al ProductList.tsx y poner la URL de la API de
 
 Y funciona perfectamente!! 🤩
 
-## 2.4. Interfaz de la página del Home
+## 2.4. Componente de la carta del producto en la interfaz de la página del Home
 
-### ProductCard.tsx
+Partiendo del componente que ya tenemos del *ProductList*, lo que sería la carta en sí del producto, debeberíamos de abstraerla aún más en otro componente más pequeño, de modo que vamos a crear el componente del *ProductCard.tsx*
 
 ```tsx
 function ProductCard(props: Props) { // right here we have to write the product will be getting props
@@ -1468,104 +1467,7 @@ Cuando el usuario pulse el botón que hicimos en el apartado anterior, tendría 
 
 **Nota:** quería poner aquí alguna captura de pantalla de cómo se ve en acción, pero es tan rápido que no tengo forma de capturarlo en el momento justo, de modo que ya lo enseñaré próximamente mediante algún video.
 
-## 4.6. Componente del Mini-Loader
-
-En el apartado anterior añadimos un mini-loader al botón de icono de añadir un producto al carrito desde el ProductCard, pero pensándolo mejor, este mini-loader seguramente lo vaya a necesitar y a reutilizar próximamente en futuros componentes o páginas, de modo que es mejor separarlo en un componente propio.
-
-Para ello, dentro de la carpeta de components --> view --> creamos una carpeta nueva llamada *common*, y dentro de ella creamos este nuevo componente, el *MiniLoader.tsx*
-
-```tsx
-import React from 'react'
-
-function MiniLoader({ type = 'warning', size = '100' }) { // right here in the parameters, we can say the default type will be warning and size will be 100
-  return (
-    // here we can use dynamic text for the styles that we've set as parameters before
-    <div style={{ scale: `${size}%` }} className={`spinner-border text-${type}`}>
-      {' '}
-    </div>
-  )
-}
-
-export default MiniLoader
-```
-
-Y en el ProductCard, donde antes teníamos el <div> del mini-loader, ahora llamamos a este nuevo componente por separado.
-
-```tsx
-<div style={{ position: 'absolute', top: '15px', right: '15px' }}>
-  <MiniLoader />
-</div>
-```
-
-También tendríamos que añadir este MiniLoader al botón del AddToCart del ProductDetails...
-
-```tsx
-<div className="col-5">
-  {isAddedToCart
-    ? (
-      <button className='btn btn-warning form-control' disabled>
-        <MiniLoader type='danger' />
-      </button>
-    )
-    : (
-      <button 
-        className="btn btn-warning form-control"
-        onClick={() => handleAddToCart(data.result?.id)}
-      >
-        Add to Cart
-      </button>
-    )
-  }
-</div>
-```
-
-Y ejecutamos nuestra aplicación y comprobamos que el MiniLoader sigue funcionando correctamente!
-
-## 4.7. Componmente del BigLoader
-
-Ya que estamos con el tema de los loaders, también necesitábamos el loader principal, el que se vería cuando cargan el ProductList y el ProductDetails.
-
-Dentro de la carpeta de components --> view --> common --> creamos el componente del *BigLoader.tsx*
-
-```tsx
-import React from 'react'
-
-function BigLoader() {
-  return (
-    <div style={{ position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: '4rem', height: '4rem' }} className='spinner-border text-warning'>
-        {' '}
-      </div>
-    </div>
-  )
-}
-
-export default BigLoader
-```
-
-Entonces ahora ya podríamos llamar a este nuevo componente en el ProductDetails
-
-```tsx
-<div className='d-flex justify-content-center' style={{ width: "100%" }}>
-  {/* <div>Loading product details...</div> */}
-  <BigLoader />
-</div>
-```
-
-Y también en el ProductList
-
-```tsx
-if (isLoading) {
-  return (
-    // <div>Loading products ...</div>
-    <BigLoader />
-  )
-}
-```
-
-![](./img/32.png)
-
-## 4.8. Creando las interfaces del carrito y de los items del carrito
+## 4.6. Creando las interfaces del carrito y de los items del carrito
 
 Recordamos que en el Header, tenemos un icono que nos llevaría a la página del carrito, en la cual queremos mostrar cuantos items de cada producto hay en el carrito del usuario en cuestión.
 
@@ -1579,7 +1481,7 @@ Seguiremos usando el userId hardcodeado y vamos a volver a hacer el truco de aut
 
 ![](./img/33.png)
 
-### CartIterface.ts
+De modo que para el *CartIterface.ts* tendríamos el siguiente modelo:
 
 ```ts
 import CartItemInterface from "./CartItemInterface"
@@ -1596,7 +1498,7 @@ export default interface CartInterface {
 }
 ```
 
-### CartItemInterface
+Y para el *CartItemInterface.ts* tendríamos este otro modelo:
 
 ```ts
 import ProductInterface from "./ProductInterface"
@@ -1612,7 +1514,7 @@ export default interface CartItemInterface {
 }
 ```
 
-## 4.9. Slice para el carrito
+## 4.7. Slice para el carrito
 
 Cuando estemos cargando el ProductList, tendremos que recuperar el número de items de cada producto añadido para ponerlo en el icono del carrito del Header, y cuando el usuario vaya efectivamente a la página del carrito tendremos que mostrar todos los productos añadidos.
 
@@ -1700,7 +1602,7 @@ function App() {
 ![](./img/34.png)
 ![](./img/35.png)
 
-## 4.10. Crear la vista de la página del Carrito
+## 4.8. Crear la vista de la página del Carrito
 
 Vamos a nuestra carpeta de *pages* para añadir la nueva vista del carrito, el *Cart.tsx*
 
@@ -1743,7 +1645,7 @@ export default CartRecap
 
 ![](./img/36.png)
 
-## 4.11. Desarrollando el componente del CartRecap
+## 4.9. Desarrollando el componente del CartRecap
 
 Lo primero será volver a buscar por Google cualquier plantilla de Bootstrap de un carrito de la compra de la cual podamos usar de base y seguir hacia adelante rápidamente.
 
@@ -1844,7 +1746,7 @@ import { RootState } from '../../../store/redux/ReduxStorage'
 
 ![](./img/37.png)
 
-## 4.12. Añadir más reducers a nuestro slice del carrito
+## 4.10. Añadir más reducers a nuestro slice del carrito
 
 Ahora tenemos que añadir algunos endpoints para actualizar la cantidad o eliminar un item (producto) del carrito.
 
@@ -1893,7 +1795,7 @@ export const cartSlice = createSlice({
 });
 ```
 
-## 4.13. Implementando las nuevas funcionalidades en el componente del resumen del carrito
+## 4.11. Implementando las nuevas funcionalidades en el componente del resumen del carrito
 
 Vamos a volver ahora al archivo del *CartRecap.tsx* para implementar y llamar con el hook del useDispatch a las acciones de los métodos que habíamos desarrollado en el apartado anterior.
 
@@ -1981,7 +1883,7 @@ function CartRecap() {
 
 [Prueba de ejecución para probar las funcionalidades del carrito - Actualizar las cantidades de los productos y eliminar los productos](#prueba-de-ejecución-para-probar-las-funcionalidades-del-carrito---actualizar-las-cantidades-de-los-productos-y-eliminar-los-productos)
 
-## 4.14. Mostrar el número de productos en el icono del carrito
+## 4.12. Mostrar el número de productos en el icono del carrito
 
 En este pequeño apartado, vamos a implementar la característica de que en el icono del carrito del Header, aparezca un badge que nos muestre el número de items (productos) que nuestro carrito tiene actualmente.
 
@@ -2017,7 +1919,7 @@ function Header() {
 
 ![](./img/38.png)
 
-## 4.15. Mostrar los detalles del pedido a la derecha en el carrito
+## 4.13. Mostrar los detalles del pedido a la derecha en el carrito
 
 En este apartado vamos a mostrar los detalles de lo que sería el futuro pedido. Mostraremos tanto el total de la compra como los detalles del usuario que recogerá el pedido, así como su email y su número de teléfono.
 
@@ -2096,7 +1998,7 @@ function DeliveryDetails() {
 
 ![](./img/39.png)
 
-## 4.16. Desarrollar los métodos de ayuda para los campos a rellenar del DeliveryDetails
+## 4.14. Desarrollar los métodos de ayuda para los campos a rellenar del DeliveryDetails
 
 En este apartado crearemos una nueva carpeta para los *helper methods* que podamos desarrollar con funcionalidades comunes a cualquier página y/o componente de la aplicación.
 
@@ -2205,7 +2107,7 @@ function DeliveryDetails() {
 }
 ```
 
-## 4.17. Añadiendo un mini-loader cuando el botón de encargar el pedido es pulsado
+## 4.15. Añadiendo un mini-loader cuando el botón de encargar el pedido es pulsado
 
 ```tsx
 function DeliveryDetails() {
@@ -2872,64 +2774,7 @@ function Header() {
 
 [Prueba de ejecución para probar la funcionalidad del Login y Logout](#prueba-de-ejecución-para-probar-la-funcionalidad-del-login-y-logout)
 
-## 5.10. Añadir las notificaciones *Toast*
-
-Para añadir este tipo de notificaciones a nuestra aplicación de una forma más rápida y sencilla, vamos a instalar un paquete de npm llamado react-toastify
-
-```bash
-npm install react-toastify
-```
-
-Y ahora, cómo podemos implementarlo??
-
-Primero tenemos que crearnos un nuevo helper method, por ejemplo, el *toastNotifyHelper.ts* y pegar la configuración de la web de [react-toastify Demo - Toast Emitter](https://fkhadra.github.io/react-toastify/introduction/)
-
-```ts
-const toastNotifyHelper = (toastNotificationMessage: string, toastNotificationType: TypeOptions='success') => { // TypeOptions it's alredy defied inside the react notify
-  toast(toastNotificationMessage, {
-    position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "dark",
-    type: toastNotificationType // to modify the notification type if the user wants
-  });
-}
-
-export default toastNotifyHelper;
-```
-
-Luego tenemos que añadir el contenedor del componente en sí en nuestro *index.tsx* del nivel root de nuestra aplicaión
-
-```tsx
-root.render(
-  <Provider store={reduxStorage}>
-    <BrowserRouter>
-      <App />
-      <ToastContainer />
-    </BrowserRouter>
-  </Provider>
-);
-```
-
-Y por último, llamamos al helper method donde queramos activar la mnotificación toast, que normalmente será cuando obtengamos las respuestas de la API. Por ejemplo, en el *ProductCard.tsx* para notificar que añadimos un producto al carrito desde el Home sería así
-
-```tsx
-...
-// if cartResponse.data is populated and success flag is true, let's invoke a toast notification
-if (cartResponse.data && cartResponse.data.success) {
-    toastNotifyHelper('Producto añadido al carrito correctamente');
-}
-...
-```
-
-![](./img/50.png)
-![](./img/51.png)
-
-## 5.11. Autentificación del usuario con High-Order-Component (HOC)
+## 5.10. Autentificación del usuario con High-Order-Component (HOC)
 
 Ahora ha llegado el momento de agregar validaciones de los permisos del usuario en función de su rol para poder acceder a ciertas páginas, es decir, debemos limitar las acciones y accesos de los usuarios *clientes*, y debemos otorgar más accesos y funciones para los usuarios *administradores*.
 
@@ -2979,7 +2824,7 @@ function AuthCustomerTest() {
 export default checkCustomerAuth(AuthCustomerTest)
 ```
 
-## 5.12. Autorización del usuario con High-Order-Component (HOC)
+## 5.11. Autorización del usuario con High-Order-Component (HOC)
 
 Para la autorización del usuario y poder comprobar su rol, y en base a ello ofrecerle el acceso a nuevas páginas o fuciones, vamos a crear en la carpeta del *HOC*. un nuevo archivo llamado *CheckAdminAuth.tsx*
 
@@ -3029,7 +2874,7 @@ export default checkAdminAuth(AuthAdminTest)
 
 Y para la página del *AccessRefused.tsx* nos buscamos cualquier plantilla en Google.
 
-## 5.13. Añadir la lógica de que sólo los usuarios identificados puedan añadir productos al carrito
+## 5.12. Añadir la lógica de que sólo los usuarios identificados puedan añadir productos al carrito
 
 Esto tenemos que hacerlo tanto en el *ProductCard.tsx* como en el *ProductDetails.tsx*
 
@@ -3076,7 +2921,7 @@ Por último, lo suyo sería que el badge del contador de productos del icono del
 
 **Nota:** lo siguiente sería ya introducor el usuario dinámico, es decir, sustituir el user id hardcodeado del admin1 por la lógica que añada al usuario en cuestión del que se tarte realmente. Y una vez que haga eso, ya añadiría un video a modo de prueba de ejecución de toda esta parte para esclarecer cómo debe de quedar todo.
 
-## 5.14. Cambiar el id estático del usuario "admin" por un id dinámico
+## 5.13. Cambiar el id estático del usuario "admin" por un id dinámico
 
 Por fin llegamos al punto en el que ya lo tenemos todo listo para dar el paso a cambiar el userId que tenemos estáticamente hardcodeado perteneciente al primer usuario que creamos (admin@gmail.com), por un userId dinámico que pertenezca al usuario en cuestión que esté identificado en nuestra aplicación.
 
@@ -4203,7 +4048,7 @@ Lo probamos y podemos comprar que funciona perfectamente!
 
 [Prueba de ejecución de toda la parte relativa a los pedidos, desde la creación de un pedido hasta su entrega](#prueba-de-ejecución-de-toda-la-parte-relativa-a-los-pedidos-desde-la-creación-de-un-pedido-hasta-su-entrega)
 
-# 8. Página de la gestión de los productos
+# 8. Página del admin para la gestión de los productos
 
 Ahora la idea es hacer una página tipo para que el administrador pueda gestionar los productos del negocio, es decir, ha llegado la hora de hacer el CRUD de los productos!
 
@@ -5258,6 +5103,53 @@ function ProductsList() {
 ![](./img/95.png)
 ![](./img/96.png)
 
+# 10. Mejorando el la lista de productos y la lista de pedidos del admin
+
+Partimos de la base de que vengo de hacer unos cambios en la API. En el *OrderController.cs* de la API, he añadido al endpoint del GetOrders() más parámetros de entrada para poder llegar a implementar las funcionalidades de filtrado de búsqueda y paginación
+
+![](./img/108.png)
+![](./img/109.png)
+![](./img/110.png)
+
+## 10.1. Añadir los filtros de búsqueda a la interfaz de los pedidos
+
+Vamos a comenzar por la parte de los pedidos, concretamente vamos a añadir estas funcionalidades de búsqueda y paginación a la página del administrador del *AllUsersOrders.tsx*
+
+```tsx
+function AllUsersOrders() {
+  ...
+  return (
+    <>
+      ...
+      {!isLoading && (
+        <>
+          <div className='d-flex align-items-center justify-content-between mx-5 mt-5'>
+            <h1 className="text-success w-50">Lista de pedidos</h1>
+
+            <div style={{ width: '40%' }} className='d-flex'>
+              <input type='text' className='form-control mx-2' placeholder='Buscar por nombre, email o teléfono' />
+            </div>
+
+            <select className='form-select w-50 mx-2'>
+              <option value="Todo">Todo</option>
+            </select>
+
+            <button className='btn btn-outline-warning'>Buscar</button>
+          </div>
+          
+          <OrdersList 
+            data={data.result}
+            isLoading={isLoading}
+          />
+        </>
+      )}
+    </>
+  )
+}
+```
+
+![](./img/111.png)
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -5415,6 +5307,103 @@ export default interface ApiResponse {
 
 ![](./img/43.png)
 
+## Componente del Mini-Loader
+
+En el apartado anterior añadimos un mini-loader al botón de icono de añadir un producto al carrito desde el ProductCard, pero pensándolo mejor, este mini-loader seguramente lo vaya a necesitar y a reutilizar próximamente en futuros componentes o páginas, de modo que es mejor separarlo en un componente propio.
+
+Para ello, dentro de la carpeta de components --> view --> creamos una carpeta nueva llamada *common*, y dentro de ella creamos este nuevo componente, el *MiniLoader.tsx*
+
+```tsx
+import React from 'react'
+
+function MiniLoader({ type = 'warning', size = '100' }) { // right here in the parameters, we can say the default type will be warning and size will be 100
+  return (
+    // here we can use dynamic text for the styles that we've set as parameters before
+    <div style={{ scale: `${size}%` }} className={`spinner-border text-${type}`}>
+      {' '}
+    </div>
+  )
+}
+
+export default MiniLoader
+```
+
+Y en el ProductCard, donde antes teníamos el <div> del mini-loader, ahora llamamos a este nuevo componente por separado.
+
+```tsx
+<div style={{ position: 'absolute', top: '15px', right: '15px' }}>
+  <MiniLoader />
+</div>
+```
+
+También tendríamos que añadir este MiniLoader al botón del AddToCart del ProductDetails...
+
+```tsx
+<div className="col-5">
+  {isAddedToCart
+    ? (
+      <button className='btn btn-warning form-control' disabled>
+        <MiniLoader type='danger' />
+      </button>
+    )
+    : (
+      <button 
+        className="btn btn-warning form-control"
+        onClick={() => handleAddToCart(data.result?.id)}
+      >
+        Add to Cart
+      </button>
+    )
+  }
+</div>
+```
+
+Y ejecutamos nuestra aplicación y comprobamos que el MiniLoader sigue funcionando correctamente!
+
+## Componmente del BigLoader
+
+Ya que estamos con el tema de los loaders, también necesitábamos el loader principal, el que se vería cuando cargan el ProductList y el ProductDetails.
+
+Dentro de la carpeta de components --> view --> common --> creamos el componente del *BigLoader.tsx*
+
+```tsx
+import React from 'react'
+
+function BigLoader() {
+  return (
+    <div style={{ position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ width: '4rem', height: '4rem' }} className='spinner-border text-warning'>
+        {' '}
+      </div>
+    </div>
+  )
+}
+
+export default BigLoader
+```
+
+Entonces ahora ya podríamos llamar a este nuevo componente en el ProductDetails
+
+```tsx
+<div className='d-flex justify-content-center' style={{ width: "100%" }}>
+  {/* <div>Loading product details...</div> */}
+  <BigLoader />
+</div>
+```
+
+Y también en el ProductList
+
+```tsx
+if (isLoading) {
+  return (
+    // <div>Loading products ...</div>
+    <BigLoader />
+  )
+}
+```
+
+![](./img/32.png)
+
 ## Evitar perder el contenido del almacenamiento de Redux con los valores del token del usuario
 
 En el *App.tsx* tendríamos que descodificar el token de nuevo y llamar al slice del setUserLogged
@@ -5440,6 +5429,63 @@ En el *App.tsx* tendríamos que descodificar el token de nuevo y llamar al slice
     }
   }, []);
 ```
+
+## Añadir las notificaciones *Toast*
+
+Para añadir este tipo de notificaciones a nuestra aplicación de una forma más rápida y sencilla, vamos a instalar un paquete de npm llamado react-toastify
+
+```bash
+npm install react-toastify
+```
+
+Y ahora, cómo podemos implementarlo??
+
+Primero tenemos que crearnos un nuevo helper method, por ejemplo, el *toastNotifyHelper.ts* y pegar la configuración de la web de [react-toastify Demo - Toast Emitter](https://fkhadra.github.io/react-toastify/introduction/)
+
+```ts
+const toastNotifyHelper = (toastNotificationMessage: string, toastNotificationType: TypeOptions='success') => { // TypeOptions it's alredy defied inside the react notify
+  toast(toastNotificationMessage, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "dark",
+    type: toastNotificationType // to modify the notification type if the user wants
+  });
+}
+
+export default toastNotifyHelper;
+```
+
+Luego tenemos que añadir el contenedor del componente en sí en nuestro *index.tsx* del nivel root de nuestra aplicaión
+
+```tsx
+root.render(
+  <Provider store={reduxStorage}>
+    <BrowserRouter>
+      <App />
+      <ToastContainer />
+    </BrowserRouter>
+  </Provider>
+);
+```
+
+Y por último, llamamos al helper method donde queramos activar la mnotificación toast, que normalmente será cuando obtengamos las respuestas de la API. Por ejemplo, en el *ProductCard.tsx* para notificar que añadimos un producto al carrito desde el Home sería así
+
+```tsx
+...
+// if cartResponse.data is populated and success flag is true, let's invoke a toast notification
+if (cartResponse.data && cartResponse.data.success) {
+    toastNotifyHelper('Producto añadido al carrito correctamente');
+}
+...
+```
+
+![](./img/50.png)
+![](./img/51.png)
 
 ## Cómo aplazar la llamada a un endpoint en función de un orden de llamadas
 
@@ -5479,7 +5525,7 @@ function App() {
 }
 ```
 
-### Añadir la cabecera de la autorización en los endpoints de las entidades
+## Añadir la cabecera de la autorización en los endpoints de las entidades
 
 Cuando empecé a desarrollar la API, al principio no puse las etiquetas de validación de [Authorize] en ningún método. Pero ahora las había puesto, y resulta que al re-publicar la API y al volver a ejecutar esta aplicación web cliente, las pantallas me salían en blanco y ya nada funcionaba (401)... ¿qué estaba pasando?
 
@@ -5500,6 +5546,32 @@ const productAPI = createApi({
   ...
 ```
 
+## Despliegue de la aplicación en Azure
+
+![](./img/97.png)
+![](./img/98.png)
+![](./img/99.png)
+![](./img/100.png)
+![](./img/101.png)
+![](./img/102.png)
+![](./img/103.png)
+![](./img/104.png)
+
+[Enlace al despliegue de la aplicación web cliente de eFoodDelivery](https://efooddelivery-website.azurewebsites.net/)
+
+Si al intentar desplegar nos saliese este error:
+
+![](./img/105.png)
+
+o si al intentar crear el App Web Service desde el VSCode nos disese el error de: *"this region has quota of 1 instances for your subscription. try selecting different region or sku"*
+
+Lo que tenemos que hacer para ambos casos, es que creamos el App Web Service desde VSCode, y nos saldrá el segundo error del que te hablaba. Pero si vamos a nuestro portal de Azure, podremos ver que se ha creado sólo un nuevo grupo de recursos llamado *"appsvc_linux_centralus"*.
+
+![](./img/106.png)
+![](./img/107.png)
+
+Entonces nos metemos en ese nuevo grupo de recursos, y desde Azure, creamos un nuevo App Web Service con su nuevo Plan de Pago gratuito, y después volvemos al VSCode, y en el explorador de servicios de Azure, si refrescamos, nos aparecerá ya efectivamente eset nuevo App Service, y a ese le hacemos click derecho y desplegamos, y el despliegue se efectuará correctamente.
+
 ## Enlace al espacio de trabajo y al tablero del proyecto en Trello
 
-### [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](https://trello.com/invite/b/jhJydRkf/ATTI1474acfddb1880c784b2467f19f42a7a387BB064/efooddelivery-website)
+[Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](https://trello.com/invite/b/jhJydRkf/ATTI1474acfddb1880c784b2467f19f42a7a387BB064/efooddelivery-website)
