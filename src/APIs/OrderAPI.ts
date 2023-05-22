@@ -35,6 +35,16 @@ const orderAPI = createApi({
           ...(orderStatus && {orderStatus})
         }
       }),
+      // the response headers are not automatically being retrieved, so to do that, 
+      // here we need to transform the response that is being received by the query and then return back
+      // we need to use "transformResponse" and receive two parameters, 
+      // the apiResponse and its metaData (metaData will have all the header information)
+      transformResponse(apiDataResponse: { result: any }, metaData: any) {
+        return {
+          apiDataResponse,
+          recordsNumber: metaData.response.headers.get('X-Pagination')
+        }
+      },
       providesTags: ["Orders"]
     }),
     getOrderDetailsById: builder.query({

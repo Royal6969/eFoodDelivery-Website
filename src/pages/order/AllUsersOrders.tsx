@@ -28,6 +28,12 @@ function AllUsersOrders() {
     orderSearch: '',
     orderStatus: ''
   });
+  // to implement pagination, we need one more state that basically store the total numbers of records (pageSize) and the number of page we're navigating (actualPage)
+  const [recordsNumber, setRecordsNumber] = useState(0);  // total number of objects retrieved
+  const [pageNumberAndSize, setPageNumberAndSize] = useState({
+    actualPage: 1,  // page number that we're on
+    pageSize: 5     // number of objects in each page
+  });
 
   // we need to save the result back from the query and define a flag for when it's loading the response
   // we don't need the useSelector() hook here to retrieve the user stored, so instead passing a userId, we'll pass an empty string to fetch all orders of all users
@@ -88,7 +94,16 @@ function AllUsersOrders() {
   // then we want to useEffect() and set the order data with that data.result
   useEffect(() => {
     if (data) {
-      setOrderDataFiltered(data.result);
+      // setOrderDataFiltered(data.result);
+      // after implementing pagination, we have an error here with data.result, 
+      // because now in data we have the api response and that has all the order
+      setOrderDataFiltered(data.apiDataResponse.result);
+      // console.log(data.recordsNumber);
+
+      // now we have to extract the recordsNumber inside the api response, and we have to add that to the local state
+      const { RecordsNumber } = JSON.parse(data.recordsNumber);
+      setRecordsNumber(RecordsNumber);
+      // console.log(recordsNumber);
     }
 
   }, [data]);

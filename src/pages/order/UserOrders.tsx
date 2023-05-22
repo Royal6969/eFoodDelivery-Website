@@ -11,7 +11,7 @@ function UserOrders() {
   // here we can use the useSelector() hook to get the userId from the redux store
   const userId = useSelector((state: RootState) => state.authenticationStore.userId);
   // we need to save the result back from the query and define a flag for when it's loading the response
-  const { data, isLoading } = useGetOrdersFromUserQuery(userId);
+  const { data, isLoading } = useGetOrdersFromUserQuery({ userId });
 
   
   return (
@@ -27,7 +27,10 @@ function UserOrders() {
           </div>
           
           <OrdersList 
-            data={data.result}
+            // data={data.result}
+            // after implementing pagination, we have an error here with data.result, 
+            // because now in data we have the api response and that has all the order
+            data={data?.apiDataResponse.result}
             isLoading={isLoading}
           />
         </>

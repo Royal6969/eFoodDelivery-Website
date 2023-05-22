@@ -112,7 +112,8 @@
 - [10. Mejorando el la lista de productos y la lista de pedidos del admin](#10-mejorando-el-la-lista-de-productos-y-la-lista-de-pedidos-del-admin)
   - [10.1. Añadir los filtros de búsqueda a la interfaz de los pedidos](#101-añadir-los-filtros-de-búsqueda-a-la-interfaz-de-los-pedidos)
   - [10.2. Implementar el filtrado de búsqueda](#102-implementar-el-filtrado-de-búsqueda)
-  - [10.2.](#102)
+  - [10.3. Hacer la búsqueda filtrada pero llamando a la API](#103-hacer-la-búsqueda-filtrada-pero-llamando-a-la-api)
+  - [10.4. Obtener de la API el número total de registros, así como el número y tamaño de la página](#104-obtener-de-la-api-el-número-total-de-registros-así-como-el-número-y-tamaño-de-la-página)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -5272,7 +5273,7 @@ function AllUsersOrders() {
 ![](./img/113.png)
 ![](./img/114.png)
 
-## 10.2. 
+## 10.3. Hacer la búsqueda filtrada pero llamando a la API
 
 Tenemos que tener en cuenta que los filtros anteriores, los estábamos llevando a cabo en local... es decir, debemos de pasar estos filtros a la API a través del endpoint de carrito. De modo que vamos al *OrderAPI.ts* para añadir los parámetros nuevos
 
@@ -5364,6 +5365,99 @@ function AllUsersOrders() {
 ```
 
 Y ahora si vamos al inspeccionar y a la sección de Network, podemos ver que cada vez que le damos al botón de buscar, se realiza la llamada a la API.
+
+**Nota:** no olvides ir al *UserOrders* para poner el parámetro de entrada del userId en la función principal, dentro de unas llaves. 
+
+## 10.4. Obtener de la API el número total de registros, así como el número y tamaño de la página 
+
+Para hacer esto, básicamente vamos a definir un par de nuevos states (uno para el número de página y otro para el tamaño de ésta), y el número de registros por página lo podemos obtener de la cabecera de respuesta de la API del "X-Pagination"
+
+Pero antes de nada, debemos acudir de nuevo al *OrderAPI* para añadir una transformación de la respuesta de la API, para que nos devuelva, por un lado el número de la página actual y el tamaño de ésta, y por otro lado el número total de registros que se obtienen.
+
+```ts
+getOrdersFromUser: builder.query({
+  query: ({ userId, orderSearch, orderStatus }) => ({ // now I have to pass the new parameters for filtered search in AllOrdersUsers
+    url: "Order",
+    params: {
+      // userId: userId // and the new way to set params will be spreading them
+      ...(userId && {userId}), // if userId is populated, only then we will pass userId, orderSearch or orderStatus
+      ...(orderSearch && {orderSearch}),
+      ...(orderStatus && {orderStatus})
+    }
+  }),
+  // the response headers are not automatically being retrieved, so to do that, 
+  // here we need to transform the response that is being received by the query and then return back
+  // we need to use "transformResponse" and receive two parameters, 
+  // the apiResponse and its metaData (metaData will have all the header information)
+  transformResponse(apiDataResponse: { result: any }, metaData: any) {
+    return {
+      apiDataResponse,
+      recordsNumber: metaData.response.headers.get('X-Pagination')
+    }
+  },
+  providesTags: ["Orders"]
+}),
+```
+
+Y ahora volviendo al *AllUsersOrders*...
+
+```tsx
+function AllUsersOrders() {
+  ...
+  // to implement pagination, we need one more state that basically store the total numbers of records (pageSize) and the number of page we're navigating (actualPage)
+  const [recordsNumber, setRecordsNumber] = useState(0);  // total number of objects retrieved
+  const [pageNumberAndSize, setPageNumberAndSize] = useState({
+    actualPage: 1,  // page number that we're on
+    pageSize: 5     // number of objects in each page
+  });
+  ...
+  useEffect(() => {
+    if (data) {
+      // setOrderDataFiltered(data.result);
+      // after implementing pagination, we have an error here with data.result, 
+      // because now in data we have the api response and that has all the order
+      setOrderDataFiltered(data.apiDataResponse.result);
+
+      // now we have to extract the recordsNumber inside the api response, and we have to add that to the local state
+      const { RecordsNumber } = JSON.parse(data.recordsNumber);
+      setRecordsNumber(RecordsNumber);
+    }
+
+  }, [data]);
+  
+  return (
+    ...
+  )
+}
+```
+
+**Nota:** con los cambios que acabamos de hacer, hay que i¡tener en cuenta de que en el *UserOrders* también hay que cambiar el {data.result} por ahora el {data?.apiDataResponse.result}
+
+```tsx
+function UserOrders() {
+  ...
+  return (
+    <>
+      ...
+      {!isLoading && (
+        <>
+          <div className='d-flex align-items-center justify-content-between mx-5 mt-5'>
+            <h1 className="text-success">Mis pedidos</h1>
+          </div>
+          
+          <OrdersList 
+            // data={data.result}
+            // after implementing pagination, we have an error here with data.result, 
+            // because now in data we have the api response and that has all the order
+            data={data?.apiDataResponse.result}
+            isLoading={isLoading}
+          />
+        </>
+      )}
+    </>
+  )
+}
+```
 
 # Webgrafía y Enlaces de Interés
 
