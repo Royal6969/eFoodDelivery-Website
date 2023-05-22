@@ -16,7 +16,7 @@ function Register() {
   const [registerInput, setRegisterInput] = useState({
     userName: '',
     password: '',
-    role: '',
+    role: 'customer',
     name: ''
   });
 
@@ -69,7 +69,7 @@ function Register() {
             <input
               type='email'
               className='form-control'
-              placeholder='Enter Username'
+              placeholder='Email'
               required
               name='userName'
               value={registerInput.userName}
@@ -81,7 +81,7 @@ function Register() {
             <input
               type='text'
               className='form-control'
-              placeholder='Enter Name'
+              placeholder='Nombre'
               required
               name='name'
               value={registerInput.name}
@@ -93,7 +93,7 @@ function Register() {
             <input
               type='password'
               className='form-control'
-              placeholder='Enter Password'
+              placeholder='Contraseña'
               required
               name='password'
               value={registerInput.password}
@@ -101,6 +101,7 @@ function Register() {
             />
           </div>
         
+          {/* 
           <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
             <select 
               className='form-control form-select' 
@@ -113,7 +114,8 @@ function Register() {
               <option value={`${StaticDetails_Roles.CUSTOMER}`}>Customer</option>
               <option value={`${StaticDetails_Roles.ADMIN}`}>Admin</option>
             </select>
-          </div>
+          </div> 
+          */}
         </div>
         
         <div className='mt-5'>
@@ -126,6 +128,19 @@ function Register() {
           </button>
         </div>
       </form>
+
+      <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+        ¿Ya tienes una cuenta?&nbsp;&nbsp;
+        <a
+          style={{textDecoration: 'none'}}
+          className='btn-primary' 
+          role='button' 
+          onClick={() => navigate('/Login')}
+        >
+          Inicia sesión
+        </a>
+        &nbsp;para empezar a pedir 🍴
+      </div>
     </div>
   )
 }

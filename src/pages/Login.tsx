@@ -122,12 +122,25 @@ function Login() {
           <button
             type='submit'
             style={{ width: '200px' }}
-            className='btn btn-warning'
+            className='btn btn-warning mt-5'
           >
             Login
           </button>
         </div>
       </form>
+
+      <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+        Aún no tengo una cuenta.&nbsp;&nbsp;
+        <a
+          style={{textDecoration: 'none'}}
+          className='btn-primary' 
+          role='button' 
+          onClick={() => navigate('/Register')}
+        >
+          Regístrate aquí
+        </a>
+        &nbsp;para empezar a pedir 🍴
+      </div>
     </div>
   )
 }
