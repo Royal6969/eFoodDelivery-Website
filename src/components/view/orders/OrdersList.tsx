@@ -18,7 +18,7 @@ function OrdersList({ data, isLoading }: OrdersListInterface) {
       )}
 
       {!isLoading && (
-        <div className="table p-5">
+        <div className="table p-4">
           <div className="p-2">
             <div className="row border">
               <div className="col-1">ID</div>

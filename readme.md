@@ -109,11 +109,12 @@
   - [9.4. Obtener las categorías de cada producto y mostrarlas en botones](#94-obtener-las-categorías-de-cada-producto-y-mostrarlas-en-botones)
   - [9.5. Implementar la lógica del filtrado por categorías y mostrar sólo los productos de la categoría seleccionada](#95-implementar-la-lógica-del-filtrado-por-categorías-y-mostrar-sólo-los-productos-de-la-categoría-seleccionada)
   - [9.6. Implementar la lógica de la ordenación de los productos](#96-implementar-la-lógica-de-la-ordenación-de-los-productos)
-- [10. Mejorando el la lista de productos y la lista de pedidos del admin](#10-mejorando-el-la-lista-de-productos-y-la-lista-de-pedidos-del-admin)
+- [10. Mejorando la lista de pedidos de todos los usuarios para el administrador](#10-mejorando-la-lista-de-pedidos-de-todos-los-usuarios-para-el-administrador)
   - [10.1. Añadir los filtros de búsqueda a la interfaz de los pedidos](#101-añadir-los-filtros-de-búsqueda-a-la-interfaz-de-los-pedidos)
   - [10.2. Implementar el filtrado de búsqueda](#102-implementar-el-filtrado-de-búsqueda)
   - [10.3. Hacer la búsqueda filtrada pero llamando a la API](#103-hacer-la-búsqueda-filtrada-pero-llamando-a-la-api)
   - [10.4. Obtener de la API el número total de registros, así como el número y tamaño de la página](#104-obtener-de-la-api-el-número-total-de-registros-así-como-el-número-y-tamaño-de-la-página)
+  - [10.5. Implementando la funcionalidad de la paginación](#105-implementando-la-funcionalidad-de-la-paginación)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -5106,11 +5107,11 @@ function ProductsList() {
 ![](./img/95.png)
 ![](./img/96.png)
 
-# 10. Mejorando el la lista de productos y la lista de pedidos del admin
+# 10. Mejorando la lista de pedidos de todos los usuarios para el administrador
 
 Partimos de la base de que vengo de hacer unos cambios en la API. En el *OrderController.cs* de la API, he añadido al endpoint del GetOrders() más parámetros de entrada para poder llegar a implementar las funcionalidades de filtrado de búsqueda y paginación
 
-![](./img/108.png)
+![](./img/115.png)
 ![](./img/109.png)
 ![](./img/110.png)
 
@@ -5276,6 +5277,8 @@ function AllUsersOrders() {
 ## 10.3. Hacer la búsqueda filtrada pero llamando a la API
 
 Tenemos que tener en cuenta que los filtros anteriores, los estábamos llevando a cabo en local... es decir, debemos de pasar estos filtros a la API a través del endpoint de carrito. De modo que vamos al *OrderAPI.ts* para añadir los parámetros nuevos
+
+![](./img/116.png)
 
 ```ts
 getOrdersFromUser: builder.query({
@@ -5458,6 +5461,134 @@ function UserOrders() {
   )
 }
 ```
+
+## 10.5. Implementando la funcionalidad de la paginación
+
+![](./img/108.png)
+
+Primero, en el *OrderAPI* tendríamos que pasar los dos nuevos parámetros que nos quedaban por meter, en este caso para la paginación
+
+```ts
+getOrdersFromUser: builder.query({
+  query: ({ userId, orderSearch, orderStatus, pageNumber, pageSize }) => ({ // now I have to pass the new parameters for filtered search in AllOrdersUsers
+    url: "Order",
+    params: {
+      // userId: userId // and the new way to set params will be spreading them
+      ...(userId && {userId}), // if userId is populated, only then we will pass userId, orderSearch or orderStatus
+      ...(orderSearch && {orderSearch}),
+      ...(orderStatus && {orderStatus}),
+      // now as we can see in this API endpoint, also we need to pass the page details for the pageNumber and the pageSize
+      ...(pageNumber && {pageNumber}),
+      ...(pageSize && {pageSize})
+    }
+  }),
+  // the response headers are not automatically being retrieved, so to do that, 
+  // here we need to transform the response that is being received by the query and then return back
+  // we need to use "transformResponse" and receive two parameters, 
+  // the apiResponse and its metaData (metaData will have all the header information)
+  transformResponse(apiDataResponse: { result: any }, metaData: any) {
+    return {
+      apiDataResponse,
+      recordsNumber: metaData.response.headers.get('X-Pagination')
+    }
+  },
+  providesTags: ["Orders"]
+}),
+```
+
+Y ahora en el *AllUsersOrders*...
+
+```tsx
+function AllUsersOrders() {
+  ...
+  // we need to save the result back from the query and define a flag for when it's loading the response
+  // we don't need the useSelector() hook here to retrieve the user stored, so instead passing a userId, we'll pass an empty string to fetch all orders of all users
+  // const { data, isLoading } = useGetOrdersFromUserQuery('');
+  const { data, isLoading } = useGetOrdersFromUserQuery({ // now we have to pass the object with userId, orderSearch and orderStatus
+    // now when we're getting all the orders, we don't want to pass userId, but we want everything else 
+    // and those filters are inside the setSearchFilters so we can navigate or rather spread the filter here
+    // ...(searchFilters && {
+    ...(searchCallingApiFilters && { 
+      // before we used searchFilters to fetch locally, but now, and based on the API filters above this, we will fetch the data from our API
+      // if that is populated, then we want to pass the object with search string
+      orderSearch: searchCallingApiFilters.orderSearch,
+      orderStatus: searchCallingApiFilters.orderStatus,
+      // but when we're calling the all orders and loading the data here, I can also pass the actualPage and pageSize which are inside pageNumberAndSize
+      pageNumber: pageNumberAndSize.actualPage,
+      pageSize: pageNumberAndSize.pageSize
+    })
+  });
+  ...
+  // define a helper method to get the pagination details for the actualPage number, the StartPage number and the endPage number
+  const getActualStartEndPageNumbers = () => {
+    const startPageNumber = (pageNumberAndSize.actualPage - 1) * (pageNumberAndSize.pageSize +1);
+    // e.g. if actual page is 1, then this will be 0, multiply that, but the start number will be 1
+    // e.g. if actual page is 2, then this will be 1, multiply that by the page size, which is 5, and then we add 1, which is 6
+    // so that means it's skipping the first 5 and the records are starting from the 6º record
+    // and then we want to display that we're displaying records 6 to 10
+    // for that we need the end number, which will basically be actual page, multiply by page size
+    const endPageNumber = (pageNumberAndSize.actualPage) * (pageNumberAndSize.pageSize);
+    // so on 2º page, the records will start from 6 and it will go till 10
+    // I will return that, and I will display that using some complex string interpolation here
+    return `${startPageNumber}-${(endPageNumber < recordsNumber) ? endPageNumber : recordsNumber} of ${recordsNumber}`;
+    // basically I'm displaying the start number, but then the end number I'm only displaying if this is not the last page
+  }
+
+  // define another helper method to handle the pagination when user clicks in prev/next buttons
+  const handlePaginationForPrevOrNextButtons = (paginationToRightOrLeft: string) => {
+    // if we're setting the next one here, then we want to increment the actual page
+    // if we're doing the previous one, then we want to decrement the actual page
+    if (paginationToRightOrLeft === 'previous') {
+      setPageNumberAndSize({
+        actualPage: pageNumberAndSize.actualPage - 1,
+        pageSize: 5
+      });
+    }
+    else if (paginationToRightOrLeft === 'next') {
+      setPageNumberAndSize({
+        actualPage: pageNumberAndSize.actualPage + 1,
+        pageSize: 5
+      });
+    }
+  }
+  
+  
+  return (
+    <>
+      ...
+      {!isLoading && (
+        <>
+          ...
+          <div className="d-flex mx-5 justify-content-end align-items-center">
+            <div className="mx-2">
+              {getActualStartEndPageNumbers()}
+            </div>
+
+            <button 
+              className='btn btn-outline-primary px-3 mx-2' 
+              disabled={pageNumberAndSize.actualPage === 1} // disable if you are in the first page
+              onClick={() => handlePaginationForPrevOrNextButtons('previous')}
+            >
+              <i className="bi bi-chevron-left"></i>
+            </button>
+
+            <button 
+              className='btn btn-outline-primary px-3 mx-2' 
+              disabled={(pageNumberAndSize.actualPage * pageNumberAndSize.pageSize) >= recordsNumber} // disable if you are in the last page
+              onClick={() => handlePaginationForPrevOrNextButtons('next')}
+            >
+              <i className="bi bi-chevron-right"></i>
+            </button>
+          </div>
+        </>
+      )}
+    </>
+  )
+}
+```
+
+![](./img/117.png)
+![](./img/118.png)
 
 # Webgrafía y Enlaces de Interés
 

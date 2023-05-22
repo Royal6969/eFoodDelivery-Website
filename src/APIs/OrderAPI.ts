@@ -26,13 +26,16 @@ const orderAPI = createApi({
     }),
     // we want to define the endpoints for GetOrder(userId) (/api/Order/) and GetOrder(orderId) (/api/Order/{orderId})
     getOrdersFromUser: builder.query({
-      query: ({ userId, orderSearch, orderStatus }) => ({ // now I have to pass the new parameters for filtered search in AllOrdersUsers
+      query: ({ userId, orderSearch, orderStatus, pageNumber, pageSize }) => ({ // now I have to pass the new parameters for filtered search in AllOrdersUsers
         url: "Order",
         params: {
           // userId: userId // and the new way to set params will be spreading them
           ...(userId && {userId}), // if userId is populated, only then we will pass userId, orderSearch or orderStatus
           ...(orderSearch && {orderSearch}),
-          ...(orderStatus && {orderStatus})
+          ...(orderStatus && {orderStatus}),
+          // now as we can see in this API endpoint, also we need to pass the page details for the pageNumber and the pageSize
+          ...(pageNumber && {pageNumber}),
+          ...(pageSize && {pageSize})
         }
       }),
       // the response headers are not automatically being retrieved, so to do that, 

@@ -44,9 +44,13 @@ function AllUsersOrders() {
     // ...(searchFilters && {
     ...(searchCallingApiFilters && { 
       // before we used searchFilters to fetch locally, but now, and based on the API filters above this, we will fetch the data from our API
+      // if that is populated, then we want to pass the object with search string
       orderSearch: searchCallingApiFilters.orderSearch,
-      orderStatus: searchCallingApiFilters.orderStatus
-    }) // if that is populated, then we want to pass the object with search string
+      orderStatus: searchCallingApiFilters.orderStatus,
+      // but when we're calling the all orders and loading the data here, I can also pass the actualPage and pageSize which are inside pageNumberAndSize
+      pageNumber: pageNumberAndSize.actualPage,
+      pageSize: pageNumberAndSize.pageSize
+    })
   }); 
 
   // we need to create a helper method to handle the changes in inputs
@@ -107,6 +111,39 @@ function AllUsersOrders() {
     }
 
   }, [data]);
+
+  // define a helper method to get the pagination details for the actualPage number, the StartPage number and the endPage number
+  const getActualStartEndPageNumbers = () => {
+    const startPageNumber = (pageNumberAndSize.actualPage - 1) * (pageNumberAndSize.pageSize +1);
+    // e.g. if actual page is 1, then this will be 0, multiply that, but the start number will be 1
+    // e.g. if actual page is 2, then this will be 1, multiply that by the page size, which is 5, and then we add 1, which is 6
+    // so that means it's skipping the first 5 and the records are starting from the 6º record
+    // and then we want to display that we're displaying records 6 to 10
+    // for that we need the end number, which will basically be actual page, multiply by page size
+    const endPageNumber = (pageNumberAndSize.actualPage) * (pageNumberAndSize.pageSize);
+    // so on 2º page, the records will start from 6 and it will go till 10
+    // I will return that, and I will display that using some complex string interpolation here
+    return `${startPageNumber}-${(endPageNumber < recordsNumber) ? endPageNumber : recordsNumber} of ${recordsNumber}`;
+    // basically I'm displaying the start number, but then the end number I'm only displaying if this is not the last page
+  }
+
+  // define another helper method to handle the pagination when user clicks in prev/next buttons
+  const handlePaginationForPrevOrNextButtons = (paginationToRightOrLeft: string) => {
+    // if we're setting the next one here, then we want to increment the actual page
+    // if we're doing the previous one, then we want to decrement the actual page
+    if (paginationToRightOrLeft === 'previous') {
+      setPageNumberAndSize({
+        actualPage: pageNumberAndSize.actualPage - 1,
+        pageSize: 5
+      });
+    }
+    else if (paginationToRightOrLeft === 'next') {
+      setPageNumberAndSize({
+        actualPage: pageNumberAndSize.actualPage + 1,
+        pageSize: 5
+      });
+    }
+  }
   
   
   return (
@@ -155,6 +192,28 @@ function AllUsersOrders() {
             data={orderDataFiltered}
             isLoading={isLoading}
           />
+
+          <div className="d-flex mx-5 justify-content-end align-items-center">
+            <div className="mx-2">
+              {getActualStartEndPageNumbers()}
+            </div>
+
+            <button 
+              className='btn btn-outline-primary px-3 mx-2' 
+              disabled={pageNumberAndSize.actualPage === 1} // disable if you are in the first page
+              onClick={() => handlePaginationForPrevOrNextButtons('previous')}
+            >
+              <i className="bi bi-chevron-left"></i>
+            </button>
+
+            <button 
+              className='btn btn-outline-primary px-3 mx-2' 
+              disabled={(pageNumberAndSize.actualPage * pageNumberAndSize.pageSize) >= recordsNumber} // disable if you are in the last page
+              onClick={() => handlePaginationForPrevOrNextButtons('next')}
+            >
+              <i className="bi bi-chevron-right"></i>
+            </button>
+          </div>
         </>
       )}
     </>
