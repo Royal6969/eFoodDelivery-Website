@@ -202,6 +202,7 @@ function ProductsList() {
               {sortOptions.map(
                 (criteria, index) => (
                   <li 
+                    style={{ cursor: 'pointer' }}
                     className='dropdown-item' 
                     key={index} 
                     onClick={() => handleSortCriteriaSelected(index)}

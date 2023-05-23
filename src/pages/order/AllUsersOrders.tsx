@@ -13,6 +13,7 @@ const inputFilterOptions = [
   StaticDetails_OrderStatus.STATUS_CONFIRMED,
   StaticDetails_OrderStatus.STATUS_COOKING,
   StaticDetails_OrderStatus.STATUS_READY,
+  StaticDetails_OrderStatus.STATUS_COMPLETED,
   StaticDetails_OrderStatus.STATUS_CANCELLED
 ];
 
@@ -28,12 +29,16 @@ function AllUsersOrders() {
     orderSearch: '',
     orderStatus: ''
   });
-  // to implement pagination, we need one more state that basically store the total numbers of records (pageSize) and the number of page we're navigating (actualPage)
+  // to implement pagination, we need one more state that basically store the total numbers of records, 
+  // and the number of page we're navigating (actualPage) and its pageSize (number of records per page)
   const [recordsNumber, setRecordsNumber] = useState(0);  // total number of objects retrieved
   const [pageNumberAndSize, setPageNumberAndSize] = useState({
     actualPage: 1,  // page number that we're on
     pageSize: 5     // number of objects in each page
   });
+  // define another local state for the current number of pageSize
+  const [actualPageSize, setActualPageSize] = useState(pageNumberAndSize.pageSize);
+
 
   // we need to save the result back from the query and define a flag for when it's loading the response
   // we don't need the useSelector() hook here to retrieve the user stored, so instead passing a userId, we'll pass an empty string to fetch all orders of all users
@@ -128,7 +133,9 @@ function AllUsersOrders() {
   }
 
   // define another helper method to handle the pagination when user clicks in prev/next buttons
-  const handlePaginationForPrevOrNextButtons = (paginationToRightOrLeft: string) => {
+  // const handlePaginationForPrevOrNextButtons = (paginationToRightOrLeft: string) => {
+  // but now we need to add the logic to set/change the pageSize, so let's rename this function
+  const handlePaginationOptionsChanges = (paginationToRightOrLeft: string, pageSize?: number) => {
     // if we're setting the next one here, then we want to increment the actual page
     // if we're doing the previous one, then we want to decrement the actual page
     if (paginationToRightOrLeft === 'previous') {
@@ -143,7 +150,26 @@ function AllUsersOrders() {
         pageSize: 5
       });
     }
+    // let's add one more elseIf condition for pageSize
+    else if (paginationToRightOrLeft === 'newPageSize') {
+      setPageNumberAndSize({
+        actualPage: 1,
+        pageSize: pageSize // if pageSize it's not null, we will set that to be pageSize, else we will set that to be 5
+          ? pageSize 
+          : 5 
+      });
+    }
   }
+
+  // define another helper method to handle the select dropdown changes for choose a pageSize
+  const handlePageSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    handlePaginationOptionsChanges('newPageSize', Number(event.target.value));
+    setActualPageSize(Number(event.target.value));
+    // so whenever anything in the dropdown changes, we want to call the handlePaginationOptionsChanges with the value of change
+    // that is exactly what we added here and we have to pass the pageSize and the actualPage
+    // we don't want to toggle the pageSize, we only want to change the number here, so that is what we're setting in the value
+    // after that we're setting the local state for the actual page size
+  };
   
   
   return (
@@ -193,7 +219,23 @@ function AllUsersOrders() {
             isLoading={isLoading}
           />
 
-          <div className="d-flex mx-5 justify-content-end align-items-center">
+          <div className="d-flex mx-5 justify-content-end align-items-center mb-3">
+            <div>Pedidos por página:</div>
+
+            <div>
+              <select 
+                style={{ width: '80px' }}
+                className='form-select mx-2'
+                value={actualPageSize}
+                onChange={handlePageSizeChange}
+              >
+                <option>5</option>
+                <option>10</option>
+                <option>15</option>
+                <option>20</option>
+              </select>
+            </div>
+
             <div className="mx-2">
               {getActualStartEndPageNumbers()}
             </div>
@@ -201,7 +243,8 @@ function AllUsersOrders() {
             <button 
               className='btn btn-outline-primary px-3 mx-2' 
               disabled={pageNumberAndSize.actualPage === 1} // disable if you are in the first page
-              onClick={() => handlePaginationForPrevOrNextButtons('previous')}
+              // onClick={() => handlePaginationForPrevOrNextButtons('previous')}
+              onClick={() => handlePaginationOptionsChanges('previous')}
             >
               <i className="bi bi-chevron-left"></i>
             </button>
@@ -209,7 +252,8 @@ function AllUsersOrders() {
             <button 
               className='btn btn-outline-primary px-3 mx-2' 
               disabled={(pageNumberAndSize.actualPage * pageNumberAndSize.pageSize) >= recordsNumber} // disable if you are in the last page
-              onClick={() => handlePaginationForPrevOrNextButtons('next')}
+              // onClick={() => handlePaginationForPrevOrNextButtons('next')}
+              onClick={() => handlePaginationOptionsChanges('next')}
             >
               <i className="bi bi-chevron-right"></i>
             </button>

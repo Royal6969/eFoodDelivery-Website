@@ -109,12 +109,15 @@
   - [9.4. Obtener las categorías de cada producto y mostrarlas en botones](#94-obtener-las-categorías-de-cada-producto-y-mostrarlas-en-botones)
   - [9.5. Implementar la lógica del filtrado por categorías y mostrar sólo los productos de la categoría seleccionada](#95-implementar-la-lógica-del-filtrado-por-categorías-y-mostrar-sólo-los-productos-de-la-categoría-seleccionada)
   - [9.6. Implementar la lógica de la ordenación de los productos](#96-implementar-la-lógica-de-la-ordenación-de-los-productos)
+    - [Prueba de ejecución](#prueba-de-ejecución-9)
 - [10. Mejorando la lista de pedidos de todos los usuarios para el administrador](#10-mejorando-la-lista-de-pedidos-de-todos-los-usuarios-para-el-administrador)
   - [10.1. Añadir los filtros de búsqueda a la interfaz de los pedidos](#101-añadir-los-filtros-de-búsqueda-a-la-interfaz-de-los-pedidos)
   - [10.2. Implementar el filtrado de búsqueda](#102-implementar-el-filtrado-de-búsqueda)
   - [10.3. Hacer la búsqueda filtrada pero llamando a la API](#103-hacer-la-búsqueda-filtrada-pero-llamando-a-la-api)
   - [10.4. Obtener de la API el número total de registros, así como el número y tamaño de la página](#104-obtener-de-la-api-el-número-total-de-registros-así-como-el-número-y-tamaño-de-la-página)
   - [10.5. Implementando la funcionalidad de la paginación](#105-implementando-la-funcionalidad-de-la-paginación)
+  - [10.6. Implementar la funcionalidad de cambiar el número de registros por página](#106-implementar-la-funcionalidad-de-cambiar-el-número-de-registros-por-página)
+    - [Prueba de ejecución](#prueba-de-ejecución-10)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -160,6 +163,10 @@
   - [CRUD de Producto](#crud-de-producto)
     - [Prueba de ejecución para probar la funcionalidad de editar un producto](#prueba-de-ejecución-para-probar-la-funcionalidad-de-editar-un-producto)
     - [Prueba de ejecución para probar todas las funcionalidades del CRUD de producto](#prueba-de-ejecución-para-probar-todas-las-funcionalidades-del-crud-de-producto)
+  - [Mejoras del Home](#mejoras-del-home)
+    - [Prueba de ejecución para probar las nuevas funcionalidades del Home de búsqueda filtrada por texto, categorías y criterios de ordenación](#prueba-de-ejecución-para-probar-las-nuevas-funcionalidades-del-home-de-búsqueda-filtrada-por-texto-categorías-y-criterios-de-ordenación)
+  - [Mejoras de la lista de pedidos de todos los usuarios](#mejoras-de-la-lista-de-pedidos-de-todos-los-usuarios)
+    - [Prueba de ejecución para probar las funcionalidades de búsqueda filtrada y paginación de resultados](#prueba-de-ejecución-para-probar-las-funcionalidades-de-búsqueda-filtrada-y-paginación-de-resultados)
 - [Extras](#extras)
   - [Crear una interfaz para las respuesta de la API](#crear-una-interfaz-para-las-respuesta-de-la-api)
   - [Componente del Mini-Loader](#componente-del-mini-loader)
@@ -5107,6 +5114,10 @@ function ProductsList() {
 ![](./img/95.png)
 ![](./img/96.png)
 
+### Prueba de ejecución
+
+[Prueba de ejecución para probar las nuevas funcionalidades del Home de búsqueda filtrada por texto, categorías y criterios de ordenación](#prueba-de-ejecución-para-probar-las-nuevas-funcionalidades-del-home-de-búsqueda-filtrada-por-texto-categorías-y-criterios-de-ordenación)
+
 # 10. Mejorando la lista de pedidos de todos los usuarios para el administrador
 
 Partimos de la base de que vengo de hacer unos cambios en la API. En el *OrderController.cs* de la API, he añadido al endpoint del GetOrders() más parámetros de entrada para poder llegar a implementar las funcionalidades de filtrado de búsqueda y paginación
@@ -5590,6 +5601,97 @@ function AllUsersOrders() {
 ![](./img/117.png)
 ![](./img/118.png)
 
+## 10.6. Implementar la funcionalidad de cambiar el número de registros por página
+
+Lo que pretendemos hacer ahora, es que en la misma página del *AllUsersOrders* se pueda cambiar (elegir) el número de pedidos que queremos ver y que aparzcan por página.
+
+```tsx
+function AllUsersOrders() {
+  ...
+  // define another local state for the current number of pageSize
+  const [actualPageSize, setActualPageSize] = useState(pageNumberAndSize.pageSize);
+  ...
+  // define another helper method to handle the pagination when user clicks in prev/next buttons
+  // const handlePaginationForPrevOrNextButtons = (paginationToRightOrLeft: string) => {
+  // but now we need to add the logic to set/change the pageSize, so let's rename this function
+  const handlePaginationOptionsChanges = (paginationToRightOrLeft: string, pageSize?: number) => {
+    // if we're setting the next one here, then we want to increment the actual page
+    // if we're doing the previous one, then we want to decrement the actual page
+    if (paginationToRightOrLeft === 'previous') {
+      setPageNumberAndSize({
+        actualPage: pageNumberAndSize.actualPage - 1,
+        pageSize: 5
+      });
+    }
+    else if (paginationToRightOrLeft === 'next') {
+      setPageNumberAndSize({
+        actualPage: pageNumberAndSize.actualPage + 1,
+        pageSize: 5
+      });
+    }
+    // let's add one more elseIf condition for pageSize
+    else if (paginationToRightOrLeft === 'newPageSize') {
+      setPageNumberAndSize({
+        actualPage: 1,
+        pageSize: pageSize // if pageSize it's not null, we will set that to be pageSize, else we will set that to be 5
+          ? pageSize 
+          : 5 
+      });
+    }
+  }
+
+  // define another helper method to handle the select dropdown changes for choose a pageSize
+  const handlePageSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    handlePaginationOptionsChanges('newPageSize', Number(event.target.value));
+    setActualPageSize(Number(event.target.value));
+    // so whenever anything in the dropdown changes, we want to call the handlePaginationOptionsChanges with the value of change
+    // that is exactly what we added here and we have to pass the pageSize and the actualPage
+    // we don't want to toggle the pageSize, we only want to change the number here, so that is what we're setting in the value
+    // after that we're setting the local state for the actual page size
+  };
+  
+  
+  return (
+    <>
+      {isLoading && (
+        <BigLoader />
+      )}
+
+      {!isLoading && (
+        <>
+          ...
+          <div className="d-flex mx-5 justify-content-end align-items-center mb-3">
+            <div>Pedidos por página:</div>
+
+            <div>
+              <select 
+                style={{ width: '80px' }}
+                className='form-select mx-2'
+                value={actualPageSize}
+                onChange={handlePageSizeChange}
+              >
+                <option>5</option>
+                <option>10</option>
+                <option>15</option>
+                <option>20</option>
+              </select>
+            </div>
+            ...
+          </div>
+        </>
+      )}
+    </>
+  )
+}
+```
+
+![](./img/119.png)
+![](./img/120.png)
+
+### Prueba de ejecución
+
+[Prueba de ejecución para probar las funcionalidades de búsqueda filtrada y paginación de resultados](#prueba-de-ejecución-para-probar-las-funcionalidades-de-búsqueda-filtrada-y-paginación-de-resultados)
+
 # Webgrafía y Enlaces de Interés
 
 ### [1. What is the meaning of the "at" (@) prefix on npm packages?](https://stackoverflow.com/questions/36667258/what-is-the-meaning-of-the-at-prefix-on-npm-packages)
@@ -5714,6 +5816,18 @@ function AllUsersOrders() {
 ### Prueba de ejecución para probar todas las funcionalidades del CRUD de producto
 
 [Prueba de Ejecución 6](https://private-user-images.githubusercontent.com/80839621/239195845-ef47afde-0959-4d04-9fc6-5d82b22dcaf2.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJrZXkxIiwiZXhwIjoxNjg0NDAyMTQ2LCJuYmYiOjE2ODQ0MDE4NDYsInBhdGgiOiIvODA4Mzk2MjEvMjM5MTk1ODQ1LWVmNDdhZmRlLTA5NTktNGQwNC05ZmM2LTVkODJiMjJkY2FmMi5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBSVdOSllBWDRDU1ZFSDUzQSUyRjIwMjMwNTE4JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDIzMDUxOFQwOTI0MDZaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT00YWMzZGQyOTNlMmU5ZjY3NWZmZmY4YWU1ODMwMzc1NzJiYmYzZmQ3MjM3MTZhNTk3ZWUzNjZkMTYzN2ZlNzZkJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.w4AtVBhYSpcWtmMiVKfGY5NPaqRKmgIJvS2q2hYwA9w)
+
+## Mejoras del Home
+
+### Prueba de ejecución para probar las nuevas funcionalidades del Home de búsqueda filtrada por texto, categorías y criterios de ordenación
+
+[Prueba de Ejecución 7](https://private-user-images.githubusercontent.com/80839621/240235324-2ca43285-65a8-4990-ba55-aa597f358c64.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJrZXkxIiwiZXhwIjoxNjg0ODM3OTI0LCJuYmYiOjE2ODQ4Mzc2MjQsInBhdGgiOiIvODA4Mzk2MjEvMjQwMjM1MzI0LTJjYTQzMjg1LTY1YTgtNDk5MC1iYTU1LWFhNTk3ZjM1OGM2NC5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBSVdOSllBWDRDU1ZFSDUzQSUyRjIwMjMwNTIzJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDIzMDUyM1QxMDI3MDRaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0zOGM5M2M2N2RiMWQxZmQwNjQ0ZGY0NzI4ZGQzMzdkYjEzMmNmN2QyMjUyNDczMmYxOGQ0MGQxYTg1YzZmZGEyJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.hA90AnhTIILioymPJSR17fCb7N1Ym8a122FtZ1-1Li0)
+
+## Mejoras de la lista de pedidos de todos los usuarios
+
+### Prueba de ejecución para probar las funcionalidades de búsqueda filtrada y paginación de resultados
+
+[Prueba de Ejecución 8](https://private-user-images.githubusercontent.com/80839621/240236145-aa70ac53-dd32-4651-9ba9-805dee032ae9.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJrZXkxIiwiZXhwIjoxNjg0ODM4MDgxLCJuYmYiOjE2ODQ4Mzc3ODEsInBhdGgiOiIvODA4Mzk2MjEvMjQwMjM2MTQ1LWFhNzBhYzUzLWRkMzItNDY1MS05YmE5LTgwNWRlZTAzMmFlOS5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBSVdOSllBWDRDU1ZFSDUzQSUyRjIwMjMwNTIzJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDIzMDUyM1QxMDI5NDFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT01ZGQ2YmQ5OGFmZWMwNjQyNTY5OTQ1OWYwZjQxNzVhNzM4ZmIzOWVkYzViMzMwNzdkMmJmMmRmMDczMzVmYWM3JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.VaD0vNrSeGHsdfWjWttSIHJX-KnWVDPzRG4wwPvqr6s)
 
 # Extras
 
