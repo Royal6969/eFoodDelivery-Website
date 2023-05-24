@@ -17,7 +17,8 @@ function Register() {
     userName: '',
     password: '',
     role: 'customer',
-    name: ''
+    name: '',
+    phoneNumber: ''
   });
 
   // now we have to use our helper method called InputHandler
@@ -37,7 +38,8 @@ function Register() {
       userName: registerInput.userName,
       password: registerInput.password,
       role: registerInput.role,
-      name: registerInput.name
+      name: registerInput.name,
+      phoneNumber: registerInput.phoneNumber
       // all of these values will be populated inside the registerInput because we have the control component
     });
 
@@ -77,6 +79,18 @@ function Register() {
             />
           </div>
         
+          <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Teléfono'
+              required
+              name='phoneNumber'
+              value={registerInput.phoneNumber}
+              onChange={handleRegisterInput}
+            />
+          </div>
+
           <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
             <input
               type='text'

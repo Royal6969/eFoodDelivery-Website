@@ -26,7 +26,9 @@ import {
   AllUsersOrders,
   AdminProductsList,
   ProductForm,
-  DeleteConfirmation
+  DeleteProduct,
+  AdminUsersList,
+  DeleteUser
 } from '../pages';
 
 
@@ -114,7 +116,9 @@ function App() {
             <Route path='/product/AdminProductsList' element={<AdminProductsList />}></Route>
             <Route path='/product/ProductForm' element={<ProductForm />}></Route>
             <Route path='/product/ProductForm/:productId' element={<ProductForm />}></Route>
-            <Route path='/product/DeleteConfirmation/:productId' element={<DeleteConfirmation />}></Route>
+            <Route path='/product/DeleteProduct/:productId' element={<DeleteProduct />}></Route>
+            <Route path='user/AdminUsersList' element={<AdminUsersList />}></Route>
+            <Route path='/user/DeleteUser/:userId' element={<DeleteUser />}></Route>
 
             <Route path='/AuthCustomerTest' element={<AuthCustomerTest />}></Route>
             <Route path='/AuthAdminTest' element={<AuthAdminTest />}></Route>

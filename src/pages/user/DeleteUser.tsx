@@ -1,25 +1,25 @@
 import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDeleteProductByIdMutation, useGetProductByIdQuery } from '../../APIs/ProductAPI';
 import { InputHelper, toastNotifyHelper } from '../../helperMethods';
 import { checkAdminAuth } from '../../HOC';
+import { useDeleteUserByIdMutation, useGetUserByIdQuery } from '../../APIs/UserAPI';
 
 
-function DeleteConfirmation() {
-  // define useParams() hook to receive the productId through the route
-  const { productId } = useParams();
-  // once we have the productId, we need to call the query for GetProductById(productId)
-  const { data } = useGetProductByIdQuery(productId);
-  // console.log(data);
+function DeleteUser() {
+  // define useParams() hook to receive the userId through the route
+  const { userId } = useParams();
+  // once we have the userId, we need to call the query for GetUserById(userId)
+  const { data } = useGetUserByIdQuery(userId);
+  console.log(data);
 
   // define useState() hook to set loading when this page needs
   const [isLoading, setIsLoading] = useState(false);
-  // define useNavigate() hook to redirect admin user to AdminProductsList page once the new product object has been created
+  // define useNavigate() hook to redirect admin user to AdminUsersList page once a user has been deleted
   const navigate = useNavigate();
-  // define the mutation for DELETE endpoint to delete a product
-  const [deleteProduct] = useDeleteProductByIdMutation();
+  // define the mutation for DELETE endpoint to delete a user
+  const [deleteUser] = useDeleteUserByIdMutation();
 
-  // useState for the input fields to delete a product writing its id
+  // useState for the input fields to delete a user writing its id
   const [deleteInput, setDeleteInput] = useState({
     id: ''
   });
@@ -30,21 +30,22 @@ function DeleteConfirmation() {
     setDeleteInput(tempData);
   }
 
-  const handleDeleteProduct = async (event: React.FormEvent<HTMLFormElement>) => {
+  // define another helper method to handle the delete user action with active confirmation
+  const handleDeleteUser = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
 
-    if (productId === deleteInput.id) {
-      const deleteResponse = await deleteProduct(productId);
+    if (userId === deleteInput.id) {
+      const deleteResponse = await deleteUser(userId);
 
       if (deleteResponse) {
         setIsLoading(false);
-        navigate('/product/AdminProductsList');
-        toastNotifyHelper('Producto eliminado correctamente', 'success');
+        navigate('/user/AdminUsersList');
+        toastNotifyHelper('Usuario eliminado correctamente', 'success');
       }
     }
     else {
-      toastNotifyHelper('El producto NO se ha eliminado', 'error');
+      toastNotifyHelper('El usuario NO se ha eliminado', 'error');
       setIsLoading(false);
     }
 
@@ -56,38 +57,29 @@ function DeleteConfirmation() {
     <div className='container mt-3 p-3 bg-light'>
 
       <h3 className='mb-3 px-2 text-warning'>
-        ¿Estás seguro de que quieres eliminar este producto?
+        ¿Estás seguro de que quieres eliminar este usuario?
       </h3>
       
       {data && (
         <>
-          <p>Nombre del producto: <span style={{color: 'red'}}>{data.result?.name}</span>&nbsp;</p>
-          <p>ID del producto: <span style={{color: 'red'}}>{data.result?.id}</span>&nbsp;</p>
+          <p>Nombre del usuario: <span style={{color: 'red'}}>{data.result?.name}</span></p>
+          <p>Email del usuario: <span style={{color: 'red'}}>{data.result?.email}</span></p>
+          <p>ID del usuario: <span style={{color: 'red'}}>{data.result?.id}</span></p>
         </>
       )}
 
-      <form method='post' encType='multipart/form-data' onSubmit={handleDeleteProduct}>
+      <form method='post' encType='multipart/form-data' onSubmit={handleDeleteUser}>
         <div className='row mt-3'>
           <div className='col-md-7'>
             <input
               type='text'
               className='form-control'
-              placeholder='Id del Producto'
+              placeholder='Id del Usuario'
               required
               name='id'
               value={deleteInput.id}
               onChange={handleDeleteInput}
             />
-
-          <div className='col-md-8 mt-3 text-center'>
-            {data && (
-              <img
-                style={{ width: '100%', borderRadius: '30px' }}
-                src={data.result?.image}
-                alt=''
-              />
-            )}
-          </div>
 
             <div className="row">
               <div className="col-6">
@@ -102,9 +94,9 @@ function DeleteConfirmation() {
               <div className="col-6">
                 <a 
                   className='btn btn-secondary mt-3 form-control' 
-                  onClick={() => navigate('/product/AdminProductsList')}
+                  onClick={() => navigate('/user/AdminUsersList')}
                 >
-                  Volver a los productos
+                  Volver a los usuarios
                 </a>
               </div>
             </div>
@@ -116,4 +108,4 @@ function DeleteConfirmation() {
 }
 
 
-export default checkAdminAuth(DeleteConfirmation)
+export default checkAdminAuth(DeleteUser)

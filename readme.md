@@ -118,6 +118,11 @@
   - [10.5. Implementando la funcionalidad de la paginación](#105-implementando-la-funcionalidad-de-la-paginación)
   - [10.6. Implementar la funcionalidad de cambiar el número de registros por página](#106-implementar-la-funcionalidad-de-cambiar-el-número-de-registros-por-página)
     - [Prueba de ejecución](#prueba-de-ejecución-10)
+- [11. Página del listado de todos los usuarios para el administrador](#11-página-del-listado-de-todos-los-usuarios-para-el-administrador)
+  - [11.1. Crear el endpoint para los usuarios del *UserAPI*](#111-crear-el-endpoint-para-los-usuarios-del-userapi)
+  - [11.2. Crear la página del *AdminUsersList*](#112-crear-la-página-del-adminuserslist)
+  - [11.3. Crear la página del *DeleteUser*](#113-crear-la-página-del-deleteuser)
+    - [Prueba de ejecución](#prueba-de-ejecución-11)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -5691,6 +5696,214 @@ function AllUsersOrders() {
 ### Prueba de ejecución
 
 [Prueba de ejecución para probar las funcionalidades de búsqueda filtrada y paginación de resultados](#prueba-de-ejecución-para-probar-las-funcionalidades-de-búsqueda-filtrada-y-paginación-de-resultados)
+
+# 11. Página del listado de todos los usuarios para el administrador
+
+Esta nueva página que haremos, a la que sólo los administradores podrán acceder, es para listar todos los usuarios registrados en nuestra aplicación, y para poder eliminar a algún usuario.
+
+Para esta nueva vista, tan sólo tenemos que crear una nueva subcarpeta en *pages*, llamada *user*, por ejemplo, y creamos la nueva vista del *AdminUsersList*, la cual será una copia del *AdminProductsList*.
+
+Previamente en el proyecto del la API, necesitaremos haber creado el controlador del *UserController.cs* el cual tenga definidos los tres endpoints que necesitamos, el de obtener todos los usuarios (para listarlos), el de obtener a un usuario por su id (para recuperarlo una vez obtengamos su id a través de la ruta), y el de eliminar a un usuario a través de su id (para pulsar el botón de eliminar con confirmación activa).
+
+Una vez tengamos eso en la API, ahora aquí en la parte web cliente, necesitamos crear un nuevo archivo en la carpeta de *APIs* llamado *UserAPI*, por ejemplo. Copiaremos/pegaremos del *ProductAPI* los tres endpoint que necesitamos y le modificaremos los nombres. Añadimos este nuevo endpoint al almacenamiento de redux en el archivo *ReduxStorage.ts*.
+
+Y ahora ya tan sólo quedaría hacer las dos vistas que necesitamos, una para listar los usuarios y otra para eliminarlos con confirmación activa.
+
+## 11.1. Crear el endpoint para los usuarios del *UserAPI*
+
+```ts
+endpoints: (builder) => ({
+  getUsers: builder.query({
+    query: () => ({
+      url: "User"
+    }),
+    providesTags: ["Users"]
+  }),
+  getUserById: builder.query({
+    query: (userId) => ({
+      url: `User/${userId}`
+    }),
+    providesTags: ["Users"]
+  }),
+  deleteUserById: builder.mutation({
+    query: (userId) => ({
+      url: 'User/' + userId,
+      method: 'DELETE',
+    }),
+    invalidatesTags: ["Users"]
+  })
+})
+```
+
+## 11.2. Crear la página del *AdminUsersList*
+
+```tsx
+function AdminUsersList() {
+  // copied/pasted from same functionality in ProductsList component
+  const { data, isLoading } = useGetUsersQuery(null);
+  // to go to DeleteUser page we need the useNavigate() hook
+  const navigate = useNavigate();
+  
+  return (
+    <>
+      {isLoading && (
+        <BigLoader />
+      )}
+
+      {!isLoading && (
+        <div className='table p-5'>
+          <div className='d-flex align-items-center justify-content-between'>
+            <h1 className='text-warning'>Listado de usuarios</h1>
+          </div>
+          
+          <div className='p-2'>
+            <div className='row border'>
+              <div className='col-4'>ID</div>
+              <div className='col-2'>Nombre</div>
+              <div className='col-2'>Email</div>
+              <div className='col-2'>Phone</div>
+              <div className='col-2'>Accciones</div>
+            </div>
+            
+            {data.result.map(
+              (user: UsersListInterface, index: number) => {
+                return (
+                  <div className='row border' key={index}>     
+                    <div className='col-4'>{user.id}</div>
+                    <div className='col-2'>{user.name}</div>
+                    <div className='col-2'>{user.email}</div>
+                    <div className='col-2'>{user.phoneNumber}</div>
+                    <div className='col-2'>
+                      <button className='btn btn-danger mx-2' disabled={user.name.includes('admin')}>
+                        <i 
+                          className='bi bi-trash-fill'
+                          onClick={() => navigate('/user/DeleteUser/' + user.id)}
+                        ></i>
+                      </button>
+                    </div>
+                  </div>
+                )
+              })
+            }
+
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+```
+
+## 11.3. Crear la página del *DeleteUser*
+
+```tsx
+function DeleteUser() {
+  // define useParams() hook to receive the userId through the route
+  const { userId } = useParams();
+  // once we have the userId, we need to call the query for GetUserById(userId)
+  const { data } = useGetUserByIdQuery(userId);
+  console.log(data);
+
+  // define useState() hook to set loading when this page needs
+  const [isLoading, setIsLoading] = useState(false);
+  // define useNavigate() hook to redirect admin user to AdminUsersList page once a user has been deleted
+  const navigate = useNavigate();
+  // define the mutation for DELETE endpoint to delete a user
+  const [deleteUser] = useDeleteUserByIdMutation();
+
+  // useState for the input fields to delete a user writing its id
+  const [deleteInput, setDeleteInput] = useState({
+    id: ''
+  });
+
+  // now we have to use our helper method called InputHelper... copied/pasted from Register.tsx
+  const handleDeleteInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const tempData = InputHelper(event, deleteInput);
+    setDeleteInput(tempData);
+  }
+
+  // define another helper method to handle the delete user action with active confirmation
+  const handleDeleteUser = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    if (userId === deleteInput.id) {
+      const deleteResponse = await deleteUser(userId);
+
+      if (deleteResponse) {
+        setIsLoading(false);
+        navigate('/user/AdminUsersList');
+        toastNotifyHelper('Usuario eliminado correctamente', 'success');
+      }
+    }
+    else {
+      toastNotifyHelper('El usuario NO se ha eliminado', 'error');
+      setIsLoading(false);
+    }
+
+    setIsLoading(false);
+  }
+
+  return (
+    <div className='container mt-3 p-3 bg-light'>
+
+      <h3 className='mb-3 px-2 text-warning'>
+        ¿Estás seguro de que quieres eliminar este usuario?
+      </h3>
+      
+      {data && (
+        <>
+          <p>Nombre del usuario: <span style={{color: 'red'}}>{data.result?.name}</span></p>
+          <p>Email del usuario: <span style={{color: 'red'}}>{data.result?.email}</span></p>
+          <p>ID del usuario: <span style={{color: 'red'}}>{data.result?.id}</span></p>
+        </>
+      )}
+
+      <form method='post' encType='multipart/form-data' onSubmit={handleDeleteUser}>
+        <div className='row mt-3'>
+          <div className='col-md-7'>
+            <input
+              type='text'
+              className='form-control'
+              placeholder='Id del Usuario'
+              required
+              name='id'
+              value={deleteInput.id}
+              onChange={handleDeleteInput}
+            />
+
+            <div className="row">
+              <div className="col-6">
+                <button
+                  className='btn btn-warning mt-3 form-control'
+                  type='submit'
+                >
+                  Eliminar
+                </button>
+              </div>
+
+              <div className="col-6">
+                <a 
+                  className='btn btn-secondary mt-3 form-control' 
+                  onClick={() => navigate('/user/AdminUsersList')}
+                >
+                  Volver a los usuarios
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  )
+}
+```
+
+### Prueba de ejecución
+
+![](./img/121.png)
+![](./img/122.png)
+![](./img/123.png)
 
 # Webgrafía y Enlaces de Interés
 

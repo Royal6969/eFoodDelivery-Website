@@ -6,6 +6,7 @@ import UserInterface from "./UserInterface";
 import OrderRecapInterface from "./OrderRecapInterface";
 import OrderInterface from "./OrderInterface";
 import OrderDetailInterface from "./OrderDetailInterface";
+import UsersListInterface from "./UsersListInterface";
 
 
 export type { // we have to add the right type here because we are explicity exporting the type
@@ -16,5 +17,6 @@ export type { // we have to add the right type here because we are explicity exp
   UserInterface,
   OrderRecapInterface,
   OrderInterface,
-  OrderDetailInterface
+  OrderDetailInterface,
+  UsersListInterface
 }

@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 function AdminProductsList() {
   // copied/pasted from same functionality in ProductsList component
   const { data, isLoading } = useGetProductsQuery(null);
-  // to go to ProductForm page we need the useNavigate() hook
+  // to go to ProductForm and DeleteProduct page we need the useNavigate() hook
   const navigate = useNavigate();
 /*
   // define the mutation for DELETE endpoint to delete a product
@@ -86,7 +86,7 @@ function AdminProductsList() {
                       >
                         <i 
                           className='bi bi-trash-fill'
-                          onClick={() => navigate('/product/DeleteConfirmation/' + product.id)}
+                          onClick={() => navigate('/product/DeleteProduct/' + product.id)}
                         ></i>
                       </button>
                     </div>

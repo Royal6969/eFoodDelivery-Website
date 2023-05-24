@@ -1,7 +1,7 @@
 // now this store is where we will manage all the slices. To configure the store we need to import the configureStore from Redux Toolkit
 import { configureStore } from "@reduxjs/toolkit";
 import { productReducer } from "./ProductSlice";
-import { authenticationAPI, cartAPI, orderAPI, paymentAPI, productAPI } from "../../APIs"; // we have to register it as a reducer
+import { authenticationAPI, cartAPI, orderAPI, paymentAPI, productAPI, userAPI } from "../../APIs"; // we have to register it as a reducer
 import { cartReducer } from "./CartSlice";
 import { authenticationReducer } from "./AuthenticationSlice";
 
@@ -16,7 +16,8 @@ const reduxStorage = configureStore({ // we have to configure the objects here
     [cartAPI.reducerPath]: cartAPI.reducer,
     [authenticationAPI.reducerPath]: authenticationAPI.reducer,
     [paymentAPI.reducerPath]: paymentAPI.reducer,
-    [orderAPI.reducerPath]: orderAPI.reducer
+    [orderAPI.reducerPath]: orderAPI.reducer,
+    [userAPI.reducerPath]: userAPI.reducer
   },
   // now you should remember that when we have to register the API, we also have to add that in the middleware, and it needs a default configuration
   middleware: (getDefaultMiddleware) => 
@@ -26,6 +27,7 @@ const reduxStorage = configureStore({ // we have to configure the objects here
       .concat(authenticationAPI.middleware)
       .concat(paymentAPI.middleware)
       .concat(orderAPI.middleware)
+      .concat(userAPI.middleware)
 });
 
 
