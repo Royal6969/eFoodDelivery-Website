@@ -125,3 +125,10 @@ code {
   transform: scale(1.05);
 }
 /* ********************************** Buttons for categories ends   ********************************** */
+
+/* to checking list for password input in register page */
+.fa-check-circle
+{
+  margin-right: 5px;
+  transition-duration:600ms;  
+}
