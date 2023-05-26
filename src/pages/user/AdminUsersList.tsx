@@ -39,8 +39,8 @@ function AdminUsersList() {
                 return (
                   <div className='row border' key={index}>     
                     <div className='col-4'>{user.id}</div>
-                    <div className='col-2'>{user.name}</div>
-                    <div className='col-2'>{user.email}</div>
+                    <div className='col-2 text-break'>{user.name}</div>
+                    <div className='col-2 text-break'>{user.email}</div>
                     <div className='col-2'>{user.phoneNumber}</div>
                     <div className='col-2'>
                       <button className='btn btn-danger mx-2' disabled={user.name.includes('admin')}>

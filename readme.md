@@ -162,6 +162,7 @@
   - [Autentificación y Autorización](#autentificación-y-autorización)
     - [Prueba de ejecución para probar la funcionalidad del Login y Logout](#prueba-de-ejecución-para-probar-la-funcionalidad-del-login-y-logout)
     - [Prueba de ejecución para probar el userId dinámico, el HOC, y las notificaciones toast](#prueba-de-ejecución-para-probar-el-userid-dinámico-el-hoc-y-las-notificaciones-toast)
+    - [Prueba de Ejecución para probar la verificación de email cuando un nuevo usuario se registra](#prueba-de-ejecución-para-probar-la-verificación-de-email-cuando-un-nuevo-usuario-se-registra)
   - [Pedido](#pedido)
     - [Prueba de ejecución para probar la creación de un objeto de pedido](#prueba-de-ejecución-para-probar-la-creación-de-un-objeto-de-pedido)
     - [Prueba de ejecución de toda la parte relativa a los pedidos, desde la creación de un pedido hasta su entrega](#prueba-de-ejecución-de-toda-la-parte-relativa-a-los-pedidos-desde-la-creación-de-un-pedido-hasta-su-entrega)
@@ -177,6 +178,7 @@
   - [Componente del Mini-Loader](#componente-del-mini-loader)
   - [Componmente del BigLoader](#componmente-del-bigloader)
   - [Evitar perder el contenido del almacenamiento de Redux con los valores del token del usuario](#evitar-perder-el-contenido-del-almacenamiento-de-redux-con-los-valores-del-token-del-usuario)
+  - [Enviar un email de confirmación a los nuevos usuarios](#enviar-un-email-de-confirmación-a-los-nuevos-usuarios)
   - [Añadir las notificaciones *Toast*](#añadir-las-notificaciones-toast)
   - [Cómo aplazar la llamada a un endpoint en función de un orden de llamadas](#cómo-aplazar-la-llamada-a-un-endpoint-en-función-de-un-orden-de-llamadas)
   - [Añadir la cabecera de la autorización en los endpoints de las entidades](#añadir-la-cabecera-de-la-autorización-en-los-endpoints-de-las-entidades)
@@ -6000,6 +6002,10 @@ function DeleteUser() {
 
 [Prueba de Ejecución 4](https://user-images.githubusercontent.com/80839621/236813864-7b1477cd-744a-4f6d-be68-3a27b2985dd0.mp4)
 
+### Prueba de Ejecución para probar la verificación de email cuando un nuevo usuario se registra
+
+[Prueba de Ejecución 9](https://private-user-images.githubusercontent.com/80839621/241195634-6a904035-acf6-4ff6-b29f-d71e4f22c373.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJrZXkxIiwiZXhwIjoxNjg1MDk3ODU1LCJuYmYiOjE2ODUwOTc1NTUsInBhdGgiOiIvODA4Mzk2MjEvMjQxMTk1NjM0LTZhOTA0MDM1LWFjZjYtNGZmNi1iMjlmLWQ3MWU0ZjIyYzM3My5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBSVdOSllBWDRDU1ZFSDUzQSUyRjIwMjMwNTI2JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDIzMDUyNlQxMDM5MTVaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1lYWNkMWRhOTJjNmM1MjY5MmQzYmIyNGVjZjMwYmM1M2VlZDVjNTVjNTY1MzA4OWU2Y2JhMWQ0Yzg1NzAwYmRiJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.CET2qq_ifFE4dyO_1PntoJEn9ndve4IEUAAIhTUOMvk)
+
 ## Pedido
 
 ### Prueba de ejecución para probar la creación de un objeto de pedido
@@ -6196,6 +6202,12 @@ En el *App.tsx* tendríamos que descodificar el token de nuevo y llamar al slice
     }
   }, []);
 ```
+
+## Enviar un email de confirmación a los nuevos usuarios
+
+A través de la parte de la API, he implementado un nuevo endpoint y un nuvevo método, por el cual cuando un nuevo usuario se registra en la aplicación, se le envía un email de confirmación, donde hay un enlace, el cual si el usuario hace click, se llama al endpoint de la API de *activateUser* y a partir de ese momento el nuevo usuario ya podrá hacer login en la página. Si no pulsa tal enlace, ese nuevo usuario no podrá iniciar sesión en la aplicación.
+
+[verificación-de-email-cuando-un-nuevo-usuario-se-registra](#prueba-de-ejecución-para-probar-la-verificación-de-email-cuando-un-nuevo-usuario-se-registra)
 
 ## Añadir las notificaciones *Toast*
 

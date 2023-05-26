@@ -81,7 +81,7 @@ function App() {
     if (!isLoading && data) {
       // if the loading is complete, then we want to dispatch and set our shopping cart
       dispatch(setCart(data.result?.cartItemsList));
-      console.log(data.result);
+      // console.log(data.result);
     }
   // and then when should they useEffect() be triggered, we can do that on isLoading or we can even say whenever the data is toggled
   }, [data]);

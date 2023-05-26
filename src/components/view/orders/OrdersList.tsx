@@ -40,8 +40,8 @@ function OrdersList({ data, isLoading }: OrdersListInterface) {
                 return (
                   <div className="row border" key={order.orderId}>
                     <div className="col-1">{order.orderId}</div>
-                    <div className="col-2">{order.clientName}</div>
-                    <div className="col-2">{order.clientEmail}</div>
+                    <div className="col-2 text-break">{order.clientName}</div>
+                    <div className="col-2 text-break">{order.clientEmail}</div>
                     <div className="col-1">{order.clientPhone}</div>
                     <div className="col-1">{order.orderTotal!.toFixed(2)}€</div>
                     <div className="col-1">{order.orderQuantityItems}</div>
