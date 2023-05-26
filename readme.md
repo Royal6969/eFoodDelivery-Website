@@ -153,6 +153,12 @@
     - [27. Stripe --\> tarjetas de prueba por marcas](#27-stripe----tarjetas-de-prueba-por-marcas)
     - [28. Stripe Payment Intents --\> stripe.confirmPayment(options)](#28-stripe-payment-intents----stripeconfirmpaymentoptions)
     - [29. Handling promises with react toast notifications](#29-handling-promises-with-react-toast-notifications)
+    - [30. Password Validation using React and TypeScript](#30-password-validation-using-react-and-typescript)
+    - [31. npm password-validator](#31-npm-password-validator)
+    - [32. Generate a log file with npm @tsed/logger](#32-generate-a-log-file-with-npm-tsedlogger)
+    - [33. Generate a log file with npm winston](#33-generate-a-log-file-with-npm-winston)
+    - [34. Logging with npm typescript-logging](#34-logging-with-npm-typescript-logging)
+    - [35. Try to Polyfill modules in webpack 5 but not working in Reactjs](#35-try-to-polyfill-modules-in-webpack-5-but-not-working-in-reactjs)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [Lista de productos y Detalles del producto](#lista-de-productos-y-detalles-del-producto)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -184,6 +190,11 @@
   - [Añadir la cabecera de la autorización en los endpoints de las entidades](#añadir-la-cabecera-de-la-autorización-en-los-endpoints-de-las-entidades)
   - [Despliegue de la aplicación en Azure](#despliegue-de-la-aplicación-en-azure)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
+  - [Inteligencias Artificiales usadas como ayuda y orientación](#inteligencias-artificiales-usadas-como-ayuda-y-orientación)
+    - [1. OpenAI --\> ChatGPT](#1-openai----chatgpt)
+    - [2. HuggingChat](#2-huggingchat)
+    - [3. Perplexity.ai](#3-perplexityai)
+    - [4. Visual Studio Extension --\> GitHub Copilot](#4-visual-studio-extension----github-copilot)
 
 
 # 0. Crear una aplicaión de React con Typescript
@@ -5967,6 +5978,18 @@ function DeleteUser() {
 
 ### [29. Handling promises with react toast notifications](https://fkhadra.github.io/react-toastify/promise/)
 
+### [30. Password Validation using React and TypeScript](https://javascript.plainenglish.io/password-validation-using-react-and-typescript-5230079dff89)
+
+### [31. npm password-validator](https://www.npmjs.com/package/password-validator)
+
+### [32. Generate a log file with npm @tsed/logger](https://logger.tsed.io/appenders/file.html#installation)
+
+### [33. Generate a log file with npm winston](https://www.youtube.com/watch?v=BYBLTLA7r0o&ab_channel=LetCodewithKoushik)
+
+### [34. Logging with npm typescript-logging](https://github.com/vauxite-org/typescript-logging)
+
+### [35. Try to Polyfill modules in webpack 5 but not working in Reactjs](https://stackoverflow.com/questions/70398678/i-tried-to-polyfill-modules-in-webpack-5-but-not-working-reactjs)
+
 # Pruebas de Ejecución
 
 ## Lista de productos y Detalles del producto
@@ -6354,3 +6377,13 @@ Entonces nos metemos en ese nuevo grupo de recursos, y desde Azure, creamos un n
 ## Enlace al espacio de trabajo y al tablero del proyecto en Trello
 
 [Enlace a Trello - Espacio de trabajo y Tablero del proyecto eFoodDelivery-Website](https://trello.com/invite/b/jhJydRkf/ATTI1474acfddb1880c784b2467f19f42a7a387BB064/efooddelivery-website)
+
+## Inteligencias Artificiales usadas como ayuda y orientación
+
+### 1. [OpenAI --> ChatGPT](https://chat.openai.com/chat)
+
+### 2. [HuggingChat](https://huggingface.co/chat/)
+
+### 3. [Perplexity.ai](https://www.perplexity.ai/)
+
+### 4. [Visual Studio Extension --> GitHub Copilot](https://code.visualstudio.com/docs/editor/artificial-intelligence)
