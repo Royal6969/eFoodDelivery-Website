@@ -12,6 +12,7 @@ code {
     monospace;
 }
 
+
 /* ********************************** AccessRefused page starts ********************************** */
 @import url("https://fonts.googleapis.com/css?family=Comfortaa");
 .containerAccessRefused {
@@ -92,6 +93,82 @@ code {
 }
 /* ********************************** AccessRefused page ends ********************************** */
 
+
+/* ********************************** 404 NotFound page starts ********************************** */
+.fundo{
+  animation: scales 3s alternate  infinite;
+  transform-origin: center;
+}
+.pao-baixo{
+   animation: rotatepao 14s cubic-bezier(.1,.49,.41,.97)  infinite;
+  transform-origin: center;
+}
+.pao-cima{
+   animation: rotatepao 7s 1s cubic-bezier(.1,.49,.41,.97)  infinite;
+  transform-origin: center;
+}
+.olhos{animation: olhos   2s  alternate  infinite;
+   transform-origin: center;
+}
+.left-sparks{animation: left-sparks   4s  alternate  infinite;
+      transform-origin: 150px 156px;
+}
+.right-sparks{animation: left-sparks   4s  alternate  infinite;
+      transform-origin: 310px 150px;
+}
+.olhos{animation: olhos   2s  alternate  infinite;
+   transform-origin: center;
+}
+@keyframes scales{
+  from { transform: scale(0.98)}
+  to{ transform: scale(1)}
+}
+@keyframes rotatepao{
+  0% { transform:  rotate(0deg)}
+  50% , 60%{ transform:  rotate(-20deg)}
+  100%{  transform:  rotate(0deg) }
+}
+@keyframes olhos{
+  0%{
+    transform: rotateX(0deg);
+  }
+   100%{
+    transform: rotateX(30deg);
+  }
+}
+@keyframes left-sparks{
+  0%{
+    opacity: 0; 
+  }
+}
+.main{
+  
+  min-height: 600px;
+  margin: 0px auto;
+  width: auto;
+  max-width: 460px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.path {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: dash 4s   alternate infinite;
+}
+@keyframes dash{
+   0%, 30%{
+     fill: 4B4B62;
+    stroke-dashoffset:   0;
+  }
+   80%,100%{
+     fill: transparent;
+    stroke-dashoffset:  -200;
+  } 
+}
+/* ********************************** 404 NotFound page ends ********************************** */
+
+
 /* ********************************** Banner component starts ********************************** */
 .custom-banner {
   background: linear-gradient(to right, #2c536499, #203a4399, #0f202799), url("/src/assets/images/food.jpg") center;
@@ -101,6 +178,7 @@ code {
   overflow: hidden;
 }
 /* ********************************** Banner component ends ********************************** */
+
 
 /* ********************************** Buttons for categories starts ********************************** */
 .category-buttons {
@@ -126,9 +204,58 @@ code {
 }
 /* ********************************** Buttons for categories ends   ********************************** */
 
+
 /* to checking list for password input in register page */
 .fa-check-circle
 {
   margin-right: 5px;
   transition-duration:600ms;  
 }
+
+
+/* ********************************** Forget Password starts ********************************** */
+.container-fp{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.container-fp .form{
+  background: #fff;
+  padding: 30px 35px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.container-fp .form form .form-control{
+  height: 40px;
+  font-size: 15px;
+}
+.container-fp .form form .forget-pass{
+  margin: -15px 0 15px 0;
+}
+.container-fp .form form .forget-pass a{
+ font-size: 15px;
+}
+.container-fp .form form .button{
+  background: #6665ee;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.container-fp .form form .button:hover{
+  background: #5757d1;
+}
+.container-fp .form form .link{
+  padding: 5px 0;
+}
+.container-fp .form form .link a{
+  color: #6665ee;
+}
+.container-fp .login-form form p{
+  font-size: 14px;
+}
+.container-fp .row .alert{
+  font-size: 14px;
+}
+/* ********************************** Forget Password ends ********************************** */

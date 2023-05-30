@@ -1,7 +1,7 @@
 # eFoodDelivery Website - Trabajo de Fin de Grado
 
 - [eFoodDelivery Website - Trabajo de Fin de Grado](#efooddelivery-website---trabajo-de-fin-de-grado)
-- [0. Crear una aplicaión de React con Typescript](#0-crear-una-aplicaión-de-react-con-typescript)
+- [0. Crear una aplicación de React con Typescript](#0-crear-una-aplicación-de-react-con-typescript)
   - [0.1. package.json](#01-packagejson)
   - [0.2. Limpiar y reorganizar la arquitectura inicial por defecto del proyecto](#02-limpiar-y-reorganizar-la-arquitectura-inicial-por-defecto-del-proyecto)
     - [Eliminar](#eliminar)
@@ -159,6 +159,9 @@
     - [33. Generate a log file with npm winston](#33-generate-a-log-file-with-npm-winston)
     - [34. Logging with npm typescript-logging](#34-logging-with-npm-typescript-logging)
     - [35. Try to Polyfill modules in webpack 5 but not working in Reactjs](#35-try-to-polyfill-modules-in-webpack-5-but-not-working-in-reactjs)
+    - [36. What is a Payload in Redux context](#36-what-is-a-payload-in-redux-context)
+    - [37. Redux Fundamentals, Part 3: State, Actions, and Reducers](#37-redux-fundamentals-part-3-state-actions-and-reducers)
+    - [38. How to deploy your React App on Azure App Service from VS Code](#38-how-to-deploy-your-react-app-on-azure-app-service-from-vs-code)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [Lista de productos y Detalles del producto](#lista-de-productos-y-detalles-del-producto)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -169,6 +172,7 @@
     - [Prueba de ejecución para probar la funcionalidad del Login y Logout](#prueba-de-ejecución-para-probar-la-funcionalidad-del-login-y-logout)
     - [Prueba de ejecución para probar el userId dinámico, el HOC, y las notificaciones toast](#prueba-de-ejecución-para-probar-el-userid-dinámico-el-hoc-y-las-notificaciones-toast)
     - [Prueba de Ejecución para probar la verificación de email cuando un nuevo usuario se registra](#prueba-de-ejecución-para-probar-la-verificación-de-email-cuando-un-nuevo-usuario-se-registra)
+    - [Prueba de Ejecución para probar el procedimiento de cambiar la contraseña del usuario (Forget Password)](#prueba-de-ejecución-para-probar-el-procedimiento-de-cambiar-la-contraseña-del-usuario-forget-password)
   - [Pedido](#pedido)
     - [Prueba de ejecución para probar la creación de un objeto de pedido](#prueba-de-ejecución-para-probar-la-creación-de-un-objeto-de-pedido)
     - [Prueba de ejecución de toda la parte relativa a los pedidos, desde la creación de un pedido hasta su entrega](#prueba-de-ejecución-de-toda-la-parte-relativa-a-los-pedidos-desde-la-creación-de-un-pedido-hasta-su-entrega)
@@ -185,9 +189,12 @@
   - [Componmente del BigLoader](#componmente-del-bigloader)
   - [Evitar perder el contenido del almacenamiento de Redux con los valores del token del usuario](#evitar-perder-el-contenido-del-almacenamiento-de-redux-con-los-valores-del-token-del-usuario)
   - [Enviar un email de confirmación a los nuevos usuarios](#enviar-un-email-de-confirmación-a-los-nuevos-usuarios)
+  - [Procedimiento de recuperación de la contraseña del usuario (Forget Password)](#procedimiento-de-recuperación-de-la-contraseña-del-usuario-forget-password)
   - [Añadir las notificaciones *Toast*](#añadir-las-notificaciones-toast)
   - [Cómo aplazar la llamada a un endpoint en función de un orden de llamadas](#cómo-aplazar-la-llamada-a-un-endpoint-en-función-de-un-orden-de-llamadas)
   - [Añadir la cabecera de la autorización en los endpoints de las entidades](#añadir-la-cabecera-de-la-autorización-en-los-endpoints-de-las-entidades)
+  - [Página del Acceso denegado](#página-del-acceso-denegado)
+  - [Página del 404 no encontrado](#página-del-404-no-encontrado)
   - [Despliegue de la aplicación en Azure](#despliegue-de-la-aplicación-en-azure)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
   - [Inteligencias Artificiales usadas como ayuda y orientación](#inteligencias-artificiales-usadas-como-ayuda-y-orientación)
@@ -197,7 +204,7 @@
     - [4. Visual Studio Extension --\> GitHub Copilot](#4-visual-studio-extension----github-copilot)
 
 
-# 0. Crear una aplicaión de React con Typescript
+# 0. Crear una aplicación de React con Typescript
 
 La segunda parte de este proyecto (la parte web del cliente), voy a desarrollarla en React usando como lenguaje base Typescript.
 
@@ -5990,6 +5997,12 @@ function DeleteUser() {
 
 ### [35. Try to Polyfill modules in webpack 5 but not working in Reactjs](https://stackoverflow.com/questions/70398678/i-tried-to-polyfill-modules-in-webpack-5-but-not-working-reactjs)
 
+### [36. What is a Payload in Redux context](https://stackoverflow.com/questions/51357412/what-is-a-payload-in-redux-context)
+
+### [37. Redux Fundamentals, Part 3: State, Actions, and Reducers](https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers)
+
+### [38. How to deploy your React App on Azure App Service from VS Code](https://www.youtube.com/watch?v=ebk7cdL2OI0&ab_channel=BawanthaRathnayaka)
+
 # Pruebas de Ejecución
 
 ## Lista de productos y Detalles del producto
@@ -6028,6 +6041,10 @@ function DeleteUser() {
 ### Prueba de Ejecución para probar la verificación de email cuando un nuevo usuario se registra
 
 [Prueba de Ejecución 9](https://private-user-images.githubusercontent.com/80839621/241195634-6a904035-acf6-4ff6-b29f-d71e4f22c373.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJrZXkxIiwiZXhwIjoxNjg1MDk3ODU1LCJuYmYiOjE2ODUwOTc1NTUsInBhdGgiOiIvODA4Mzk2MjEvMjQxMTk1NjM0LTZhOTA0MDM1LWFjZjYtNGZmNi1iMjlmLWQ3MWU0ZjIyYzM3My5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBSVdOSllBWDRDU1ZFSDUzQSUyRjIwMjMwNTI2JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDIzMDUyNlQxMDM5MTVaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1lYWNkMWRhOTJjNmM1MjY5MmQzYmIyNGVjZjMwYmM1M2VlZDVjNTVjNTY1MzA4OWU2Y2JhMWQ0Yzg1NzAwYmRiJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.CET2qq_ifFE4dyO_1PntoJEn9ndve4IEUAAIhTUOMvk)
+
+### Prueba de Ejecución para probar el procedimiento de cambiar la contraseña del usuario (Forget Password)
+
+[Prueba de Ejecución 10](https://private-user-images.githubusercontent.com/80839621/241957431-e1c42a22-4705-4c2f-bb07-e18e6124aa6f.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJrZXkxIiwiZXhwIjoxNjg1NDQ3NTQ1LCJuYmYiOjE2ODU0NDcyNDUsInBhdGgiOiIvODA4Mzk2MjEvMjQxOTU3NDMxLWUxYzQyYTIyLTQ3MDUtNGMyZi1iYjA3LWUxOGU2MTI0YWE2Zi5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBSVdOSllBWDRDU1ZFSDUzQSUyRjIwMjMwNTMwJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDIzMDUzMFQxMTQ3MjVaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1hYWJlYmI4NjBmODZkM2ZjN2UzNjE2ZmNmYTllZTM3ZTJlOWUzMDQ0NmI3ZWYzN2Y1MjE5Y2U0ZjljZDI4M2M3JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.bjOc1hJV6qsgPQAN0z5usX2K7sjanH25Hl3CYLd8_sc)
 
 ## Pedido
 
@@ -6232,6 +6249,505 @@ A través de la parte de la API, he implementado un nuevo endpoint y un nuvevo m
 
 [verificación-de-email-cuando-un-nuevo-usuario-se-registra](#prueba-de-ejecución-para-probar-la-verificación-de-email-cuando-un-nuevo-usuario-se-registra)
 
+## Procedimiento de recuperación de la contraseña del usuario (Forget Password)
+
+Este proceso consta de tres vistas, y de un endpoint más por cada una de ellas.
+
+Tras haber hecho los tres endpoints en la parte de la API, ahora tenemos que hacer sus correspondientes aquí en nuestra carpeta de *APIs*:
+
+```ts
+sendEmailToRecoverPassword: builder.mutation({
+  query: (userEmail) => ({ // userData will have all the properties that we require for registration
+    url: "Authentication/SendEmailToRecoverPassword",
+    method: "POST",
+    // params: { } // we don't have parameters in this endpoint
+    // we receive the data directly in a body in json format
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify(userEmail)
+  }),
+  // invalidatesTags: [""] // we don't have to invalidate any tag here
+}),
+verifyCode: builder.mutation({
+  query: (userData) => ({ // userData will have all the properties that we require for registration
+    url: "Authentication/VerifyCode",
+    method: "POST",
+    // params: { } // we don't have parameters in this endpoint
+    // we receive the data directly in a body in json format
+    headers: { "Content-type": "application/json" },
+    body: userData
+  }),
+  // invalidatesTags: [""] // we don't have to invalidate any tag here
+}),
+changeUserPassword: builder.mutation({
+  query: (userData) => ({ // userData will have all the properties that we require for registration
+    url: "Authentication/ChangeUserPassword",
+    method: "POST",
+    // params: { } // we don't have parameters in this endpoint
+    // we receive the data directly in a body in json format
+    headers: { "Content-type": "application/json" },
+    body: userData
+  }),
+  // invalidatesTags: [""] // we don't have to invalidate any tag here
+})
+```
+
+Por consecuente, las tres vistas serían las siguientes:
+
+La primera sería la del *ForgetPassword.tsx*
+
+```tsx
+function ForgetPassword() {
+  const [loading, setLoading] = useState(false);
+  // define useNavigate() hook to redirect user to Home page when user is logged
+  const navigate = useNavigate();
+
+  // also we need a useState for the input field to write an email address
+  const [emailInput, setEmailInput] = useState({
+    email: ''
+  });
+
+  // now we have to use our helper method called InputHandler
+  const handleEmailInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const tempData = InputHelper(event, emailInput);
+    setEmailInput(tempData);
+  }
+
+  // define mutation to invoke it on form submit
+  const [sendEmail] = useSendEmailToRecoverPasswordMutation();
+
+  const handleSendEmail = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+
+    const sendEmailResponse: ApiResponse = await sendEmail(
+       emailInput.email
+      // all of these values will be populated inside the loginInput because we have the control component
+    );
+
+    // one we invoke the endpoint, we have to examine the response that result
+    if (sendEmailResponse.data?.statusCode == 200) { // if loginResponse.data, if that is populated, let's check what happens 
+      // console.log(loginResponse.data);
+      
+      toastNotifyHelper('Email con código de recuperación enviado correctamente. Revise su correo electrónico.');
+
+      // redirect user to Home page
+      navigate('/forgetPassword/ResetCode', {
+        state: { // here we're passing to the different components some values, but we're using a state which will be on navigate itself
+          // sendEmailResponse: emailInput.email,
+          emailInput
+        }
+      });
+    }
+    else if (sendEmailResponse.error) {
+      // console.log(loginResponse.error.data.errorsList[0]);
+      // setErrorMessage(loginResponse.error.data.errorsList[0]);
+      toastNotifyHelper(sendEmailResponse.error.data.errorsList[0], 'error');
+    }
+
+    setLoading(false);
+  }
+
+
+  return (
+    <div className="container container-fp">
+
+      {loading && (
+        <BigLoader />
+      )} 
+
+      <div className="row">
+        <div className="col-md-4 offset-md-4 form">
+
+          <form onSubmit={handleSendEmail} method="post">
+            <h2 className="text-center">Recuperar contraseña</h2>
+            <p className="text-center">Introduzca su dirección de correo electrónico</p>
+
+            <div className="form-group">
+              <input 
+                type='email'
+                className='form-control'
+                placeholder='Email'
+                required
+                name='email'
+                value={emailInput.email}
+                onChange={handleEmailInput}
+              />
+            </div>
+            
+            <div className="form-group mt-3">
+              <input 
+                className="form-control button" 
+                type="submit" 
+              />
+            </div>
+          </form>
+        
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+La segunda vista es el *ResetCode.tsx*
+
+```tsx
+function ResetCode() {
+  // we are looking for the apiDataResult and deliveryInput, and from where we want that, we want to extract that from useLocation() hook
+  // that will make sure that whatever we're passing in the state when we navigate it's extracted and automatically populated
+  const {
+    state: {
+      // sendEmailResponse: verifyCodeResponse,
+      emailInput
+    }
+  } = useLocation();
+
+  const [loading, setLoading] = useState(false);
+  // define useNavigate() hook to redirect user to Home page when user is logged
+  const navigate = useNavigate();
+
+  // also we need a useState for the input field to write an email address
+  const [codeInput, setCodeInput] = useState({
+    code: ''
+  });
+
+  // now we have to use our helper method called InputHandler
+  const handleCodeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const tempData = InputHelper(event, emailInput);
+    setCodeInput(tempData);
+  }
+
+  // define mutation to invoke it on form submit
+  const [verifyCode] = useVerifyCodeMutation();
+
+  const handleVerifyCode = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+
+    const verifyCodeResponse: ApiResponse = await verifyCode({
+      email: emailInput.email,
+      code: codeInput.code
+      // all of these values will be populated inside the loginInput because we have the control component
+    });
+
+    // one we invoke the endpoint, we have to examine the response that result
+    if (verifyCodeResponse.data?.statusCode == 200) { // if loginResponse.data, if that is populated, let's check what happens 
+      // console.log(loginResponse.data);
+      
+      toastNotifyHelper('Codigo validado correctamente.');
+
+      // redirect user to Home page
+      navigate('/forgetPassword/NewPassword', {
+        state: { // here we're passing to the different components some values, but we're using a state which will be on navigate itself
+          responseInput: {
+            email: emailInput.email,
+            code: codeInput.code 
+          }
+        }
+      });
+    }
+    else if (verifyCodeResponse.error) {
+      // console.log(loginResponse.error.data.errorsList[0]);
+      // setErrorMessage(loginResponse.error.data.errorsList[0]);
+      toastNotifyHelper(verifyCodeResponse.error.data.errorsList[0], 'error');
+    }
+
+    setLoading(false);
+  }
+
+
+  return (
+    <div className="container container-fp">
+
+      {loading && (
+        <BigLoader />
+      )}
+
+      <div className="row">
+        <div className="col-md-4 offset-md-4 form">
+
+          <form onSubmit={handleVerifyCode} method="POST">
+            <h2 className="text-center">Código de verificación</h2>
+
+            <div className="form-group">
+              <input 
+                type='text'
+                className='form-control'
+                placeholder='Código de verificación'
+                required
+                name='code'
+                value={codeInput.code}
+                onChange={handleCodeInput}
+              />
+            </div>
+
+            <div className="form-group mt-3">
+              <input 
+                className="form-control button" 
+                type="submit"  
+              />
+            </div>
+          </form>
+          
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+Y la tercera vista es la del *NewPassword.tsx*
+
+```tsx
+function NewPassword() {
+  // we are looking for the apiDataResult and deliveryInput, and from where we want that, we want to extract that from useLocation() hook
+  // that will make sure that whatever we're passing in the state when we navigate it's extracted and automatically populated
+  const {
+    state: {
+      responseInput
+    }
+  } = useLocation();
+
+  const [loading, setLoading] = useState(false);
+  // define useNavigate() hook to redirect user to Home page when user is logged
+  const navigate = useNavigate();
+
+  // also we need a useState for the input field to write an email address
+  const [newPasswordInput, setNewPasswordInput] = useState({
+    password: '',
+    confirmPassword: ''
+  });
+
+  /********************************************** Password Validation ****************************************************** */
+  const [validLength, setValidLength] = useState(false);
+  const [hasNumber, setHasNumber] = useState(false);
+  const [upperCase, setUpperCase] = useState(false);
+  const [lowerCase, setLowerCase] = useState(false);
+  const [specialChar, setSpecialChar] = useState(false);
+  const [match, setMatch] = useState(false);
+  const [requiredLength, setRequiredLength] = useState(8)
+
+  const inputPasswordChange: (event: React.ChangeEvent<HTMLInputElement>) => void = (event) => {
+    const { value, name } = event.target;
+    setNewPasswordInput({
+      ...newPasswordInput,
+      [name]: value
+    })
+  }
+
+  useEffect(() => {
+    setValidLength(newPasswordInput.password.length >= requiredLength ? true : false);
+    setUpperCase(newPasswordInput.password.toLowerCase() !== newPasswordInput.password);
+    setLowerCase(newPasswordInput.password.toUpperCase() !== newPasswordInput.password);
+    setHasNumber(/\d/.test(newPasswordInput.password));
+    setMatch(!!newPasswordInput.password && newPasswordInput.password === newPasswordInput.confirmPassword)
+    setSpecialChar(/[ `!@#$%^&*()_+\-=\]{};':"\\|,.<>?~]/.test(newPasswordInput.password));
+
+  }, [newPasswordInput, requiredLength]);
+  
+  /************************************************************************************************************************* */
+
+  // now we have to use our helper method called InputHandler
+  const handleNewPasswordInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const tempData = InputHelper(event, newPasswordInput);
+    setNewPasswordInput(tempData);
+  }
+
+  // define mutation to invoke it on form submit
+  const [changePassword] = useChangeUserPasswordMutation();
+
+  const handleNewPasswordCode = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    //console.log(responseInput);
+
+    if (!validLength) {
+      toastNotifyHelper('La contraseña debe contener 8 caracteres como mínimo', 'error');
+      setLoading(false);
+    }
+    else if (!lowerCase) {
+      toastNotifyHelper('La contraseña debe contener al menos 1 minúscula', 'error');
+      setLoading(false);
+    }
+    else if (!upperCase) {
+      toastNotifyHelper('La contraseña debe contener al menos 1 mayúscula', 'error');
+      setLoading(false);
+    }
+    else if (!hasNumber) {
+      toastNotifyHelper('La contraseña debe contener al menos 1 número', 'error');
+      setLoading(false);
+    }
+    else if (!specialChar) {
+      toastNotifyHelper('La contraseña debe contener al menos 1 carácter especial', 'error');
+      setLoading(false);
+    }
+    else if (!match) {
+      toastNotifyHelper('Las contraseñas no coinciden', 'error');
+      setLoading(false);
+    }
+    else if (validLength && hasNumber && upperCase && lowerCase && specialChar && match) {
+      const newPasswordResponse: ApiResponse = await changePassword({
+        email: responseInput.email,
+        code: responseInput.code,
+        password: newPasswordInput.password
+        // all of these values will be populated inside the loginInput because we have the control component
+      });
+  
+      // one we invoke the endpoint, we have to examine the response that result
+      if (newPasswordResponse.data?.statusCode == 200) { // if loginResponse.data, if that is populated, let's check what happens 
+        // console.log(loginResponse.data);
+        
+        toastNotifyHelper('Contraseña cambiada correctamente.');
+  
+        // redirect user to Home page
+        navigate('/Login');
+      }
+      else if (newPasswordResponse.error) {
+        // console.log(loginResponse.error.data.errorsList[0]);
+        // setErrorMessage(loginResponse.error.data.errorsList[0]);
+        toastNotifyHelper(newPasswordResponse.error.data.errorsList[0], 'error');
+      }
+    }
+
+    setLoading(false);
+  }
+
+
+  return (
+    <div className="container container-fp">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"></link>
+
+      {loading && (
+        <BigLoader />
+      )}
+
+      <div className="row">
+        <div className="col-md-4 offset-md-4 form">
+
+          <form onSubmit={handleNewPasswordCode} method="POST">
+            <h2 className="text-center">Nueva contraseña</h2>
+
+            <div className="form-group">
+              <input 
+                type='password'
+                className='form-control'
+                placeholder='Contraseña'
+                required
+                name='password'
+                value={newPasswordInput.password}
+                // onChange={handleNewPasswordInput}
+                onChange={inputPasswordChange}
+              />
+            </div>
+
+            <div className="form-group mt-1">
+              <input 
+                type='password'
+                className='form-control'
+                placeholder='Confirmar contraseña'
+                required
+                name='confirmPassword'
+                value={newPasswordInput.confirmPassword}
+                // onChange={handleNewPasswordInput}
+                onChange={inputPasswordChange}
+              />
+            </div>
+
+            <ul style={{listStyle: 'none'}} className='mt-3'>
+              <li style={validLength ? {color: 'green'} : {color: 'red'}}>
+                <i className="far fa-check-circle"></i> 
+                <span>Longitud válida{/*: {validLength ? <span>True</span> : <span>False</span>}*/}</span>
+              </li>
+              <li style={hasNumber ? {color: 'green'} : {color: 'red'}}>
+                <i className="far fa-check-circle"></i> 
+                <span>Contiene un número{/*: {hasNumber ? <span>True</span> : <span>False</span>}*/}</span>
+              </li>
+              <li style={upperCase ? {color: 'green'} : {color: 'red'}}>
+                <i className="far fa-check-circle"></i> 
+                <span>Contiene una mayúscula{/*: {upperCase ? <span>True</span> : <span>False</span>}*/}</span>
+              </li>
+              <li style={lowerCase ? {color: 'green'} : {color: 'red'}}>
+                <i className="far fa-check-circle"></i> 
+                <span>Contiene una minúscula{/*: {lowerCase ? <span>True</span> : <span>False</span>}*/}</span>
+              </li>
+              <li style={specialChar ? {color: 'green'} : {color: 'red'}}>
+                <i className="far fa-check-circle"></i> 
+                <span>Contiene un carácter especial{/*: {specialChar ? <span>True</span> : <span>False</span>}*/}</span>
+              </li>
+              <li style={match ? {color: 'green'} : {color: 'red'}}>
+                <i className="far fa-check-circle"></i> 
+                <span>Las contraseñas coinciden{/*: {match ? <span>True</span> : <span>False</span>}*/}</span>
+              </li>
+            </ul>
+            
+            <div className="form-group mt-3">
+              <input 
+                className="form-control button" 
+                type="submit" 
+              />
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+Y para los estilos, he añadido estos al *index.css*
+
+```css
+.container-fp{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.container-fp .form{
+  background: #fff;
+  padding: 30px 35px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.container-fp .form form .form-control{
+  height: 40px;
+  font-size: 15px;
+}
+.container-fp .form form .forget-pass{
+  margin: -15px 0 15px 0;
+}
+.container-fp .form form .forget-pass a{
+ font-size: 15px;
+}
+.container-fp .form form .button{
+  background: #6665ee;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.container-fp .form form .button:hover{
+  background: #5757d1;
+}
+.container-fp .form form .link{
+  padding: 5px 0;
+}
+.container-fp .form form .link a{
+  color: #6665ee;
+}
+.container-fp .login-form form p{
+  font-size: 14px;
+}
+.container-fp .row .alert{
+  font-size: 14px;
+}
+```
+
+Y éste ha sido el resultado:
+
+[procedimiento de cambiar la contraseña del usuario](#prueba-de-ejecución-para-probar-el-procedimiento-de-cambiar-la-contraseña-del-usuario-forget-password)
+
 ## Añadir las notificaciones *Toast*
 
 Para añadir este tipo de notificaciones a nuestra aplicación de una forma más rápida y sencilla, vamos a instalar un paquete de npm llamado react-toastify
@@ -6347,6 +6863,237 @@ const productAPI = createApi({
   }),
   ...
 ```
+
+## Página del Acceso denegado
+
+```tsx
+function AccessRefused() {
+  return (
+    <div className="containerAccessRefused">
+      <h1>
+        4
+        <div className="lock">
+          <div className="top"></div>
+          <div className="bottom"></div>
+        </div>3
+      </h1>
+      
+      <p>Access denied</p>
+    </div>
+  )
+}
+```
+
+```css
+@import url("https://fonts.googleapis.com/css?family=Comfortaa");
+.containerAccessRefused {
+  background-color: #a74006;
+  font-family: sans-serif;
+  z-index: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 10px;
+  min-width: 300px;
+}
+.containerAccessRefused div {
+  display: inline-block;
+}
+.containerAccessRefused .lock {
+  opacity: 1;
+}
+.containerAccessRefused h1 {
+  font-family: "Comfortaa", cursive;
+  font-size: 100px;
+  text-align: center;
+  color: #eee;
+  font-weight: 100;
+  margin: 0;
+}
+.containerAccessRefused p {
+  color: #fff;
+}
+.lock {
+  transition: 0.5s ease;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+}
+.lock ::after {
+  content: "";
+  background: #a74006;
+  opacity: 0.3;
+  display: block;
+  position: absolute;
+  height: 100%;
+  width: 50%;
+  top: 0;
+  left: 0;
+}
+.lock .bottom {
+  background: #D68910;
+  height: 40px;
+  width: 60px;
+  display: block;
+  position: relative;
+  margin: 0 auto;
+}
+.lock .top {
+  height: 60px;
+  width: 50px;
+  border-radius: 50%;
+  border: 10px solid #fff;
+  display: block;
+  position: relative;
+  top: 30px;
+  margin: 0 auto;
+}
+.lock .top::after {
+  padding: 10px;
+  border-radius: 50%;
+}
+@media (max-width: 420px) {
+  .containerAccessRefused {
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  .lock.generated {
+    transform: scale(0.3);
+  }
+}
+```
+
+![](./img/124.png)
+
+## Página del 404 no encontrado
+
+```tsx
+function NotFound() {
+  return (
+    <div className="main"> 
+      <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="470" height="290" viewBox="0 0 470 290">
+          <defs>
+              <path className="fundo" id="prefix__a" d="M5.063 128.67c-2.513 15.192 5.633 31.093 17.898 38.941 5.99 3.832 13.34 6.528 16.471 13.254 4.868 10.452-3.879 22.437-13.113 28.515-9.236 6.078-20.5 10.9-24.704 21.683-2.771 7.108-1.685 15.387 1.058 22.507 10.06 26.112 39.393 37.547 65.479 36.15 26.086-1.396 50.827-12.407 76.416-18.075 87.873-19.465 180.005 24.717 267.728 4.47 13.65-3.151 27.4-8.081 37.943-17.99 11.883-11.167 18.632-28.016 19.65-45.023.97-16.225-4.34-34.495-17.744-41.806-7.834-4.273-17.196-4.1-25.7-1.774-5.43 1.483-10.767 3.808-16.369 3.848-5.601.038-11.763-3-13.386-8.808-1.707-6.107 2.182-12.41 6.642-16.577 9.072-8.474 21.203-12.707 29.441-22.126 7.927-9.063 11.264-22.574 8.574-34.716-2.692-12.141-11.326-22.538-22.188-26.715-27.683-10.645-57.844 18.377-86.152 9.873-2.101-.63-4.312-1.605-5.418-3.641-1.08-1.988-.834-4.51-.214-6.716 3.468-12.348 16.939-20.21 17.528-33.102.32-7.008-3.504-13.564-8.325-18.251-33.126-32.2-81.125 6.102-114.9 18.194-55.542 19.884-112.157 36.49-167.849 55.963-20.81 7.275-44.91 18.606-48.766 41.922z"/>
+          </defs>
+          <g fill="none" fill-rule="evenodd">
+              <path fill="#FFF" d="M0 0H1366V800H0z" transform="translate(-448 -157)"/>
+              <g transform="translate(-448 -157) translate(448 157)">
+                  <mask id="prefix__b" fill="#fff">
+                      <use xlinkHref="#prefix__a"/>
+                  </mask>
+                  <use fill="#F6F6F7" xlinkHref="#prefix__a"/>
+                  <path fill="#EDEDF0" fill-rule="nonzero" d="M-14.199 211.2H481.36V301.2H-14.199z" mask="url(#prefix__b)"/>
+                  <g className="paes">
+                  <g className="pao-baixo">
+                        <path fill="#FBB965" d="M2.79 131.737s-2.073 3.155-2.479 6.868c-.406 3.713-.747 9.666 1.24 13.372 1.985 3.707 12.69 20.8 65.175 21.02 53.15.225 69.188-15.685 70.59-18.977 2.605-6.118 1.838-21.327.06-22.283-1.777-.956-44.044-3.204-72.446-4.057-28.402-.854-49.872-1.968-62.14 4.057" transform="translate(161 68)"/>
+                      <path fill="#E6A95F" d="M34.648 167.758c-8.863-1.526-23.515-6.939-30.292-14.218-6.775-7.28-2.096-8.803 3.508-5.387 5.605 3.415 24.569 11.557 54.124 12.263 29.555.706 61.424-6.946 72.2-17.053 0 0 2.705-1.47 2.768 1.509.062 2.98.428 7.948-2.769 10.507-3.196 2.558-34.805 23.526-99.54 12.379" transform="translate(161 68)"/>
+                      <path fill="#FFDA7F" d="M5.679 131.837c-6.522 1.646-.275 6.91 9.492 12.14 9.767 5.229 28.24 10.257 44.267 10.015 16.028-.243 37.48-.481 52.543-5.333 15.06-4.852 16.223-9.55 17.998-13.298 1.774-3.748-107.32-7.809-124.3-3.524" transform="translate(161 68)"/>
+                    </g>
+                    <g className="pao-cima">
+                      <path fill="#FBB868" d="M71.37 0C49.008.035-2.43.631 1.18 51.16c0 0-.018 10.84 62.825 10.84 62.844 0 72.591-9.633 73.721-11.173C142.284 44.623 147.583-.117 71.37 0" transform="translate(161 68)"/>
+                      <path fill="#E6A95F" d="M34.552 61c-7.628-1.006-23.98-2.904-27.586-5.506-3.606-2.604-7.448-2.895-5.39-10.826.842-3.242 7.976-.619 11.264.839 3.289 1.458 21.239 6.047 42.989 6.673 21.75.625 57.126-1.679 67.42-5.458 9.806-3.598 13.662-7.027 15.493-5.228 2.396 2.351 1.687 8.008-4.913 12.215-6.252 3.985-27.53 7.2-49.434 7.76-21.904.56-38.604 1.012-49.843-.469" transform="translate(161 68)"/>
+                      <path fill="#FFEAD4" d="M45.508 13.114c-.368.549-.54 1.598-.503 2.445.017.392.297.604.45.287.143-.297.222-.617.303-.978.087-.387.197-.735.238-1.15.042-.44-.257-.95-.488-.604M42.092 9.016c-.694.13-1.446.61-1.774 1.098-.168.248-.3.512-.317.792-.017.313.154.503.29.776.249.494 1.245.392 1.22-.162-.014-.274.33-.612.54-.817.367-.361.75-.62.923-1.075.154-.404-.413-.7-.882-.612M51.621 9.247c-.182-.409-.68-.325-.615.364.063.687.007 1.485.25 2.067.19.458.694.473.737-.25.043-.759-.109-1.592-.372-2.181M32.55 15.101c-1.206.547-1.849 1.662-1.414 2.552.188.384 1.21.504 1.46.077.188-.32.407-.629.616-.942.243-.363.63-.675.767-1.064.173-.486-.753-.93-1.43-.623M29.793 9.012c-.26-.108-.498.532-.62.942-.166.565-.205 1.033-.149 1.674.053.59.424.405.493-.048-.002.014.102-.302.138-.4.093-.247.18-.497.262-.76.113-.359.144-1.297-.124-1.408M38.384 6.056c-.737-.211-1.406.211-1.881.674-.53.514-.607 1.19-.39 1.829.167.5 1.09.632 1.326.096.127-.285.31-.53.533-.764.304-.32.72-.44.944-.848.237-.429-.053-.85-.532-.987M21.722 10.101c-.484-.28-1.16.08-1.542.378-.57.444-.957.924-1.152 1.628-.21.764.802 1.182 1.296.663.4-.42.901-.746 1.308-1.172.319-.334.594-1.205.09-1.497M23.513 15.078c-.385.414-.505 1.566-.513 2.381-.005.47.333.749.47.35.206-.592.422-1.34.517-2.047.082-.598-.253-.921-.474-.684M38.964 14.6c-.26-.324-1.293-.581-2.192-.6-.626-.012-.971.28-.65.452.459.244 1.155.57 2.063.547.56-.014.936-.205.78-.4M51.58 3.028c-.54-.1-.912.074-1.399.401-.45.304-.83.813-1.092 1.395-.344.76.386 1.437.866 1.076.662-.5 1.41-.857 1.914-1.641.255-.397.126-1.152-.29-1.23M66.234 9c-.923 0-2.062.305-2.227.708-.074.182.437.384.836.247.537-.185 1.29-.187 1.832-.364.59-.193.337-.591-.441-.591M60.589 9.375c-.101-.522-.482-.493-.556.048-.12.852.102 1.815.423 2.412.213.396.543.02.544-.494.002-.736-.283-1.302-.411-1.966M69.955 3.569c-.44-.473-1.713-.712-2.727-.479-.37.085-.24.315.044.396.601.173 1.168.408 1.848.503.49.069 1.042-.199.835-.42M73.956 10.626c-.231-.836-.735-1.255-1.316-1.507-.24-.104-.5-.147-.75-.1-.148.028-.273.063-.407.161-.032.022-.373.238-.223.161-.282.148-.382.791-.057.979.117.067.22.24.333.325.168.128.336.247.508.364.327.219.564.609.873.868.537.45 1.27-.42 1.04-1.251M66.549 15.017c-.83-.233-.486 2.056-.435 2.528.055.51.678.664.741.08.068-.628.42-2.405-.306-2.608M54.803 16.301c-.065-.347-.1-.709-.19-1.038-.107-.393-.44-.32-.532.052-.186.746-.052 2.313.405 2.636.225.16.545-.077.512-.623-.024-.375-.13-.676-.195-1.027M39.534 21.024c-.423.212-.58 1.352-.523 2.174.066.946.664 1.13.785.144.065-.538.22-1.041.203-1.612-.016-.528-.238-.82-.465-.706M15.946 21.201c-.04-.142-.134-.197-.214-.2-.311-.02-.464.621-.576 1.05-.124.468-.188.945-.14 1.461.053.562.486.699.57.088.053-.375.146-.754.233-1.107.108-.439.265-.815.127-1.292M14.918 16.274c-.067-.169-.25-.279-.46-.274-.571.015-1.05.232-1.55.61-.562.422-.976 1.023-.899 1.675.081.697.993.942 1.574.476.407-.326.746-.755 1.058-1.149.364-.462.441-.923.277-1.338M62.906 5.209c-.447-.277-1.34-.251-1.957-.083-.279.077-.57.172-.738.298-.069.051-.108.105-.15.16-.025.038-.037.076-.038.115.043.077.042.09-.003.037-.154.243.622.357.925.173.227-.051.444-.104.705-.13.521-.054 1.021-.089 1.286-.315.092-.078.088-.182-.03-.255M52.906 8.291c-.191-.24-.402-.204-.634-.28-.218-.073-.326.255-.245.491.117.34.438.509.697.497.26-.01.37-.472.182-.708M80.437 1.283c-.385-.22-.844-.327-1.272-.266-.497.071-.7.363-1.033.724-.356.388.07 1.143.54.93l-.065-.083c.095.05.192.08.295.09.177.032.31.074.477.16.373.189.702.503 1.023.78.348.301 1.738.788 1.586-.245-.141-.963-.789-1.652-1.551-2.09M78.955 8.082c-.134-.55-.259-1.126-.366-1.703-.102-.548-.457-.476-.541.05-.073.453-.057.877.01 1.331.083.548.286.874.512 1.17.11.144.276.048.357-.132.097-.215.088-.476.028-.716M87.395 8c-.77.016-1.317.338-2.032.43-.505.065-.477.525.046.56.713.047 1.359-.082 2.053-.14.468-.04 1.35.253 1.516-.164.191-.483-.906-.7-1.583-.685M81.958 14.767c-.103-.44-.306-.8-.377-1.279-.095-.644-.518-.678-.57.063-.07.998.19 1.845.53 2.34.293.426.566-.494.417-1.124M99.918 9.365c-.177-.18-.36-.23-.56-.337-.295-.16-.508.405-.225.646.181.155.805.626.863.04.012-.119-.003-.273-.078-.349M93.308 4.792c-.387-.436-.932-.682-1.466-.78-.809-.145-1.17 1.02-.47 1.477.65.427 1.772 2.34 2.503 1.097.376-.641-.178-1.356-.567-1.794M91.498 10.138c-.32.55-.428 1.334-.494 2.18-.043.546.266.928.442.494.21-.512.38-1.126.522-1.741.139-.605-.204-1.393-.47-.933M103.977 8.863c-.265-1.177-1.477-2.153-2.51-1.784-.548.195-.653 1.156-.104 1.442.294.153.53.397.762.655.326.36.549.611.988.784.564.223.992-.535.864-1.097M100.988 4.781c.03-.437-.169-.702-.568-.724-.906-.33-1.89.849-2.3 1.608-.47.873.538 1.63 1.223 1.22.683-.406 1.786-1.108 1.645-2.104M110.532 7.06c-.238-.218-.568.203-.463.619l.012.045c-.01.096-.001.204 0 .297 0 .14-.016.294-.025.434-.012.181-.043.357-.053.539-.013.245.016.45.06.612.091.33.32.515.53.304.108-.11.286-.37.335-.709.04-.276.058-.554.07-.836.024-.568-.189-1.052-.466-1.306M108.458 14.127c-.434-.548-.995-.921-1.662-1.103-.746-.203-1.116.933-.445 1.28.216.11.4.251.557.443.204.248.42.648.672.84.348.262.868.645 1.249.23.437-.478-.064-1.305-.37-1.69M117.71 13.184c-.282.276-.558.555-.852.815-.143.126-.333.256-.446.42-.108.156-.174.34-.284.489-.392.535.193 1.412.694.973.104-.091.318-.086.446-.134.16-.062.324-.11.486-.169.51-.186.872-.578 1.145-1.11.418-.816-.553-1.907-1.188-1.284M97.93 18.019c-.834-.165-1.209.791-.697 1.348.495.538 1.83 2.49 2.627 1.2.636-1.034-1.044-2.373-1.93-2.548M124.69 17.006c-.372.072-.428.396-.629.626-.202.23.139.496.376.3.22-.181.506-.403.559-.676.032-.168-.129-.285-.307-.25M115.979 19.839c-.079-.499-.153-.976-.264-1.445-.205-.86-.853-.174-.689.73.089.49.148.982.25 1.46.196.907.849.182.703-.745M78.957 24.496c.068-.31.05-.616-.02-.91-.077-.321-.14-.65-.183-1.002-.099-.82-.671-.76-.736.076-.056.71.019 1.361.23 1.918.132.348.265.461.467.377-.18.076.075.038.116.016.071-.038.117-.183.135-.33.01-.08.063-.472-.009-.145M61.924 22.403c-.057-.057-.16-.13-.189-.2-.132-.33-.73-.229-.735.1-.004.27.047.533.379.665.186.073.458.02.543-.14l.027-.053c.06-.114.083-.266-.025-.372M106.798 22.22c-.107-.292-.757-.304-.794.028-.032.293.107.618.488.731.229.068.532-.032.507-.257-.021-.186-.137-.329-.201-.502M70.884 28.197c-.13-.291-.716-.24-.83.025-.131.304-.034.606.41.754.101.033.24.034.334-.012.326-.16.181-.553.086-.767" transform="translate(161 68)"/>
+                    <g className="olhos">
+                        <path fill="#633" d="M51.976 32.505c.27 2.748-1.735 5.197-4.476 5.47-2.748.274-5.199-1.732-5.476-4.48-.27-2.748 1.735-5.197 4.483-5.47 2.748-.274 5.192 1.733 5.469 4.48M93.976 28.505c.27 2.748-1.735 5.197-4.483 5.47-2.748.273-5.192-1.733-5.469-4.48-.27-2.748 1.735-5.197 4.483-5.47 2.748-.274 5.192 1.733 5.469  4.48M65.03 45.127c2.1-5.726 9.106-6.606 13.113-2.171.408.462-.277 1.204-.725.77-3.981-3.892-9.17-2.951-11.83 1.745-.187.333-.68-.002-.558-.344 " transform="translate(161 68)"/>
+                      
+                      </g>
+                </g>
+                  </g>
+                  <g fill-rule="nonzero" stroke="#979797" stroke-linecap="round" stroke-width="1.8" className="left-sparks">
+                      <path d="M23.684 5.789L30 1.158" transform="rotate(-90 157 13)"/>
+                      <path d="M0 5.789L6.316 1.158" transform="rotate(-90 157 13) matrix(-1 0 0 1 6.316 0)"/>
+                      <path d="M15.789 4.632L15.789 0" transform="rotate(-90 157 13)"/>
+                  </g>
+                  <g fill-rule="nonzero" stroke="#979797" stroke-linecap="round" stroke-width="1.8" className="right-sparks">
+                      <path d="M23.684 5.789L30 1.158" transform="matrix(0 -1 -1 0 318 170)"/>
+                      <path d="M0 5.789L6.316 1.158" transform="matrix(0 -1 -1 0 318 170) matrix(-1 0 0 1 6.316 0)"/>
+                      <path d="M15.789 4.632L15.789 0" transform="matrix(0 -1 -1 0 318 170)"/>
+                  </g>
+                  <path fill="#4B4B62" className="path" fill-rule="nonzero" stroke="#4B4B62" stroke-width="2" d="M198.754 186c1.56 0 2.246-.703 2.246-2.3v-41.4c0-1.597-.686-2.3-2.246-2.3h-9.608c-1.56 0-2.247.703-2.247 2.3v19.678h-5.802c-1.185 0-1.934-.83-1.934-2.172V142.3c0-1.597-.686-2.3-2.246-2.3h-9.67c-1.56 0-2.247.703-2.247 2.3v22.425c0 7.283 3.244 10.606 11.355 10.606H186.9v8.369c0 1.597.687 2.3 2.247 2.3h9.608zm32.277 1c15.3 0 18.969-5.248 18.969-13.056V152.12c0-7.808-3.67-13.12-18.969-13.12-15.3 0-19.031 5.312-19.031 13.12v21.824c0 7.808 3.732 13.056 19.031 13.056zm.969-12c-4.25 0-5-1.27-5-2.986v-17.091c0-1.652.75-2.923 5-2.923 4.313 0 5 1.27 5 2.923v17.09c0 1.716-.688 2.987-5 2.987zm62.754 11c1.56 0 2.246-.703 2.246-2.3v-41.4c0-1.597-.686-2.3-2.246-2.3h-9.608c-1.56 0-2.247.703-2.247 2.3v19.678h-5.802c-1.185 0-1.934-.83-1.934-2.172V142.3c0-1.597-.686-2.3-2.246-2.3h-9.67c-1.56 0-2.247.703-2.247 2.3v22.425c0 7.283 3.244 10.606 11.355 10.606H282.9v8.369c0 1.597.687 2.3 2.247 2.3h9.608z"/>
+              </g>
+          </g>
+      </svg>    
+    </div>
+  )
+}
+```
+
+```css
+.fundo{
+  animation: scales 3s alternate  infinite;
+  transform-origin: center;
+}
+.pao-baixo{
+   animation: rotatepao 14s cubic-bezier(.1,.49,.41,.97)  infinite;
+  transform-origin: center;
+}
+.pao-cima{
+   animation: rotatepao 7s 1s cubic-bezier(.1,.49,.41,.97)  infinite;
+  transform-origin: center;
+}
+.olhos{animation: olhos   2s  alternate  infinite;
+   transform-origin: center;
+}
+.left-sparks{animation: left-sparks   4s  alternate  infinite;
+      transform-origin: 150px 156px;
+}
+.right-sparks{animation: left-sparks   4s  alternate  infinite;
+      transform-origin: 310px 150px;
+}
+.olhos{animation: olhos   2s  alternate  infinite;
+   transform-origin: center;
+}
+@keyframes scales{
+  from { transform: scale(0.98)}
+  to{ transform: scale(1)}
+}
+@keyframes rotatepao{
+  0% { transform:  rotate(0deg)}
+  50% , 60%{ transform:  rotate(-20deg)}
+  100%{  transform:  rotate(0deg) }
+}
+@keyframes olhos{
+  0%{
+    transform: rotateX(0deg);
+  }
+   100%{
+    transform: rotateX(30deg);
+  }
+}
+@keyframes left-sparks{
+  0%{
+    opacity: 0; 
+  }
+}
+.main{
+  
+  min-height: 600px;
+  margin: 0px auto;
+  width: auto;
+  max-width: 460px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.path {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: dash 4s   alternate infinite;
+}
+@keyframes dash{
+   0%, 30%{
+     fill: 4B4B62;
+    stroke-dashoffset:   0;
+  }
+   80%,100%{
+     fill: transparent;
+    stroke-dashoffset:  -200;
+  } 
+}
+```
+
+![](./img/125.png)
 
 ## Despliegue de la aplicación en Azure
 

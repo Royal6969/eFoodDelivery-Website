@@ -89,7 +89,7 @@ function Login() {
         <div className='mt-5'>
           <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
             <input
-              type='text'
+              type='email'
               className='form-control'
               placeholder='Email'
               required
@@ -113,11 +113,23 @@ function Login() {
         </div>
 
         <div className='mt-2'>
+        {/* 
           {errorMessage && (
             <p className='text-danger'>
               {errorMessage}
             </p>
-          )}
+          )} 
+        */}
+
+          <a
+            style={{textDecoration: 'none'}}
+            className='btn-primary' 
+            role='button' 
+            onClick={() => navigate('/forgetPassword/ForgetPassword')}
+          >
+            ¿Has olvidado la contraseña?
+          </a>
+          <br/>
 
           <button
             type='submit'

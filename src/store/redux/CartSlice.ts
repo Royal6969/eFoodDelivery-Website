@@ -16,9 +16,14 @@ export const cartSlice = createSlice({
   name: "CartItems",
   initialState: initialState,
   reducers: { // here we want the reducers that will be responsible for managing the state
+    /////////////////////////////////////////// Actions starts here ///////////////////////////////////////////////
+
+    // 1º action to set the cart for the user in App and avoid lose the cart when we reload the page
     setCart: (state, action) => {  // it receives two parameters, first one is the state itself, and the second one is the action
       state.cartItemsList = action.payload; // we need to set the state for cart which will be passed to us from the payload when we invoke this
     },
+
+    // 2º action to update the items quantity
     updateItemQuantity: (state, action) => {
       // inside the state, we will have all the cartItems
       state.cartItemsList = state.cartItemsList?.map((item) => {
@@ -33,6 +38,8 @@ export const cartSlice = createSlice({
         // that is how map function works. If the condition means you want to do this as you don't want to touch any other cartItems
       });
     },
+
+    // 3º action to remove the cart items
     removeItemFromCart: (state, action) => {
       // when we have to remove an item from the cart, rather than map, we will be using filter method here
       state.cartItemsList = state.cartItemsList?.filter((item) => {

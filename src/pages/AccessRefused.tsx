@@ -1,5 +1,6 @@
 import React from 'react'
 
+
 function AccessRefused() {
   return (
     <div className="containerAccessRefused">
@@ -15,5 +16,6 @@ function AccessRefused() {
     </div>
   )
 }
+
 
 export default AccessRefused

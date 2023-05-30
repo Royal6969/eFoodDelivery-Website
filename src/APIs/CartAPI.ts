@@ -2,10 +2,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 
+// with createApi and fetchBaseQuery, we can define endpoints to make requests to the API
 const cartAPI = createApi({
   reducerPath: "cartAPI",  // a name to identify it
   baseQuery: fetchBaseQuery({ // to configure the baseQuery and here we want to fetch the baseQuery using a baseURL
     // we set here the same URL that we used in ProductList but without the endpoint
+    // baseUrl: "https://localhost:7240/api/"
     baseUrl: "https://efooddelivery-api.azurewebsites.net/api/", // when we define the query endpoint, we will append the user there
     // to set the headers accordingly with tags [Authorize] in the API, we need to send a token back to the request, and that way our API will validate that
     prepareHeaders: (headers: Headers, api) => { // we need to get the token that we have and we have to pass that whenever we call the API endpoint
@@ -15,6 +17,9 @@ const cartAPI = createApi({
   }),
   tagTypes: ["Carts"],
   endpoints: (builder) => ({  // when we build the endpoint, we have the arrow function where will get the builder object
+    /////////////////////////////////////////// Endpoints starts here ///////////////////////////////////////////////
+
+    // 1º endpoint to get a user cart, and if there's not userId provided, it will retrieve all carts from db
     getCart: builder.query({
       query: (userId) => ({ // when we have to get the cart by userId here, we will receive the parameter ID
         // url: `cart/${userId}` // and we will use string interpolation here and add that to the URL here using the userID
@@ -26,6 +31,8 @@ const cartAPI = createApi({
       }),
       providesTags: ["Carts"]
     }),
+
+    // 2º endpoint to create a new cart, update, and delete that cart
     // we alredy added a userId in our code right now, and that is what we will be using for all the request that we make
     // that looks good for the query, but main thing when we add or remove anything from the cart is calling this post endpoint
     // for that we will have to call a mutation where we have the get cart here, we would rather calling update cart here

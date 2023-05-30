@@ -28,7 +28,11 @@ import {
   ProductForm,
   DeleteProduct,
   AdminUsersList,
-  DeleteUser
+  DeleteUser,
+  ForgetPassword,
+  NewPassword,
+  PasswordChanged,
+  ResetCode
 } from '../pages';
 
 
@@ -100,26 +104,42 @@ function App() {
         
         <div className="pb-5">
           <Routes>
+            {/* Routes for Home and NotFound */}
             <Route path='/' element={<Home />}></Route>
             <Route path='*' element={<NotFound />}></Route>
             
+            {/* Routes for Login and Register */}
             <Route path='/Register' element={<Register />}></Route>
             <Route path='/Login' element={<Login />}></Route>
           
+            {/* Routes for ProductCard, the Cart and the PaymentDetails */}
             <Route path='/ProductDetails/:productId' element={<ProductDetails />}></Route>
             <Route path='/Cart' element={<Cart />}></Route>
             <Route path='/PaymentDetails' element={<PaymentDetails />}></Route>
+            
+            {/* Routes for Order pages */}
             <Route path='/order/OrderConfirmed/:orderId' element={<OrderConfirmed />}></Route>
             <Route path='/order/UserOrders' element={<UserOrders />}></Route>
             <Route path='/order/AllUsersOrders' element={<AllUsersOrders />}></Route>
             <Route path='/order/OrderDetails/:orderId' element={<OrderDetails />}></Route>
+            
+            {/* Routes for Product pages (for admin) */}
             <Route path='/product/AdminProductsList' element={<AdminProductsList />}></Route>
             <Route path='/product/ProductForm' element={<ProductForm />}></Route>
             <Route path='/product/ProductForm/:productId' element={<ProductForm />}></Route>
             <Route path='/product/DeleteProduct/:productId' element={<DeleteProduct />}></Route>
-            <Route path='user/AdminUsersList' element={<AdminUsersList />}></Route>
+            
+            {/* Routes for User pages (for admin) */}
+            <Route path='/user/AdminUsersList' element={<AdminUsersList />}></Route>
             <Route path='/user/DeleteUser/:userId' element={<DeleteUser />}></Route>
+            
+            {/* Routes for reset password proccess */}
+            <Route path='/forgetPassword/ForgetPassword' element={<ForgetPassword />}></Route>
+            <Route path='/forgetPassword/NewPassword' element={<NewPassword />}></Route>
+            <Route path='/forgetPassword/PasswordChanged' element={<PasswordChanged />}></Route>
+            <Route path='/forgetPassword/ResetCode' element={<ResetCode />}></Route>
 
+            {/* Routes for testing authentication and authorization and the AccessDenied */}
             <Route path='/AuthCustomerTest' element={<AuthCustomerTest />}></Route>
             <Route path='/AuthAdminTest' element={<AuthAdminTest />}></Route>
             <Route path='/AccessRefused' element={<AccessRefused />}></Route>

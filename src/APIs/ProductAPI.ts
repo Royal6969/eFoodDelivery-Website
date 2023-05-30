@@ -2,8 +2,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 
+// with createApi and fetchBaseQuery, we can define endpoints to make requests to the API
 const productAPI = createApi({
   reducerPath: "productAPI",  // a name to identify it
+  // baseUrl: "https://localhost:7240/api/"
   baseQuery: fetchBaseQuery({ // to configure the baseQuery and here we want to fetch the baseQuery using a baseURL
     // we set here the same URL that we used in ProductList but without the endpoint
     baseUrl: "https://efooddelivery-api.azurewebsites.net/api/", // when we define the query endpoint, we will append the product there
@@ -15,6 +17,9 @@ const productAPI = createApi({
   }),
   tagTypes: ["Products"],
   endpoints: (builder) => ({  // when we build the endpoint, we have the arrow function where will get the builder object
+    /////////////////////////////////////////// Endpoints starts here ///////////////////////////////////////////////
+
+    // 1º endpoint to get all products from db
     // we want to define the endpoints for GetProducts (/api/Product) and GetProductById (/api/Product/{id})
     getProducts: builder.query({
       query: () => ({
@@ -23,12 +28,16 @@ const productAPI = createApi({
       providesTags: ["Products"] // when we retrieve this query, how we want to catch it, that is using the tag products that we defined in tagTypes before
       // so next time, if you update a product, you have to invalidate this tag and the endpoint will fetch the record again from the API
     }),
+
+    // 2º endpoint to get a product by its id
     getProductById: builder.query({
       query: (productId) => ({ // when we have to get the product by id here, we will receive the parameter ID
         url: `Product/${productId}` // and we will use string interpolation here and add that to the URL here using the productID
       }),
       providesTags: ["Products"]
     }),
+
+    // 3º endpoint to create a new product
     createProduct: builder.mutation({
       query: (data) => ({
         url: 'Product',
@@ -38,6 +47,8 @@ const productAPI = createApi({
       }),
       invalidatesTags: ["Products"] // when we make a post request, we need to invalidate tags
     }),
+
+    // 4º endpoint to update a product
     updateProductById: builder.mutation({
       query: ({ data, productId }) => ({
         url: 'Product/' + productId, // we have to append the productId in the route
@@ -47,6 +58,8 @@ const productAPI = createApi({
       }),
       invalidatesTags: ["Products"] // when we make an update request, we need to invalidate tags
     }),
+
+    // 5º endpoint to delete a product
     DeleteProductById: builder.mutation({
       query: (productId) => ({
         url: 'Product/' + productId, // we have to append the productId in the route

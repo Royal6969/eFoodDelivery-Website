@@ -1,8 +1,10 @@
+// enumeration for roles
 export enum StaticDetails_Roles {
   ADMIN = 'admin',
   CUSTOMER = 'customer'
 }
 
+// enumeration for the possible order statuses
 export enum StaticDetails_OrderStatus {
   STATUS_PENDING = 'Pendiente',
   STATUS_CONFIRMED = 'Confirmado',
@@ -12,6 +14,7 @@ export enum StaticDetails_OrderStatus {
   STATUS_CANCELLED = 'Pedido cancelado'
 }
 
+// enumeration for the product categories
 export enum StaticDetails_ProductCategory {
   CATEGORY_BREAKFAST = 'Desayuno',
   CATEGORY_LUNCH = 'Almuerzo',
@@ -20,6 +23,7 @@ export enum StaticDetails_ProductCategory {
   CATEGORY_DRINK = 'Bebida'
 }
 
+// enumeration for product search criteria
 export enum StaticDetails_ProductSortCriteria {
   SORT_PRODUCTS_BY_PRICE_LOW_TO_HIGH = 'Precio: Más barato - Más caro',
   SORT_PRODUCTS_BY_PRICE_HIGH_TO_LOW = 'Precio: Más caro - Más barato',

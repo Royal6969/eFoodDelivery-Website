@@ -1,9 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 
+// with createApi and fetchBaseQuery, we can define endpoints to make requests to the API
 const orderAPI = createApi({
   reducerPath: "orderAPI",
   baseQuery: fetchBaseQuery({
+    // baseUrl: "https://localhost:7240/api/"
     baseUrl: "https://efooddelivery-api.azurewebsites.net/api/",
     // to set the headers accordingly with tags [Authorize] in the API, we need to send a token back to the request, and that way our API will validate that
     prepareHeaders: (headers: Headers, api) => { // we need to get the token that we have and we have to pass that whenever we call the API endpoint
@@ -13,6 +15,9 @@ const orderAPI = createApi({
   }),
   tagTypes: ["Orders"], // we need invalidate tagTypes after for getOrder() when we're posting
   endpoints: (builder) => ({
+    /////////////////////////////////////////// Endpoints starts here ///////////////////////////////////////////////
+
+    // 1º endpoint to create an order
     createOrder: builder.mutation({
       query: (orderDetails) => ({ // when we post in API, we don't have any parameters, but we have to pass the complete object in the body
         url: "Order",
@@ -24,6 +29,8 @@ const orderAPI = createApi({
       // providesTags: [""] // we dom't need any providesTags
       invalidatesTags: ["Orders"]
     }),
+
+    // 2º endpoint to get all user orders
     // we want to define the endpoints for GetOrder(userId) (/api/Order/) and GetOrder(orderId) (/api/Order/{orderId})
     getOrdersFromUser: builder.query({
       query: ({ userId, orderSearch, orderStatus, pageNumber, pageSize }) => ({ // now I have to pass the new parameters for filtered search in AllOrdersUsers
@@ -50,12 +57,16 @@ const orderAPI = createApi({
       },
       providesTags: ["Orders"]
     }),
+
+    // 3º endpoint to get the orders details
     getOrderDetailsById: builder.query({
       query: (orderId) => ({
         url: `Order/${orderId}`
       }),
       providesTags: ["Orders"]
     }),
+
+    // 4º endpoint to update an order
     updateOrderById: builder.mutation({
       query: (newOrderDetails) => ({
         url: 'Order/' + newOrderDetails.orderId, // we have to append the orderId in the route
@@ -69,6 +80,9 @@ const orderAPI = createApi({
 });
 
 
+// now, what we have here, our query, so the action methods are created automatically, but we have to add the name which is used
+// then we set the endpoint name, changing the case, and we will have to append query at the end
+// and these will be the default actions that are created automatically when we work with our query
 export const { 
   useCreateOrderMutation, 
   useGetOrdersFromUserQuery, 

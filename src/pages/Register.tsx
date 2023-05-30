@@ -22,7 +22,7 @@ function Register() {
     phoneNumber: ''
   });
 
-  /*************************************************************************************************************************** */
+  /********************************************** Password Validation ****************************************************** */
   const [validLength, setValidLength] = useState(false);
   const [hasNumber, setHasNumber] = useState(false);
   const [upperCase, setUpperCase] = useState(false);
@@ -65,7 +65,7 @@ function Register() {
     setIsLoading(true);
 
     if (!validLength) {
-      toastNotifyHelper('La contraseña debe contener 8 caracteres mínimo', 'error');
+      toastNotifyHelper('La contraseña debe contener 8 caracteres como mínimo', 'error');
       setIsLoading(false);
     }
     else if (!lowerCase) {
@@ -189,27 +189,27 @@ function Register() {
           <ul style={{listStyle: 'none'}} className='mt-3'>
             <li style={validLength ? {color: 'green'} : {color: 'red'}}>
               <i className="far fa-check-circle"></i> 
-              <span>Valid Length: {validLength ? <span>True</span> : <span>False</span>}</span>
+              <span>Longitud válida{/*: {validLength ? <span>True</span> : <span>False</span>}*/}</span>
             </li>
             <li style={hasNumber ? {color: 'green'} : {color: 'red'}}>
               <i className="far fa-check-circle"></i> 
-              <span>Has a Number: {hasNumber ? <span>True</span> : <span>False</span>}</span>
+              <span>Contiene un número{/*: {hasNumber ? <span>True</span> : <span>False</span>}*/}</span>
             </li>
             <li style={upperCase ? {color: 'green'} : {color: 'red'}}>
               <i className="far fa-check-circle"></i> 
-              <span>UpperCase: {upperCase ? <span>True</span> : <span>False</span>}</span>
+              <span>Contiene una mayúscula{/*: {upperCase ? <span>True</span> : <span>False</span>}*/}</span>
             </li>
             <li style={lowerCase ? {color: 'green'} : {color: 'red'}}>
               <i className="far fa-check-circle"></i> 
-              <span>LowerCase: {lowerCase ? <span>True</span> : <span>False</span>}</span>
-            </li>
-            <li style={match ? {color: 'green'} : {color: 'red'}}>
-              <i className="far fa-check-circle"></i> 
-              <span>Match: {match ? <span>True</span> : <span>False</span>}</span>
+              <span>Contiene una minúscula{/*: {lowerCase ? <span>True</span> : <span>False</span>}*/}</span>
             </li>
             <li style={specialChar ? {color: 'green'} : {color: 'red'}}>
               <i className="far fa-check-circle"></i> 
-              <span>Special Character: {specialChar ? <span>True</span> : <span>False</span>}</span>
+              <span>Contiene un carácter especial{/*: {specialChar ? <span>True</span> : <span>False</span>}*/}</span>
+            </li>
+            <li style={match ? {color: 'green'} : {color: 'red'}}>
+              <i className="far fa-check-circle"></i> 
+              <span>Las contraseñas coinciden{/*: {match ? <span>True</span> : <span>False</span>}*/}</span>
             </li>
           </ul>
 

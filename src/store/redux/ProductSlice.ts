@@ -17,9 +17,14 @@ export const productSlice = createSlice({
   name: "Product",
   initialState: initialState,
   reducers: { // here we want the reducers that will be responsible for managing the state
+    /////////////////////////////////////////// Actions starts here ///////////////////////////////////////////////
+
+    // 1º action to load products in the ProductList and avoid to lose the products when we reload the page
     setProduct: (state, action) => {  // it receives two parameters, first one is the state itself, and the second one is the action
       state.product = action.payload; // we need to set the state for product which will be passed to us from the payload when we invoke this
     },
+
+    // 2º action to load products that we search in the banner
     setProductSearch: (state, action) => {
       state.bannerSearch = action.payload;
     }
