@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDeleteProductByIdMutation, useGetProductByIdQuery } from '../../APIs/ProductAPI';
 import { InputHelper, toastNotifyHelper } from '../../helperMethods';
 import { checkAdminAuth } from '../../HOC';
+import { useCreateLogMutation } from '../../APIs/LoggerAPI';
 
 
 function DeleteProduct() {
@@ -18,6 +19,8 @@ function DeleteProduct() {
   const navigate = useNavigate();
   // define the mutation for DELETE endpoint to delete a product
   const [deleteProduct] = useDeleteProductByIdMutation();
+  // define mutation to create new logs
+  const [createLog] = useCreateLogMutation();
 
   // useState for the input fields to delete a product writing its id
   const [deleteInput, setDeleteInput] = useState({
@@ -40,6 +43,8 @@ function DeleteProduct() {
 
       if (deleteResponse) {
         setIsLoading(false);
+        createLog({ log: "Se ha eliminado el producto --> Nombre: \"" + data.result?.name + "\" Precio: \"" + data.result?.price + "\"", level: "warn" });
+
         navigate('/product/AdminProductsList');
         toastNotifyHelper('Producto eliminado correctamente', 'success');
       }

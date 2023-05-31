@@ -4,6 +4,7 @@ import { productReducer } from "./ProductSlice";
 import { authenticationAPI, cartAPI, orderAPI, paymentAPI, productAPI, userAPI } from "../../APIs"; // we have to register it as a reducer
 import { cartReducer } from "./CartSlice";
 import { authenticationReducer } from "./AuthenticationSlice";
+import loggerAPI from "../../APIs/LoggerAPI";
 
 
 const reduxStorage = configureStore({ // we have to configure the objects here
@@ -19,7 +20,8 @@ const reduxStorage = configureStore({ // we have to configure the objects here
     [authenticationAPI.reducerPath]: authenticationAPI.reducer,
     [paymentAPI.reducerPath]: paymentAPI.reducer,
     [orderAPI.reducerPath]: orderAPI.reducer,
-    [userAPI.reducerPath]: userAPI.reducer
+    [userAPI.reducerPath]: userAPI.reducer,
+    [loggerAPI.reducerPath]: loggerAPI.reducer
   },
   
   // now you should remember that when we have to register the API, we also have to add that in the middleware, and it needs a default configuration
@@ -31,6 +33,7 @@ const reduxStorage = configureStore({ // we have to configure the objects here
       .concat(paymentAPI.middleware)
       .concat(orderAPI.middleware)
       .concat(userAPI.middleware)
+      .concat(loggerAPI.middleware)
 });
 
 

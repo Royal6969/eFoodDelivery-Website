@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/redux/ReduxStorage';
 import { useUpdateOrderByIdMutation } from '../../../APIs/OrderAPI';
 import { BigLoader } from '../common';
+import { useCreateLogMutation } from '../../../APIs/LoggerAPI';
 
 
 function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // receiving props from DeliveryDetails component
@@ -22,6 +23,8 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // 
   const [isLoading, setIsLoading] = useState(false);
   // define a constant to call the update mutation for the order details
   const [updateOrder] = useUpdateOrderByIdMutation();
+  // define mutation to create new logs
+  const [createLog] = useCreateLogMutation();
 
   // define constant to save the current order status and to allow change it
   const nextOrderStatus: any = apiDataResult.status! === StaticDetails_OrderStatus.STATUS_CONFIRMED
@@ -40,6 +43,8 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // 
       orderId: apiDataResult.id,
       orderStatus: StaticDetails_OrderStatus.STATUS_CANCELLED
     });
+
+    createLog({ log: "Pedido con id \"" + apiDataResult.id + "\" cancelado", level: "info" });
 
     setIsLoading(false);
   }

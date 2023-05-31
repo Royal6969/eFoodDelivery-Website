@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { setUserLogged } from '../store/redux/AuthenticationSlice';
 import { useNavigate } from 'react-router-dom';
 import { BigLoader } from '../components/view/common';
+import { useCreateLogMutation } from '../APIs/LoggerAPI';
 
 
 function Login() {
@@ -32,6 +33,8 @@ function Login() {
 
   // define mutation to invoke it on form submit
   const [loginUser] = useLoginUserMutation();
+  // define mutation to create new logs
+  const [createLog] = useCreateLogMutation();
 
   const handleLoginUser = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -61,7 +64,11 @@ function Login() {
         email,
         role
       }));
+      
       toastNotifyHelper('Login realizado correctamente.');
+      
+      if (role === 'admin')
+        createLog({ log: "Inicio de sesión de usuario --> Nombre: \"" + fullName + "\" - Email: \"" + email + "\"", level: "info" });
 
       // redirect user to Home page
       navigate('/');

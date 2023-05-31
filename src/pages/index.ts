@@ -21,6 +21,7 @@ import ForgetPassword from "./forgetPassword/ForgetPassword";
 import NewPassword from "./forgetPassword/NewPassword";
 import PasswordChanged from "./forgetPassword/PasswordChanged";
 import ResetCode from "./forgetPassword/ResetCode";
+import AllLogs from "./AllLogs";
 
 
 export {
@@ -46,5 +47,6 @@ export {
   ForgetPassword,
   NewPassword,
   PasswordChanged,
-  ResetCode
+  ResetCode,
+  AllLogs
 }

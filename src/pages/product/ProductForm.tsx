@@ -5,6 +5,7 @@ import { useCreateProductMutation, useGetProductByIdQuery, useUpdateProductByIdM
 import { useNavigate, useParams } from 'react-router-dom';
 import { BigLoader } from '../../components/view/common';
 import { StaticDetails_ProductCategory } from '../../Utils/StaticDetails';
+import { useCreateLogMutation } from '../../APIs/LoggerAPI';
 
 
 // define local array with product categories
@@ -25,6 +26,8 @@ function ProductForm() {
   const [createProduct] = useCreateProductMutation();
   // define the mutation for PUT endpoint to update a product
   const [updateProduct] = useUpdateProductByIdMutation();
+  // define mutation to create new logs
+  const [createLog] = useCreateLogMutation();
   // define useParams() hook to receive the productId through the route
   const { productId } = useParams();
   // once we have the productId, we need to call the query for GetProductById(productId)
@@ -157,12 +160,14 @@ function ProductForm() {
       });
       // we can also check response to see if it was success or error, and notify accordingly
       toastNotifyHelper('El producto ha sido modificado correctamente', 'success');
+      createLog({ log: "Se ha actualizado el producto --> Nombre: \"" + productInputs.name + "\" Precio: \"" + productInputs.price + "\"", level: "info" });
     }
     else { // create scenario
       // now once we have the form data populated, we need to invoke the mutation for create products
       productResponse = await createProduct(productFormData);
       // we can also check response to see if it was success or error, and notify accordingly
       toastNotifyHelper('El nuevo producto ha sido creado correctamente', 'success');
+      createLog({ log: "Se ha creado el producto --> Nombre: \"" + productInputs.name + "\" Precio: \"" + productInputs.price + "\"", level: "info" });
     }
 
     // check if response is present to redirect admin user to AdminProductsList page

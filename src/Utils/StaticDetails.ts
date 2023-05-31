@@ -30,3 +30,11 @@ export enum StaticDetails_ProductSortCriteria {
   SORT_PRODUCTS_BY_NAME_A_TO_Z = 'Nombre: A - Z',
   SORT_PRODUCTS_BY_NAME_Z_TO_A = 'Nombre: Z - A'
 }
+
+// enumeration for log levels
+export enum StaticDetails_LogLevel {
+  LOG_LEVEL_INFO = 'info',
+  LOG_LEVEL_WARN = 'warn',
+  LOG_LEVEL_ERROR = 'error',
+  LOG_LEVEL_FATAL = 'fatal'
+}

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { InputHelper, toastNotifyHelper } from '../../helperMethods';
 import { checkAdminAuth } from '../../HOC';
 import { useDeleteUserByIdMutation, useGetUserByIdQuery } from '../../APIs/UserAPI';
+import { useCreateLogMutation } from '../../APIs/LoggerAPI';
 
 
 function DeleteUser() {
@@ -18,6 +19,8 @@ function DeleteUser() {
   const navigate = useNavigate();
   // define the mutation for DELETE endpoint to delete a user
   const [deleteUser] = useDeleteUserByIdMutation();
+  // define mutation to create new logs
+  const [createLog] = useCreateLogMutation();
 
   // useState for the input fields to delete a user writing its id
   const [deleteInput, setDeleteInput] = useState({
@@ -40,6 +43,8 @@ function DeleteUser() {
 
       if (deleteResponse) {
         setIsLoading(false);
+        createLog({ log: "Se ha eliminado al usuario --> Nombre: \"" + data.result?.name + "\" Email: \"" + data.result?.email + "\"", level: "warn" });
+
         navigate('/user/AdminUsersList');
         toastNotifyHelper('Usuario eliminado correctamente', 'success');
       }

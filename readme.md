@@ -90,7 +90,7 @@
   - [7.13. Actualizar el estado del pedido con los botones](#713-actualizar-el-estado-del-pedido-con-los-botones)
   - [7.14. Crear la página de los pedidos de todos los usuarios para el administrador](#714-crear-la-página-de-los-pedidos-de-todos-los-usuarios-para-el-administrador)
     - [Prueba de ejecución](#prueba-de-ejecución-6)
-- [8. Página del admin para la gestión de los productos](#8-página-del-admin-para-la-gestión-de-los-productos)
+- [8. Página de la gestión de los productos para el administrador](#8-página-de-la-gestión-de-los-productos-para-el-administrador)
   - [8.1. Crear la página del listado de productos del admin](#81-crear-la-página-del-listado-de-productos-del-admin)
   - [8.2. Crear la página del formulario para la cración y edición de los productos](#82-crear-la-página-del-formulario-para-la-cración-y-edición-de-los-productos)
   - [8.3. Gestión y validación de la subida de imágenes en el formulario de producto](#83-gestión-y-validación-de-la-subida-de-imágenes-en-el-formulario-de-producto)
@@ -123,6 +123,13 @@
   - [11.2. Crear la página del *AdminUsersList*](#112-crear-la-página-del-adminuserslist)
   - [11.3. Crear la página del *DeleteUser*](#113-crear-la-página-del-deleteuser)
     - [Prueba de ejecución](#prueba-de-ejecución-11)
+- [12. Página del listado de registros para el administrador (auditoría)](#12-página-del-listado-de-registros-para-el-administrador-auditoría)
+  - [12.1. Hacer otro enumerable para los log levels y otro helper method para obtener el color de éstos](#121-hacer-otro-enumerable-para-los-log-levels-y-otro-helper-method-para-obtener-el-color-de-éstos)
+  - [12.2. Creamos los nuevos endpoints para crear y obtener los logs](#122-creamos-los-nuevos-endpoints-para-crear-y-obtener-los-logs)
+  - [12.3. Crear las interfaces para el log y la lista de logs](#123-crear-las-interfaces-para-el-log-y-la-lista-de-logs)
+  - [12.4. Crear la página del *AllLogs.tsx*](#124-crear-la-página-del-alllogstsx)
+  - [12.5. Creamos el componente del *LogsList.tsx*](#125-creamos-el-componente-del-logslisttsx)
+    - [Prueba de ejecución](#prueba-de-ejecución-12)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -4084,7 +4091,7 @@ Lo probamos y podemos comprar que funciona perfectamente!
 
 [Prueba de ejecución de toda la parte relativa a los pedidos, desde la creación de un pedido hasta su entrega](#prueba-de-ejecución-de-toda-la-parte-relativa-a-los-pedidos-desde-la-creación-de-un-pedido-hasta-su-entrega)
 
-# 8. Página del admin para la gestión de los productos
+# 8. Página de la gestión de los productos para el administrador
 
 Ahora la idea es hacer una página tipo para que el administrador pueda gestionar los productos del negocio, es decir, ha llegado la hora de hacer el CRUD de los productos!
 
@@ -5924,6 +5931,418 @@ function DeleteUser() {
 ![](./img/121.png)
 ![](./img/122.png)
 ![](./img/123.png)
+
+# 12. Página del listado de registros para el administrador (auditoría)
+
+En este apartado, y para culminar este TFG, vamos a hacer una página dedicada a la auditoría de la aplicación, es decir, los administradores tendrán acceso a esta nueva página, la cual será un informe a modo de listado, en el que aparecerán los logs de las acciones de los administradores, o sea, si un administrador modifica un producto, si se elimina a un usuario, etc.
+
+Para ello volvemos a repetir el proceso que llevábamos haciendo hasta ahora.
+
+## 12.1. Hacer otro enumerable para los log levels y otro helper method para obtener el color de éstos 
+
+En primer lugar necesitamos un nuevo enumerable en nuestra clase de *StaticDetails.ts*
+
+```ts
+// enumeration for log levels
+export enum StaticDetails_LogLevel {
+  LOG_LEVEL_INFO = 'info',
+  LOG_LEVEL_WARN = 'warn',
+  LOG_LEVEL_ERROR = 'error',
+  LOG_LEVEL_FATAL = 'fatal'
+}
+```
+
+Ahora vamos a hacer un nuevo HelperMethod para obtener los colores para presentar el nivel de cada log, y para ello crreamos la clase *LogLevelColor.ts*
+
+```ts
+const getLogLevelColor = (logLevel: StaticDetails_LogLevel) => {
+  return logLevel === StaticDetails_LogLevel.LOG_LEVEL_INFO   ? 'primary'
+       : logLevel === StaticDetails_LogLevel.LOG_LEVEL_WARN   ? 'warning'
+       : logLevel === StaticDetails_LogLevel.LOG_LEVEL_ERROR  ? 'danger'
+       : logLevel === StaticDetails_LogLevel.LOG_LEVEL_FATAL && 'danger'
+}
+```
+
+## 12.2. Creamos los nuevos endpoints para crear y obtener los logs
+
+Creamos un nuevo archivo para los endpoints del Logger, al cual llamaremos *LoggerAPI.ts*
+
+```ts
+// with createApi and fetchBaseQuery, we can define endpoints to make requests to the API
+const loggerAPI = createApi({
+  reducerPath: "loggerAPI",
+  // baseUrl: "https://localhost:7240/api/"
+  baseQuery: fetchBaseQuery({
+    baseUrl: "https://efooddelivery-api.azurewebsites.net/api/",
+    // to set the headers accordingly with tags [Authorize] in the API, we need to send a token back to the request, and that way our API will validate that
+    prepareHeaders: (headers: Headers, api) => { // we need to get the token that we have and we have to pass that whenever we call the API endpoint
+      const tokenStored = localStorage.getItem('token'); // we need to access and get our token
+      tokenStored && headers.append('Authorization', 'Bearer ' + tokenStored) // Athorization is the header that we have to set when we're calling the APi
+    }
+  }),
+  tagTypes: ["Logs"],
+  endpoints: (builder) => ({
+    /////////////////////////////////////////// Endpoints starts here ///////////////////////////////////////////////
+
+    // 1º endpoint to get all logs from db
+    getLogs: builder.query({
+      query: ({ logSearch, logLevel, pageNumber, pageSize }) => ({ // now I have to pass the new parameters for filtered search in AllOrdersUsers
+        url: "Logger",
+        params: {
+          ...(logSearch && {logSearch}),
+          ...(logLevel && {logLevel}),
+          // now as we can see in this API endpoint, also we need to pass the page details for the pageNumber and the pageSize
+          ...(pageNumber && {pageNumber}),
+          ...(pageSize && {pageSize})
+        }
+      }),
+      // the response headers are not automatically being retrieved, so to do that, 
+      // here we need to transform the response that is being received by the query and then return back
+      // we need to use "transformResponse" and receive two parameters, 
+      // the apiResponse and its metaData (metaData will have all the header information)
+      transformResponse(apiDataResponse: { result: any }, metaData: any) {
+        return {
+          apiDataResponse,
+          recordsNumber: metaData.response.headers.get('X-Pagination')
+        }
+      },
+      providesTags: ["Logs"]
+    }),
+
+    // 2º endpoint to create a log
+    createLog: builder.mutation({
+      query: ({ log, level }) => ({
+        url: 'Logger',
+        method: 'POST',
+        params: { 
+          log: log, 
+          level: level 
+        }
+      }),
+      invalidatesTags: ["Logs"] // when we make a post request, we need to invalidate tags
+    })
+  })
+});
+```
+
+**Nota:** no olvides añadir el loggerApi al almacenamiento de redux con su middleware.
+
+## 12.3. Crear las interfaces para el log y la lista de logs
+
+A continuación, tal cómo hicimos con el pedido, necesitamos crear un par de interfaces, una para el logger como tal, y otra para la lista de logs
+
+```ts
+export default interface LogInterface {
+  md_uuid?: string
+  md_date?: string
+  id?: number
+  log?: string
+  level?: StaticDetails_LogLevel
+}
+```
+
+```ts
+export default interface LogsListInterface {
+  data: LogInterface[];
+  isLoading: boolean;
+}
+```
+
+## 12.4. Crear la página del *AllLogs.tsx*
+
+Ahora tenemos que hacer dos vistas, la primera será la página del informe de los registros en sí, y la otra será el componente de la lista de los logs, que irá dentro de la primera.
+
+Para ahorrar tiempo, como lo lógico sería tener muchos logs, tendráimos que implementar las funcionalidades de búsqueda y filtrado, así que copiamos la página del *AllUsersOrders.tsx*, y el componente del *OrdersList.tsx*
+
+Empezamos por lo que sería entonces el *AllLogs.tsx*
+
+```tsx
+const inputFilterOptions = [
+  'Todo',
+  StaticDetails_LogLevel.LOG_LEVEL_INFO,
+  StaticDetails_LogLevel.LOG_LEVEL_WARN,
+  StaticDetails_LogLevel.LOG_LEVEL_ERROR,
+  StaticDetails_LogLevel.LOG_LEVEL_FATAL
+];
+
+function AllLogs() {
+  // define a local state to set the filters for when user click the search button
+  const [searchFilters, setSearchFilters] = useState({ logSearch: '', logLevel: '' });
+  // define another local state to store the filtered data for all the logs
+  const [logDataFiltered, setLogDataFiltered] = useState([]);
+  // after passing the new parameters for filter in the get log mutation below
+  // we realize now we're calling the API every time we type something we we want to avoid that with a local state
+  // and call the API only when the button is clicked
+  const [searchCallingApiFilters, setSearchCallingApiFilters] = useState({
+    logSearch: '',
+    logLevel: ''
+  });
+  // to implement pagination, we need one more state that basically store the total numbers of records, 
+  // and the number of page we're navigating (actualPage) and its pageSize (number of records per page)
+  const [recordsNumber, setRecordsNumber] = useState(0);  // total number of objects retrieved
+  const [pageNumberAndSize, setPageNumberAndSize] = useState({
+    actualPage: 1,   // page number that we're on
+    pageSize: 10     // number of objects in each page
+  });
+  // define another local state for the current number of pageSize
+  const [actualPageSize, setActualPageSize] = useState(pageNumberAndSize.pageSize);
+
+
+  // we need to save the result back from the query and define a flag for when it's loading the response
+  // we don't need the useSelector() hook here to retrieve the user stored, so instead passing a userId, we'll pass an empty string to fetch all logs of all users
+  // const { data, isLoading } = useGetLogsQuery('');
+  const { data, isLoading } = useGetLogsQuery({ // now we have to pass the object with userId, logSearch and logLevel
+    // now when we're getting all the logs, we don't want to pass userId, but we want everything else 
+    // and those filters are inside the setSearchFilters so we can navigate or rather spread the filter here
+    // ...(searchFilters && {
+    ...(searchCallingApiFilters && { 
+      // before we used searchFilters to fetch locally, but now, and based on the API filters above this, we will fetch the data from our API
+      // if that is populated, then we want to pass the object with search string
+      logSearch: searchCallingApiFilters.logSearch,
+      logLevel: searchCallingApiFilters.logLevel,
+      // but when we're calling the all logs and loading the data here, I can also pass the actualPage and pageSize which are inside pageNumberAndSize
+      pageNumber: pageNumberAndSize.actualPage,
+      pageSize: pageNumberAndSize.pageSize
+    })
+  }); 
+
+  // we need to create a helper method to handle the changes in inputs
+  const handleInputChanges = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const tempInputValues = InputHelper(event, searchFilters);
+    setSearchFilters(tempInputValues);
+  };
+
+  // also we need to define another helper method to handle all the search filters selected when user click the search button
+  const handleInputFilters = () => {
+    // now with searchCallingApiFilters, rather than we had before, I will set the api filters with the logSearch and the logLevel
+    setSearchCallingApiFilters({
+      logSearch: searchFilters.logSearch,
+      logLevel: searchFilters.logLevel
+    })
+    // because if you examine searchFilters it's a controlled component, and we can set the api filters directly
+    // and once that filters are modified, it will automatically re-fetch the data
+  }
+
+  // last thing that we have to do is when the data is modified, like in the initial fetch, 
+  // then we want to useEffect() and set the log data with that data.result
+  useEffect(() => {
+    if (data) {
+      // setLogDataFiltered(data.result);
+      // after implementing pagination, we have an error here with data.result, 
+      // because now in data we have the api response and that has all the log
+      setLogDataFiltered(data.apiDataResponse.result);
+      // console.log(data.recordsNumber);
+
+      // now we have to extract the recordsNumber inside the api response, and we have to add that to the local state
+      const { RecordsNumber } = JSON.parse(data.recordsNumber);
+      setRecordsNumber(RecordsNumber);
+      // console.log(recordsNumber);
+    }
+
+  }, [data]);
+
+  // define a helper method to get the pagination details for the actualPage number, the StartPage number and the endPage number
+  const getActualStartEndPageNumbers = () => {
+    const startPageNumber = (pageNumberAndSize.actualPage - 1) * (pageNumberAndSize.pageSize +1);
+    // e.g. if actual page is 1, then this will be 0, multiply that, but the start number will be 1
+    // e.g. if actual page is 2, then this will be 1, multiply that by the page size, which is 10, and then we add 1, which is 11
+    // so that means it's skipping the first 10 and the records are starting from the 11º record
+    // and then we want to display that we're displaying records 11 to 20
+    // for that we need the end number, which will basically be actual page, multiply by page size
+    const endPageNumber = (pageNumberAndSize.actualPage) * (pageNumberAndSize.pageSize);
+    // so on 2º page, the records will start from 11 and it will go till 20
+    // I will return that, and I will display that using some complex string interpolation here
+    return `${startPageNumber}-${(endPageNumber < recordsNumber) ? endPageNumber : recordsNumber} of ${recordsNumber}`;
+    // basically I'm displaying the start number, but then the end number I'm only displaying if this is not the last page
+  }
+
+  // define another helper method to handle the pagination when user clicks in prev/next buttons
+  // const handlePaginationForPrevOrNextButtons = (paginationToRightOrLeft: string) => {
+  // but now we need to add the logic to set/change the pageSize, so let's rename this function
+  const handlePaginationOptionsChanges = (paginationToRightOrLeft: string, pageSize?: number) => {
+    // if we're setting the next one here, then we want to increment the actual page
+    // if we're doing the previous one, then we want to decrement the actual page
+    if (paginationToRightOrLeft === 'previous') {
+      setPageNumberAndSize({
+        actualPage: pageNumberAndSize.actualPage - 1,
+        pageSize: 10
+      });
+    }
+    else if (paginationToRightOrLeft === 'next') {
+      setPageNumberAndSize({
+        actualPage: pageNumberAndSize.actualPage + 1,
+        pageSize: 10
+      });
+    }
+    // let's add one more elseIf condition for pageSize
+    else if (paginationToRightOrLeft === 'newPageSize') {
+      setPageNumberAndSize({
+        actualPage: 1,
+        pageSize: pageSize // if pageSize it's not null, we will set that to be pageSize, else we will set that to be 10
+          ? pageSize 
+          : 10 
+      });
+    }
+  }
+
+  // define another helper method to handle the select dropdown changes for choose a pageSize
+  const handlePageSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    handlePaginationOptionsChanges('newPageSize', Number(event.target.value));
+    setActualPageSize(Number(event.target.value));
+    // so whenever anything in the dropdown changes, we want to call the handlePaginationOptionsChanges with the value of change
+    // that is exactly what we added here and we have to pass the pageSize and the actualPage
+    // we don't want to toggle the pageSize, we only want to change the number here, so that is what we're setting in the value
+    // after that we're setting the local state for the actual page size
+  };
+  
+  
+  return (
+    <>
+      {isLoading && (
+        <BigLoader />
+      )}
+
+      {!isLoading && (
+        <>
+          <div className='d-flex align-items-center justify-content-between mx-5 mt-5'>
+            <h1 className="text-success w-50">Lista de registros</h1>
+
+            <div style={{ width: '40%' }} className='d-flex'>
+              <input 
+                type='text' 
+                className='form-control mx-2' 
+                placeholder='Buscar por log'
+                name='logSearch'
+                onChange={handleInputChanges}
+              />
+            </div>
+
+            <select 
+              className='form-select w-50 mx-2'
+              name='logLevel'
+              onChange={handleInputChanges}
+            >
+              {inputFilterOptions.map(
+                (filterOption, index) => (
+                  <option 
+                    value={filterOption === 'Todo' ? '' : filterOption}
+                    key={index}
+                  >
+                    {filterOption}
+                  </option>
+                )
+              )}
+            </select>
+
+            <button className='btn btn-outline-warning' onClick={handleInputFilters}>Buscar</button>
+          </div>
+          
+          <LogsList 
+            data={logDataFiltered}
+            isLoading={isLoading}
+          />
+
+          <div className="d-flex mx-5 justify-content-end align-items-center mb-3">
+            <div>Logs por página:</div>
+
+            <div>
+              <select 
+                style={{ width: '80px' }}
+                className='form-select mx-2'
+                value={actualPageSize}
+                onChange={handlePageSizeChange}
+              >
+                <option>10</option>
+                <option>15</option>
+                <option>20</option>
+                <option>25</option>
+              </select>
+            </div>
+
+            <div className="mx-2">
+              {getActualStartEndPageNumbers()}
+            </div>
+
+            <button 
+              className='btn btn-outline-primary px-3 mx-2' 
+              disabled={pageNumberAndSize.actualPage === 1} // disable if you are in the first page
+              onClick={() => handlePaginationOptionsChanges('previous')}
+            >
+              <i className="bi bi-chevron-left"></i>
+            </button>
+
+            <button 
+              className='btn btn-outline-primary px-3 mx-2' 
+              disabled={(pageNumberAndSize.actualPage * pageNumberAndSize.pageSize) >= recordsNumber} // disable if you are in the last page
+              onClick={() => handlePaginationOptionsChanges('next')}
+            >
+              <i className="bi bi-chevron-right"></i>
+            </button>
+          </div>
+        </>
+      )}
+    </>
+  )
+}
+```
+
+## 12.5. Creamos el componente del *LogsList.tsx*
+
+Por último tenemos que crear el componente de la lista de registros, el cual recibirá los datos y los mapeará para mostrar todos los logs que tengamos (recuerda que éstos datos ya están filtrados)
+
+```tsx
+function LogsList({ data, isLoading }: LogsListInterface) {
+  return (
+    <>
+      {isLoading && (
+        <BigLoader />
+      )}
+
+      {!isLoading && (
+        <div className="table p-4">
+          <div className="p-2">
+            <div className="row border">
+              <div className="col-1">ID</div>
+              <div className="col-1">Nivel</div>
+              <div className="col-2">Fecha</div>
+              <div className="col-8">Registro</div>
+            </div>
+            
+            {data.map(
+              (log: LogInterface) => {
+                // calling our getOrderStatusColor helper method to change dynamically the status for the order status column
+                const logLevelTagTypeColor = getLogLevelColor(log.level!);
+                // Format the date using the toLocaleString method
+                const formattedDate = new Date(log.md_date!).toLocaleString();
+
+                return (
+                  <div className="row border" key={log.id}>
+                    <div className="col-1">{log.id}</div>
+                    <div className="col-1">
+                      <span className={`badge bg-${logLevelTagTypeColor}`}>{log.level}</span>
+                    </div>
+                    {/* <div className="col-3">{log.md_date}</div> */}
+                    <div className="col-2">{formattedDate}</div>
+                    <div className="col-8 text-break">{log.log}</div>
+                  </div>
+                )
+              }
+            )}
+
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+```
+
+### Prueba de ejecución
+
+![](./img/126.png)
+![](./img/127.png)
+![](./img/128.png)
+![](./img/129.png)
 
 # Webgrafía y Enlaces de Interés
 

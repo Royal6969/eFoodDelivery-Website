@@ -32,7 +32,8 @@ import {
   ForgetPassword,
   NewPassword,
   PasswordChanged,
-  ResetCode
+  ResetCode,
+  AllLogs,
 } from '../pages';
 
 
@@ -143,6 +144,9 @@ function App() {
             <Route path='/AuthCustomerTest' element={<AuthCustomerTest />}></Route>
             <Route path='/AuthAdminTest' element={<AuthAdminTest />}></Route>
             <Route path='/AccessRefused' element={<AccessRefused />}></Route>
+
+            {/* Route for logs list (for admin) */}
+            <Route path='/AllLogs' element={<AllLogs />}></Route>
           </Routes>
         </div>
         
