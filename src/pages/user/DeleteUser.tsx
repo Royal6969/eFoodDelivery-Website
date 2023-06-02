@@ -4,6 +4,7 @@ import { InputHelper, toastNotifyHelper } from '../../helperMethods';
 import { checkAdminAuth } from '../../HOC';
 import { useDeleteUserByIdMutation, useGetUserByIdQuery } from '../../APIs/UserAPI';
 import { useCreateLogMutation } from '../../APIs/LoggerAPI';
+import { BigLoader } from '../../components/view/common';
 
 
 function DeleteUser() {
@@ -11,7 +12,7 @@ function DeleteUser() {
   const { userId } = useParams();
   // once we have the userId, we need to call the query for GetUserById(userId)
   const { data } = useGetUserByIdQuery(userId);
-  console.log(data);
+  // console.log(data);
 
   // define useState() hook to set loading when this page needs
   const [isLoading, setIsLoading] = useState(false);
@@ -40,17 +41,24 @@ function DeleteUser() {
 
     if (userId === deleteInput.id) {
       const deleteResponse = await deleteUser(userId);
-
-      if (deleteResponse) {
-        setIsLoading(false);
-        createLog({ log: "Se ha eliminado al usuario --> Nombre: \"" + data.result?.name + "\" Email: \"" + data.result?.email + "\"", level: "warn" });
-
-        navigate('/user/AdminUsersList');
-        toastNotifyHelper('Usuario eliminado correctamente', 'success');
+      // console.log(deleteResponse);
+  
+      if ('data' in deleteResponse) {
+        const { success } = deleteResponse.data;
+        
+        if (success) {
+          createLog({ log: "Se ha eliminado al usuario --> Nombre: \"" + data.result?.user.name + "\" Email: \"" + data.result?.user.email + "\"", level: "warn" });
+  
+          toastNotifyHelper('Usuario eliminado correctamente', 'success');
+          navigate('/user/AdminUsersList');
+        } else {
+          toastNotifyHelper('Error al eliminar el usuario porque tiene pedidos en proceso', 'error');
+        }
+      } else {
+        toastNotifyHelper('Error en la respuesta de eliminación del usuario', 'error');
       }
-    }
-    else {
-      toastNotifyHelper('El usuario NO se ha eliminado', 'error');
+    } else {
+      toastNotifyHelper('El id proporcionado no coincide con el id del usuario', 'error');
       setIsLoading(false);
     }
 
@@ -61,15 +69,20 @@ function DeleteUser() {
   return (
     <div className='container mt-3 p-3 bg-light'>
 
+      {isLoading && (
+        <BigLoader />
+      )}
+
       <h3 className='mb-3 px-2 text-warning'>
         ¿Estás seguro de que quieres eliminar este usuario?
       </h3>
       
       {data && (
         <>
-          <p>Nombre del usuario: <span style={{color: 'red'}}>{data.result?.name}</span></p>
-          <p>Email del usuario: <span style={{color: 'red'}}>{data.result?.email}</span></p>
-          <p>ID del usuario: <span style={{color: 'red'}}>{data.result?.id}</span></p>
+          <p>Nombre del usuario: <span style={{color: 'red'}}>{data.result?.user.name}</span></p>
+          <p>Email del usuario: <span style={{color: 'red'}}>{data.result?.user.email}</span></p>
+          <p>Rol del usuario: <span style={{color: 'red'}}>{data.result?.role}</span></p>
+          <p>ID del usuario: <span style={{color: 'red'}}>{data.result?.user.id}</span></p>
         </>
       )}
 

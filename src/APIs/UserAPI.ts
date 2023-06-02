@@ -33,7 +33,18 @@ const userAPI = createApi({
       providesTags: ["Users"]
     }),
 
-    // 3º endpoint to delete a user by his id
+    // 3º endpoint to update user role
+    updateUser: builder.mutation({
+      query: ({ userId, role }) => ({
+        url: 'User/' + userId,
+        method: 'PUT',
+        body: JSON.stringify(role),
+        headers: { "Content-type": "application/json" }
+      }),
+      invalidatesTags: ["Users"]
+    }),
+
+    // 4º endpoint to delete a user by his id
     deleteUserById: builder.mutation({
       query: (userId) => ({
         url: 'User/' + userId,
@@ -48,5 +59,5 @@ const userAPI = createApi({
 // now, what we have here, our query, so the action methods are created automatically, but we have to add the name which is used
 // then we set the endpoint name, changing the case, and we will have to append query at the end
 // and these will be the default actions that are created automatically when we work with our query
-export const { useGetUsersQuery, useGetUserByIdQuery, useDeleteUserByIdMutation } = userAPI;
+export const { useGetUsersQuery, useGetUserByIdQuery, useUpdateUserMutation, useDeleteUserByIdMutation } = userAPI;
 export default userAPI;

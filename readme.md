@@ -119,10 +119,13 @@
   - [10.6. Implementar la funcionalidad de cambiar el número de registros por página](#106-implementar-la-funcionalidad-de-cambiar-el-número-de-registros-por-página)
     - [Prueba de ejecución](#prueba-de-ejecución-10)
 - [11. Página del listado de todos los usuarios para el administrador](#11-página-del-listado-de-todos-los-usuarios-para-el-administrador)
-  - [11.1. Crear el endpoint para los usuarios del *UserAPI*](#111-crear-el-endpoint-para-los-usuarios-del-userapi)
-  - [11.2. Crear la página del *AdminUsersList*](#112-crear-la-página-del-adminuserslist)
-  - [11.3. Crear la página del *DeleteUser*](#113-crear-la-página-del-deleteuser)
+  - [11.1. Crear el endpoint para los usuarios en el *UserAPI*](#111-crear-el-endpoint-para-los-usuarios-en-el-userapi)
+  - [11.2. Modificar la nueva interfaz del *UsersListInterface*](#112-modificar-la-nueva-interfaz-del-userslistinterface)
+  - [11.3. Crear la página del *AdminUsersList*](#113-crear-la-página-del-adminuserslist)
+  - [11.4. Crear la página del *UpdateUser*](#114-crear-la-página-del-updateuser)
+  - [11.5. Crear la página del *DeleteUser*](#115-crear-la-página-del-deleteuser)
     - [Prueba de ejecución](#prueba-de-ejecución-11)
+  - [Prueba de ejecución del CRUD de los usuarios](#prueba-de-ejecución-del-crud-de-los-usuarios)
 - [12. Página del listado de registros para el administrador (auditoría)](#12-página-del-listado-de-registros-para-el-administrador-auditoría)
   - [12.1. Hacer otro enumerable para los log levels y otro helper method para obtener el color de éstos](#121-hacer-otro-enumerable-para-los-log-levels-y-otro-helper-method-para-obtener-el-color-de-éstos)
   - [12.2. Creamos los nuevos endpoints para crear y obtener los logs](#122-creamos-los-nuevos-endpoints-para-crear-y-obtener-los-logs)
@@ -169,6 +172,7 @@
     - [36. What is a Payload in Redux context](#36-what-is-a-payload-in-redux-context)
     - [37. Redux Fundamentals, Part 3: State, Actions, and Reducers](#37-redux-fundamentals-part-3-state-actions-and-reducers)
     - [38. How to deploy your React App on Azure App Service from VS Code](#38-how-to-deploy-your-react-app-on-azure-app-service-from-vs-code)
+    - [39. Add Custom Domain Name in Azure App Services](#39-add-custom-domain-name-in-azure-app-services)
 - [Pruebas de Ejecución](#pruebas-de-ejecución)
   - [Lista de productos y Detalles del producto](#lista-de-productos-y-detalles-del-producto)
     - [Prueba de ejecución de ir del menu de la lista de productos al detalle de un producto y viceversa](#prueba-de-ejecución-de-ir-del-menu-de-la-lista-de-productos-al-detalle-de-un-producto-y-viceversa)
@@ -190,6 +194,8 @@
     - [Prueba de ejecución para probar las nuevas funcionalidades del Home de búsqueda filtrada por texto, categorías y criterios de ordenación](#prueba-de-ejecución-para-probar-las-nuevas-funcionalidades-del-home-de-búsqueda-filtrada-por-texto-categorías-y-criterios-de-ordenación)
   - [Mejoras de la lista de pedidos de todos los usuarios](#mejoras-de-la-lista-de-pedidos-de-todos-los-usuarios)
     - [Prueba de ejecución para probar las funcionalidades de búsqueda filtrada y paginación de resultados](#prueba-de-ejecución-para-probar-las-funcionalidades-de-búsqueda-filtrada-y-paginación-de-resultados)
+  - [CRUD de Usuarios](#crud-de-usuarios)
+    - [Prueba de ejecución para probar las funcionalidades de editar el rol y eliminar un usuario](#prueba-de-ejecución-para-probar-las-funcionalidades-de-editar-el-rol-y-eliminar-un-usuario)
 - [Extras](#extras)
   - [Crear una interfaz para las respuesta de la API](#crear-una-interfaz-para-las-respuesta-de-la-api)
   - [Componente del Mini-Loader](#componente-del-mini-loader)
@@ -203,6 +209,7 @@
   - [Página del Acceso denegado](#página-del-acceso-denegado)
   - [Página del 404 no encontrado](#página-del-404-no-encontrado)
   - [Despliegue de la aplicación en Azure](#despliegue-de-la-aplicación-en-azure)
+  - [Comprobación de la seguridad del dominio proporcionado por Azure](#comprobación-de-la-seguridad-del-dominio-proporcionado-por-azure)
   - [Enlace al espacio de trabajo y al tablero del proyecto en Trello](#enlace-al-espacio-de-trabajo-y-al-tablero-del-proyecto-en-trello)
   - [Inteligencias Artificiales usadas como ayuda y orientación](#inteligencias-artificiales-usadas-como-ayuda-y-orientación)
     - [1. OpenAI --\> ChatGPT](#1-openai----chatgpt)
@@ -5736,7 +5743,7 @@ Una vez tengamos eso en la API, ahora aquí en la parte web cliente, necesitamos
 
 Y ahora ya tan sólo quedaría hacer las dos vistas que necesitamos, una para listar los usuarios y otra para eliminarlos con confirmación activa.
 
-## 11.1. Crear el endpoint para los usuarios del *UserAPI*
+## 11.1. Crear el endpoint para los usuarios en el *UserAPI*
 
 ```ts
 endpoints: (builder) => ({
@@ -5746,12 +5753,24 @@ endpoints: (builder) => ({
     }),
     providesTags: ["Users"]
   }),
+
   getUserById: builder.query({
     query: (userId) => ({
       url: `User/${userId}`
     }),
     providesTags: ["Users"]
   }),
+
+  updateUser: builder.mutation({
+    query: ({ userId, role }) => ({
+      url: 'User/' + userId,
+      method: 'PUT',
+      body: JSON.stringify(role),
+      headers: { "Content-type": "application/json" }
+    }),
+    invalidatesTags: ["Users"]
+  }),
+
   deleteUserById: builder.mutation({
     query: (userId) => ({
       url: 'User/' + userId,
@@ -5762,7 +5781,32 @@ endpoints: (builder) => ({
 })
 ```
 
-## 11.2. Crear la página del *AdminUsersList*
+## 11.2. Modificar la nueva interfaz del *UsersListInterface*
+
+Hay que tener en cuenta que, ahora que necesitamos los usuarios con sus roles, si recordamos bien de la parte de la API, en .NET los usuarios y los roles se encuentran en tablas separadas y distintas, unidos por una tabla relacional a través de los ids. En el endpoint de la API del GetUsers() devolvemos tanto el usuario como su rol, de modo que hay que ajustar la interfaz de la lista de usuarios a esa respuesta
+
+```ts
+/* I had this interface before when I received from API all users without their roles
+export default interface UsersListInterface {
+  name: string
+  id: string
+  email: string
+  phoneNumber: string
+}
+*/
+
+export default interface UsersListInterface {
+  user: {
+    name: string
+    id: string
+    email: string
+    phoneNumber: string
+  },
+  role: string
+}
+```
+
+## 11.3. Crear la página del *AdminUsersList*
 
 ```tsx
 function AdminUsersList() {
@@ -5770,6 +5814,7 @@ function AdminUsersList() {
   const { data, isLoading } = useGetUsersQuery(null);
   // to go to DeleteUser page we need the useNavigate() hook
   const navigate = useNavigate();
+
   
   return (
     <>
@@ -5788,7 +5833,8 @@ function AdminUsersList() {
               <div className='col-4'>ID</div>
               <div className='col-2'>Nombre</div>
               <div className='col-2'>Email</div>
-              <div className='col-2'>Phone</div>
+              <div className='col-1'>Teléfono</div>
+              <div className='col-1'>Rol</div>
               <div className='col-2'>Accciones</div>
             </div>
             
@@ -5796,15 +5842,23 @@ function AdminUsersList() {
               (user: UsersListInterface, index: number) => {
                 return (
                   <div className='row border' key={index}>     
-                    <div className='col-4'>{user.id}</div>
-                    <div className='col-2'>{user.name}</div>
-                    <div className='col-2'>{user.email}</div>
-                    <div className='col-2'>{user.phoneNumber}</div>
+                    <div className='col-4'>{user.user.id}</div>
+                    <div className='col-2 text-break'>{user.user.name}</div>
+                    <div className='col-2 text-break'>{user.user.email}</div>
+                    <div className='col-1'>{user.user.phoneNumber}</div>
+                    <div className='col-1'>{user.role}</div>
                     <div className='col-2'>
-                      <button className='btn btn-danger mx-2' disabled={user.name.includes('admin')}>
+                      <button className='btn btn-warning'>
+                        <i 
+                          className='bi bi-pencil-fill' 
+                          onClick={() => navigate('/user/EditUserRole/' + user.user.id)}
+                        ></i>
+                      </button>
+
+                      <button className='btn btn-danger mx-2' disabled={user.role === 'admin'}>
                         <i 
                           className='bi bi-trash-fill'
-                          onClick={() => navigate('/user/DeleteUser/' + user.id)}
+                          onClick={() => navigate('/user/DeleteUser/' + user.user.id)}
                         ></i>
                       </button>
                     </div>
@@ -5821,10 +5875,10 @@ function AdminUsersList() {
 }
 ```
 
-## 11.3. Crear la página del *DeleteUser*
+## 11.4. Crear la página del *UpdateUser*
 
 ```tsx
-function DeleteUser() {
+function EditUserRole() {
   // define useParams() hook to receive the userId through the route
   const { userId } = useParams();
   // once we have the userId, we need to call the query for GetUserById(userId)
@@ -5835,8 +5889,130 @@ function DeleteUser() {
   const [isLoading, setIsLoading] = useState(false);
   // define useNavigate() hook to redirect admin user to AdminUsersList page once a user has been deleted
   const navigate = useNavigate();
+  
+  const [roleInput, setRoleInput] = useState({
+    role: ''
+  });
+  
+  // now we have to use our helper method called InputHandler
+  const handleRoleInput = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const tempData = InputHelper(event, roleInput);
+    setRoleInput(tempData);
+  }
+
+  // define the mutation for UPDATE endpoint to delete a user
+  const [updateUser] = useUpdateUserMutation();
+  
+  // define mutation to create new logs
+  const [createLog] = useCreateLogMutation();
+
+  const handleEditUserRole = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    const updateResponse: ApiResponse = await updateUser({
+      userId: userId,
+      role: roleInput.role
+      // all of these values will be populated inside the registerInput because we have the control component
+    });
+
+    // one we invoke the endpoint, we have to examine the response that result
+    if (updateResponse.data) { // if registerResponse.data, if that is populated, let's check what happens 
+      // console.log(registerResponse.data);
+      toastNotifyHelper('Rol modificado correctamente!');
+      navigate('/user/AdminUsersList');
+    }
+    else if (updateResponse.error) {
+      // console.log(registerResponse.error.data.errorsList[0]);
+      // toastNotifyHelper(updateResponse.error.data.errorsList[0], 'error')
+      toastNotifyHelper('Error al actualizar el rol del usuario', 'error')
+    }
+
+    setIsLoading(false);
+  }
+
+
+  return (
+    <div className='container mt-3 p-3 bg-light'>
+
+      {isLoading && (
+        <BigLoader />
+      )}
+
+      <h3 className='mb-3 px-2 text-warning'>
+        Está actualizado el rol del siguiente usuario:
+      </h3>
+      
+      {data && (
+        <>
+          <p>Nombre del usuario: <span style={{color: 'red'}}>{data.result?.user.name}</span></p>
+          <p>Email del usuario: <span style={{color: 'red'}}>{data.result?.user.email}</span></p>
+          <p>Rol del usuario: <span style={{color: 'red'}}>{data.result?.role}</span></p>
+          <p>ID del usuario: <span style={{color: 'red'}}>{data.result?.user.id}</span></p>
+        </>
+      )}
+
+      <form method='post' encType='multipart/form-data' onSubmit={handleEditUserRole}>
+        <div className='row mt-3'>
+          <div className='col-md-7'>
+            <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
+              <select 
+                className='form-control form-select' 
+                required
+                name='role'
+                value={roleInput.role}
+                onChange={handleRoleInput}
+              >
+                <option value=''>--Seleccionar Rol--</option>
+                <option value={`${StaticDetails_Roles.CUSTOMER}`}>Customer</option>
+                <option value={`${StaticDetails_Roles.ADMIN}`}>Admin</option>
+              </select>
+            </div>
+            <div className="row">
+              <div className="col-6">
+                <button
+                  className='btn btn-warning mt-3 form-control'
+                  type='submit'
+                >
+                  Actualizar Rol
+                </button>
+              </div>
+
+              <div className="col-6">
+                <a 
+                  className='btn btn-secondary mt-3 form-control' 
+                  onClick={() => navigate('/user/AdminUsersList')}
+                >
+                  Volver a los usuarios
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  )
+}
+```
+
+## 11.5. Crear la página del *DeleteUser*
+
+```tsx
+function DeleteUser() {
+  // define useParams() hook to receive the userId through the route
+  const { userId } = useParams();
+  // once we have the userId, we need to call the query for GetUserById(userId)
+  const { data } = useGetUserByIdQuery(userId);
+  // console.log(data);
+
+  // define useState() hook to set loading when this page needs
+  const [isLoading, setIsLoading] = useState(false);
+  // define useNavigate() hook to redirect admin user to AdminUsersList page once a user has been deleted
+  const navigate = useNavigate();
   // define the mutation for DELETE endpoint to delete a user
   const [deleteUser] = useDeleteUserByIdMutation();
+  // define mutation to create new logs
+  const [createLog] = useCreateLogMutation();
 
   // useState for the input fields to delete a user writing its id
   const [deleteInput, setDeleteInput] = useState({
@@ -5856,23 +6032,37 @@ function DeleteUser() {
 
     if (userId === deleteInput.id) {
       const deleteResponse = await deleteUser(userId);
-
-      if (deleteResponse) {
-        setIsLoading(false);
-        navigate('/user/AdminUsersList');
-        toastNotifyHelper('Usuario eliminado correctamente', 'success');
+      // console.log(deleteResponse);
+  
+      if ('data' in deleteResponse) {
+        const { success } = deleteResponse.data;
+        
+        if (success) {
+          createLog({ log: "Se ha eliminado al usuario --> Nombre: \"" + data.result?.user.name + "\" Email: \"" + data.result?.user.email + "\"", level: "warn" });
+  
+          toastNotifyHelper('Usuario eliminado correctamente', 'success');
+          navigate('/user/AdminUsersList');
+        } else {
+          toastNotifyHelper('Error al eliminar el usuario porque tiene pedidos en proceso', 'error');
+        }
+      } else {
+        toastNotifyHelper('Error en la respuesta de eliminación del usuario', 'error');
       }
-    }
-    else {
-      toastNotifyHelper('El usuario NO se ha eliminado', 'error');
+    } else {
+      toastNotifyHelper('El id proporcionado no coincide con el id del usuario', 'error');
       setIsLoading(false);
     }
 
     setIsLoading(false);
   }
 
+
   return (
     <div className='container mt-3 p-3 bg-light'>
+
+      {isLoading && (
+        <BigLoader />
+      )}
 
       <h3 className='mb-3 px-2 text-warning'>
         ¿Estás seguro de que quieres eliminar este usuario?
@@ -5880,9 +6070,10 @@ function DeleteUser() {
       
       {data && (
         <>
-          <p>Nombre del usuario: <span style={{color: 'red'}}>{data.result?.name}</span></p>
-          <p>Email del usuario: <span style={{color: 'red'}}>{data.result?.email}</span></p>
-          <p>ID del usuario: <span style={{color: 'red'}}>{data.result?.id}</span></p>
+          <p>Nombre del usuario: <span style={{color: 'red'}}>{data.result?.user.name}</span></p>
+          <p>Email del usuario: <span style={{color: 'red'}}>{data.result?.user.email}</span></p>
+          <p>Rol del usuario: <span style={{color: 'red'}}>{data.result?.role}</span></p>
+          <p>ID del usuario: <span style={{color: 'red'}}>{data.result?.user.id}</span></p>
         </>
       )}
 
@@ -5931,6 +6122,10 @@ function DeleteUser() {
 ![](./img/121.png)
 ![](./img/122.png)
 ![](./img/123.png)
+
+## Prueba de ejecución del CRUD de los usuarios
+
+[Prueba de ejecución para probar todas las funcionalidades del CRUD de usuarios](#prueba-de-ejecución-para-probar-las-funcionalidades-de-editar-el-rol-y-eliminar-un-usuario)
 
 # 12. Página del listado de registros para el administrador (auditoría)
 
@@ -6422,6 +6617,8 @@ function LogsList({ data, isLoading }: LogsListInterface) {
 
 ### [38. How to deploy your React App on Azure App Service from VS Code](https://www.youtube.com/watch?v=ebk7cdL2OI0&ab_channel=BawanthaRathnayaka)
 
+### [39. Add Custom Domain Name in Azure App Services](https://www.youtube.com/watch?v=88Kza0eidcE&ab_channel=TechFeedbyRatheesh)
+
 # Pruebas de Ejecución
 
 ## Lista de productos y Detalles del producto
@@ -6506,6 +6703,12 @@ function LogsList({ data, isLoading }: LogsListInterface) {
 ### Prueba de ejecución para probar las funcionalidades de búsqueda filtrada y paginación de resultados
 
 [Prueba de Ejecución 8](https://private-user-images.githubusercontent.com/80839621/240236145-aa70ac53-dd32-4651-9ba9-805dee032ae9.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJrZXkxIiwiZXhwIjoxNjg0ODM4MDgxLCJuYmYiOjE2ODQ4Mzc3ODEsInBhdGgiOiIvODA4Mzk2MjEvMjQwMjM2MTQ1LWFhNzBhYzUzLWRkMzItNDY1MS05YmE5LTgwNWRlZTAzMmFlOS5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBSVdOSllBWDRDU1ZFSDUzQSUyRjIwMjMwNTIzJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDIzMDUyM1QxMDI5NDFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT01ZGQ2YmQ5OGFmZWMwNjQyNTY5OTQ1OWYwZjQxNzVhNzM4ZmIzOWVkYzViMzMwNzdkMmJmMmRmMDczMzVmYWM3JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.VaD0vNrSeGHsdfWjWttSIHJX-KnWVDPzRG4wwPvqr6s)
+
+## CRUD de Usuarios
+
+### Prueba de ejecución para probar las funcionalidades de editar el rol y eliminar un usuario
+
+[Prueba de Ejecución 11](https://private-user-images.githubusercontent.com/80839621/242923631-73c12a51-2588-4fd2-9ca6-6f4fda7fe112.mp4?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXkiOiJrZXkxIiwiZXhwIjoxNjg1NzE5MTY4LCJuYmYiOjE2ODU3MTg4NjgsInBhdGgiOiIvODA4Mzk2MjEvMjQyOTIzNjMxLTczYzEyYTUxLTI1ODgtNGZkMi05Y2E2LTZmNGZkYTdmZTExMi5tcDQ_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBSVdOSllBWDRDU1ZFSDUzQSUyRjIwMjMwNjAyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDIzMDYwMlQxNTE0MjhaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1jY2E0OWViNmIyMTFmZWRhNTVkOWQ5MzI2ZDE5Y2JhY2FiY2E5MzA4NzY2MGUxYzU3YzYzNTk2MDEzZDkyNDkxJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.UQZo_VAPYc73-TCO2uvq2ejugIbD_RUY5ikc__LPOy0)
 
 # Extras
 
@@ -7539,6 +7742,12 @@ Lo que tenemos que hacer para ambos casos, es que creamos el App Web Service des
 ![](./img/107.png)
 
 Entonces nos metemos en ese nuevo grupo de recursos, y desde Azure, creamos un nuevo App Web Service con su nuevo Plan de Pago gratuito, y después volvemos al VSCode, y en el explorador de servicios de Azure, si refrescamos, nos aparecerá ya efectivamente eset nuevo App Service, y a ese le hacemos click derecho y desplegamos, y el despliegue se efectuará correctamente.
+
+## Comprobación de la seguridad del dominio proporcionado por Azure
+
+[www.ssllabs.com --> eFoodDelivery-Website](https://www.ssllabs.com/ssltest/analyze.html?d=efooddelivery-website.azurewebsites.net)
+
+![](./img/130.png)
 
 ## Enlace al espacio de trabajo y al tablero del proyecto en Trello
 

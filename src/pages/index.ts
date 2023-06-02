@@ -16,6 +16,7 @@ import AdminProductsList from "./product/AdminProductsList";
 import ProductForm from "./product/ProductForm";
 import DeleteProduct from "./product/DeleteProduct";
 import AdminUsersList from "./user/AdminUsersList";
+import EditUserRole from "./user/EditUserRole";
 import DeleteUser from "./user/DeleteUser";
 import ForgetPassword from "./forgetPassword/ForgetPassword";
 import NewPassword from "./forgetPassword/NewPassword";
@@ -43,6 +44,7 @@ export {
   ProductForm,
   DeleteProduct,
   AdminUsersList,
+  EditUserRole,
   DeleteUser,
   ForgetPassword,
   NewPassword,

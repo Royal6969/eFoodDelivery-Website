@@ -26,7 +26,7 @@ function LogsList({ data, isLoading }: LogsListInterface) {
                 // calling our getOrderStatusColor helper method to change dynamically the status for the order status column
                 const logLevelTagTypeColor = getLogLevelColor(log.level!);
                 // Format the date using the toLocaleString method
-                const formattedDate = new Date(log.md_date!).toLocaleString();
+                const formattedDate = new Date(log.md_date!).toLocaleString('es-ES', { timeZone: 'Europe/Madrid' });
 
                 return (
                   <div className="row border" key={log.id}>

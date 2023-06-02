@@ -34,6 +34,7 @@ import {
   PasswordChanged,
   ResetCode,
   AllLogs,
+  EditUserRole,
 } from '../pages';
 
 
@@ -132,6 +133,7 @@ function App() {
             
             {/* Routes for User pages (for admin) */}
             <Route path='/user/AdminUsersList' element={<AdminUsersList />}></Route>
+            <Route path='/user/EditUserRole/:userId' element={<EditUserRole />}></Route>
             <Route path='/user/DeleteUser/:userId' element={<DeleteUser />}></Route>
             
             {/* Routes for reset password proccess */}
