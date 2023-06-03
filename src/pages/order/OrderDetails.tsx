@@ -2,6 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useGetOrderDetailsByIdQuery } from '../../APIs/OrderAPI';
 import { OrderRecap } from '../../components/view/orders';
+import { checkCustomerAuth } from '../../HOC';
 
 
 function OrderDetails() {
@@ -44,4 +45,4 @@ function OrderDetails() {
 }
 
 
-export default OrderDetails
+export default checkCustomerAuth(OrderDetails)

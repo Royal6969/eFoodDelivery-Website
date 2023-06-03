@@ -101,7 +101,7 @@ function NewPassword() {
       });
   
       // one we invoke the endpoint, we have to examine the response that result
-      if (newPasswordResponse.data?.statusCode == 200) { // if loginResponse.data, if that is populated, let's check what happens 
+      if (newPasswordResponse.data?.statusCode === 200) { // if loginResponse.data, if that is populated, let's check what happens 
         // console.log(loginResponse.data);
         
         toastNotifyHelper('Contraseña cambiada correctamente.');

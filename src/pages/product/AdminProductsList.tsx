@@ -1,10 +1,9 @@
 import React from 'react'
-import { useDeleteProductByIdMutation, useGetProductsQuery } from '../../APIs/ProductAPI';
+import { useGetProductsQuery } from '../../APIs/ProductAPI';
 import { BigLoader } from '../../components/view/common';
 import { ProductInterface } from '../../interfaces';
 import { checkAdminAuth } from '../../HOC';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
 
 function AdminProductsList() {

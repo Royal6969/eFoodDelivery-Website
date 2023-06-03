@@ -4,6 +4,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { CheckoutForm } from '../components/view/payments';
 import { OrderRecap } from '../components/view/orders';
+import { checkCustomerAuth } from '../HOC';
 
 
 function PaymentDetails() {
@@ -59,4 +60,4 @@ function PaymentDetails() {
 }
 
 
-export default PaymentDetails
+export default checkCustomerAuth(PaymentDetails)

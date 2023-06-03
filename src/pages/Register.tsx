@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { StaticDetails_Roles } from '../Utils/StaticDetails'
 import { InputHelper, toastNotifyHelper } from '../helperMethods';
 import { useRegisterUserMutation } from '../APIs/AuthenticationAPI';
 import { ApiResponse } from '../interfaces';
@@ -101,7 +100,7 @@ function Register() {
       // one we invoke the endpoint, we have to examine the response that result
       if (registerResponse.data) { // if registerResponse.data, if that is populated, let's check what happens 
         // console.log(registerResponse.data);
-        toastNotifyHelper('Nuevo usuario registrado correctamente!');
+        toastNotifyHelper('Nuevo usuario registrado correctamente. Revise su email para confirmar el registro.');
         navigate('/Login');
       }
       else if (registerResponse.error) {
@@ -212,22 +211,6 @@ function Register() {
               <span>Las contraseñas coinciden{/*: {match ? <span>True</span> : <span>False</span>}*/}</span>
             </li>
           </ul>
-
-          {/* 
-            <div className='col-sm-6 offset-sm-3 col-xs-12 mt-4'>
-              <select 
-                className='form-control form-select' 
-                required
-                name='role'
-                value={registerInput.role}
-                onChange={handleRegisterInput}
-              >
-                <option value=''>--Select Role--</option>
-                <option value={`${StaticDetails_Roles.CUSTOMER}`}>Customer</option>
-                <option value={`${StaticDetails_Roles.ADMIN}`}>Admin</option>
-              </select>
-            </div> 
-            */}
         </div>
 
         <div className='mt-3'>

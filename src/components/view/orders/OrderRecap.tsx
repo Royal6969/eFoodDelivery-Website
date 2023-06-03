@@ -116,7 +116,7 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // 
               Volver a los pedidos
             </button>
 
-            {userDataFromAuthenticationStore.role == StaticDetails_Roles.ADMIN && (
+            {userDataFromAuthenticationStore.role === StaticDetails_Roles.ADMIN && (
               <div className='d-flex'>
                 {(apiDataResult.status! !== StaticDetails_OrderStatus.STATUS_CANCELLED) && (apiDataResult.status! !== StaticDetails_OrderStatus.STATUS_COMPLETED) && (
                   <button 

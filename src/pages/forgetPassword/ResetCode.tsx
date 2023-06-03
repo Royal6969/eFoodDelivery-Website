@@ -45,7 +45,7 @@ function ResetCode() {
     });
 
     // one we invoke the endpoint, we have to examine the response that result
-    if (verifyCodeResponse.data?.statusCode == 200) { // if loginResponse.data, if that is populated, let's check what happens 
+    if (verifyCodeResponse.data?.statusCode === 200) { // if loginResponse.data, if that is populated, let's check what happens 
       // console.log(loginResponse.data);
       
       toastNotifyHelper('Codigo validado correctamente.');

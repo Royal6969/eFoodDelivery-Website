@@ -61,7 +61,7 @@ function Header() {
                 </NavLink>
               </li>
 
-              {userData.role == StaticDetails_Roles.ADMIN
+              {userData.role === StaticDetails_Roles.ADMIN
                 ? (
                   <li className='nav-item dropdown'>
                     <a className='nav-link dropdown-toggle' href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
@@ -125,26 +125,6 @@ function Header() {
                   </i>
                 </NavLink>
               </li>
-
-              {/* <li className='nav-item dropdown'>
-                <a className='nav-link dropdown-toggle' href='#' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
-                  ForgetPassword
-                </a>
-                <ul className='dropdown-menu'>
-                  <li style={{ cursor: 'pointer' }} className='dropdown-item' onClick={() => navigate('forgetPassword/ForgetPassword')}>
-                    ForgetPassword
-                  </li>
-                  <li style={{ cursor: 'pointer' }} className='dropdown-item' onClick={() => navigate('forgetPassword/ResetCode')}>
-                    ResetCode
-                  </li>
-                  <li style={{ cursor: 'pointer' }} className='dropdown-item' onClick={() => navigate('forgetPassword/NewPassword')}>
-                    NewPassword
-                  </li>
-                  <li style={{ cursor: 'pointer' }} className='dropdown-item' onClick={() => navigate('forgetPassword/PasswordChanged')}>
-                    PasswordChanged
-                  </li>
-                </ul>
-              </li> */}
               
               <div style={{ marginLeft: 'auto' }} className='d-flex'>
                 {userData.userId && (

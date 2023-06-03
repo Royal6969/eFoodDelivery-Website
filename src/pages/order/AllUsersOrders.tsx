@@ -5,7 +5,6 @@ import { OrdersList } from '../../components/view/orders';
 import { BigLoader } from '../../components/view/common';
 import { InputHelper } from '../../helperMethods';
 import { StaticDetails_OrderStatus } from '../../Utils/StaticDetails';
-import { OrderInterface } from '../../interfaces';
 
 
 const inputFilterOptions = [

@@ -34,7 +34,7 @@ function CartRecap() {
   const handleItemsQuantity = (updateQuantity: number, cartItem: CartItemInterface) => {
     // we have to check if there is only one item in the cart and they select two decrements, so that means we will have to remove this item
     // or if the updateQuantity is equal to 0, taht will means that the right button here is selected to remove the product
-    if ((updateQuantity == -1 && cartItem.quantity == 1) || updateQuantity == 0) { // and both of these cases we have to remove the item
+    if ((updateQuantity === -1 && cartItem.quantity === 1) || updateQuantity === 0) { // and both of these cases we have to remove the item
       updateCart({
         productId: cartItem.product?.id,
         updateQuantity: 0,
@@ -67,7 +67,7 @@ function CartRecap() {
     <div className='container p-4 m-2'>
       <h4 className='text-center text-success'>Resumen del carrito</h4>
 
-      {cartFromReduxStorage.length == 0 && (
+      {cartFromReduxStorage.length === 0 && (
         <h5 className='text-center text-warning'>
           El carrito está vacío.<br/> 
           Aún no has añadido ningún producto.

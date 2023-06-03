@@ -25,7 +25,7 @@ function ProductDetails() {
   // dummy function with useState() hook to handle the items quantity for the product and no count below than minimal 1
   const handleCounterQuantity = (counter: number) => {
     let updatedQuantity = quantity + counter;
-    if (updatedQuantity == 0)
+    if (updatedQuantity === 0)
       updatedQuantity = 1;
 
     setQuantity(updatedQuantity);
@@ -160,7 +160,6 @@ function ProductDetails() {
         // else we want to display a <div> with the text of loading
         : (
           <div className='d-flex justify-content-center' style={{ width: "100%" }}>
-            {/* <div>Loading product details...</div> */}
             <BigLoader />
           </div>
         )

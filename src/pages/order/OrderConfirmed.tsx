@@ -1,5 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom';
+import { checkCustomerAuth } from '../../HOC';
 
 
 let orderConfirmedImage = require('../../assets/images/order-confirmed.jpg');
@@ -27,4 +28,4 @@ function OrderConfirmed() {
 }
 
 
-export default OrderConfirmed
+export default checkCustomerAuth(OrderConfirmed)

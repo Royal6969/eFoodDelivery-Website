@@ -2,7 +2,7 @@ import React from 'react'
 import { checkAdminAuth } from '../../HOC'
 import { useGetUsersQuery } from '../../APIs/UserAPI';
 import { BigLoader } from '../../components/view/common';
-import { UserInterface, UsersListInterface } from '../../interfaces';
+import { UsersListInterface } from '../../interfaces';
 import { useNavigate } from 'react-router-dom';
 
 

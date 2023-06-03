@@ -35,7 +35,7 @@ function ForgetPassword() {
     );
 
     // one we invoke the endpoint, we have to examine the response that result
-    if (sendEmailResponse.data?.statusCode == 200) { // if loginResponse.data, if that is populated, let's check what happens 
+    if (sendEmailResponse.data?.statusCode === 200) { // if loginResponse.data, if that is populated, let's check what happens 
       // console.log(loginResponse.data);
       
       toastNotifyHelper('Email con código de recuperación enviado correctamente. Revise su correo electrónico.');

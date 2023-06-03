@@ -75,8 +75,8 @@ function Login() {
     }
     else if (loginResponse.error) {
       // console.log(loginResponse.error.data.errorsList[0]);
-      // setErrorMessage(loginResponse.error.data.errorsList[0]);
-      toastNotifyHelper(loginResponse.error.data.errorsList[0], 'error');
+      setErrorMessage(loginResponse.error.data.errorsList[0]);
+      toastNotifyHelper(errorMessage, 'error');
     }
 
     setLoading(false);

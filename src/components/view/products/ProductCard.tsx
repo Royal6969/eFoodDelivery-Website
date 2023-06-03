@@ -54,7 +54,6 @@ function ProductCard(props: Props) { // right here we have to write the product 
 
   return (
     <div className='col-md-4 col-12 p-4'>
-      {/* *********************************************** PRODUCT CARD STARTS ************************************************ */}
       <div className='card' style={{ boxShadow: '0 1px 7px 0 rgb(0 0 0 / 50%)' }}>
         <div className='card-body pt-2'>
          
@@ -106,7 +105,6 @@ function ProductCard(props: Props) { // right here we have to write the product 
           </div>
         </div>
       </div>
-      {/* *********************************************** PRODUCT CARD STARTS ************************************************ */}
     </div>
   )
 }

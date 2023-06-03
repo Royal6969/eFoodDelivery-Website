@@ -6,6 +6,7 @@ import { useCreateLogMutation } from '../../APIs/LoggerAPI';
 import { StaticDetails_Roles } from '../../Utils/StaticDetails';
 import { InputHelper, toastNotifyHelper } from '../../helperMethods';
 import { ApiResponse } from '../../interfaces';
+import { checkAdminAuth } from '../../HOC';
 
 
 function EditUserRole() {
@@ -126,4 +127,4 @@ function EditUserRole() {
 }
 
 
-export default EditUserRole
+export default checkAdminAuth(EditUserRole)

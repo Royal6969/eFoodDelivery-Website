@@ -64,7 +64,7 @@ function ProductForm() {
   });
 
   // useState for the category field to create/edit a product, to select one of them in a dropdown button
-  const [categoryInput, setCategoryInput] = useState();
+  // const [categoryInput, setCategoryInput] = useState();
 
   // if the product image uploaded is valid, we have to store that in the local storage, because we don't want to directly call the server
   const [imageFileStored, setImageFileStored] = useState<any>(); // first one is the image that we want to store in the DB

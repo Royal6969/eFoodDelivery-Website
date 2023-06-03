@@ -4,6 +4,7 @@ import { useDeleteProductByIdMutation, useGetProductByIdQuery } from '../../APIs
 import { InputHelper, toastNotifyHelper } from '../../helperMethods';
 import { checkAdminAuth } from '../../HOC';
 import { useCreateLogMutation } from '../../APIs/LoggerAPI';
+import { BigLoader } from '../../components/view/common';
 
 
 function DeleteProduct() {
@@ -60,6 +61,10 @@ function DeleteProduct() {
 
   return (
     <div className='container mt-3 p-3 bg-light'>
+
+      {isLoading && (
+        <BigLoader />
+      )}
 
       <h3 className='mb-3 px-2 text-warning'>
         ¿Estás seguro de que quieres eliminar este producto?
