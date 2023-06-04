@@ -216,6 +216,7 @@
     - [2. HuggingChat](#2-huggingchat)
     - [3. Perplexity.ai](#3-perplexityai)
     - [4. Visual Studio Extension --\> GitHub Copilot](#4-visual-studio-extension----github-copilot)
+- [Video de la Guía de Usuario](#video-de-la-guía-de-usuario)
 
 
 # 0. Crear una aplicación de React con Typescript
@@ -7762,3 +7763,7 @@ Entonces nos metemos en ese nuevo grupo de recursos, y desde Azure, creamos un n
 ### 3. [Perplexity.ai](https://www.perplexity.ai/)
 
 ### 4. [Visual Studio Extension --> GitHub Copilot](https://code.visualstudio.com/docs/editor/artificial-intelligence)
+
+# Video de la Guía de Usuario
+
+[YouTube - Video de la Guía de Usuario - eFoodDelivery-Website](https://youtu.be/jMQoqw0xXiQ)
