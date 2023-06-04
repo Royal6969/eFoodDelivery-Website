@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useGetOrderDetailsByIdQuery } from '../../APIs/OrderAPI';
 import { OrderRecap } from '../../components/view/orders';
 import { checkCustomerAuth } from '../../HOC';
+import { BigLoader } from '../../components/view/common';
 
 
 function OrderDetails() {
@@ -34,6 +35,10 @@ function OrderDetails() {
 
   return (
     <div style={{ maxWidth: '750px' }} className='container mx-auto p-3 w-100'>
+      {isLoading && (
+        <BigLoader />
+      )}
+      
       {!isLoading && orderDetails && deliveryInput && (
         <OrderRecap  // we have to pass these props to the OrderRecap component that it was already receiving
           apiDataResult={orderDetails} 

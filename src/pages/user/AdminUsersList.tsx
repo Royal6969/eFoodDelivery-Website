@@ -2,8 +2,10 @@ import React from 'react'
 import { checkAdminAuth } from '../../HOC'
 import { useGetUsersQuery } from '../../APIs/UserAPI';
 import { BigLoader } from '../../components/view/common';
-import { UsersListInterface } from '../../interfaces';
+import { UserInterface, UsersListInterface } from '../../interfaces';
 import { useNavigate } from 'react-router-dom';
+import { RootState } from '../../store/redux/ReduxStorage';
+import { useSelector } from 'react-redux';
 
 
 function AdminUsersList() {
@@ -11,6 +13,8 @@ function AdminUsersList() {
   const { data, isLoading } = useGetUsersQuery(null);
   // to go to DeleteUser page we need the useNavigate() hook
   const navigate = useNavigate();
+  // retrieve the actual admin data to avoid change role to himself
+  const userDataFromAuthenticationStore: UserInterface = useSelector((state: RootState) => state.authenticationStore);
 
   
   return (
@@ -45,7 +49,7 @@ function AdminUsersList() {
                     <div className='col-1'>{user.user.phoneNumber}</div>
                     <div className='col-1'>{user.role}</div>
                     <div className='col-2'>
-                      <button className='btn btn-warning'>
+                      <button className='btn btn-warning' disabled={user.user.id === userDataFromAuthenticationStore.userId}>
                         <i 
                           className='bi bi-pencil-fill' 
                           onClick={() => navigate('/user/EditUserRole/' + user.user.id)}

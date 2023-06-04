@@ -71,7 +71,8 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // 
       {!isLoading && (
         <>
           <div className='d-flex justify-content-between align-items-center'>
-            <h3 className={`text-${orderStatusTagTypeColor}`}>Resumen del pedido</h3>
+            {/* <h3 className={`text-${orderStatusTagTypeColor}`}>Resumen del pedido</h3> */}
+            <h3 className='text-warning'>Resumen del pedido</h3>
             <span style={{ cursor: 'none' }} className={`btn btn-outline-${orderStatusTagTypeColor} fs-6`}>
               {apiDataResult.status}
             </span>
@@ -92,11 +93,11 @@ function OrderRecap({ apiDataResult, deliveryInput }: OrderRecapInterface) { // 
                       <div className='d-flex' key={index}>
                         <div className='d-flex w-100 justify-content-between'>
                           <p>{cartItem.product?.name}</p>
-                          <p>{cartItem.quantity} x {cartItem.product?.price}€ =</p>
+                          <p>{cartItem.quantity} x {(cartItem.product?.price)?.toFixed(2)}€ =</p>
                         </div>
                         
                         <p style={{ width: '70px', textAlign: 'right' }}>
-                          {(cartItem.quantity ?? 0) * (cartItem.product?.price ?? 0)}€
+                          {((cartItem.quantity ?? 0) * (cartItem.product?.price ?? 0)).toFixed(2)}€
                         </p>
                       </div>
                     )

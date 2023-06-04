@@ -37,7 +37,7 @@ function PaymentDetails() {
       <div className='container p-5'>
         <div className='row'>
           <div className='col-md-7'>
-            <h3 className='text-warning'>Resumen del pedido</h3>
+            {/* <h3 className='text-warning'>Resumen del pedido</h3> */}
             <OrderRecap  // we have to pass these props to the OrderRecap component
               apiDataResult={apiDataResult} 
               deliveryInput={deliveryInput} 

@@ -69,7 +69,7 @@ function AdminProductsList() {
                     <div className='col-1'>{product.id}</div>
                     <div className='col-2'>{product.name}</div>
                     <div className='col-2'>{product.category}</div>
-                    <div className='col-1'>{product.price}€</div>
+                    <div className='col-1'>{(product.price).toFixed(2)}€</div>
                     <div className='col-2'>{product.tag}</div>
                     <div className='col-3'>
                       <button className='btn btn-warning'>
