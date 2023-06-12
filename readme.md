@@ -133,6 +133,7 @@
   - [12.4. Crear la página del *AllLogs.tsx*](#124-crear-la-página-del-alllogstsx)
   - [12.5. Creamos el componente del *LogsList.tsx*](#125-creamos-el-componente-del-logslisttsx)
     - [Prueba de ejecución](#prueba-de-ejecución-12)
+- [🤔 What's next ??](#-whats-next-)
 - [Webgrafía y Enlaces de Interés](#webgrafía-y-enlaces-de-interés)
     - [1. What is the meaning of the "at" (@) prefix on npm packages?](#1-what-is-the-meaning-of-the-at--prefix-on-npm-packages)
     - [2. Bootstrap components](#2-bootstrap-components)
@@ -6539,6 +6540,16 @@ function LogsList({ data, isLoading }: LogsListInterface) {
 ![](./img/127.png)
 ![](./img/128.png)
 ![](./img/129.png)
+
+# 🤔 What's next ??
+
+Después de haber realizado todo este largo recorrido, y de haber dado por finalizado este proyecto, la pregunta ahora sería...
+¿y qué es lo siguiente? ¿o cómo se podría seguir mejorando este proyecto?
+Al igual que en todo proyecto, las posibilidades de implementar mejoras y nuevas funcionalidades, son ilimitadas.
+
+A nivel de frontend, se podrían mejorar muchísimo las interfaces reemplazando la librería de Bootstrap por alguna otra más moderna en el mercado, como por ejemplo Tailwind. Aunque a mí personalmente me gusta más la idea de ir buscando por internet diversas ideas que utilicen una buena mezcla de CSS y JS, e implementarlas y adaptarlas al proyecto.
+
+Por otro lado y respecto al backend, seguirían quedando algunas cosas pendientes para adaptar este proyecto a cualquiera de los grandes ecommerces actuales. Se podría implementar por ejemplo un componnte (sección) de comentarios de los clientes en el ProductDetails. Otro ejemplo sería añadir en el ProductCard un botón de "like" para que el usuario pueda acceder posteriormente a una lista de productos que le han gustado (whishlist).
 
 # Webgrafía y Enlaces de Interés
 

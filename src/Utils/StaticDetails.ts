@@ -20,7 +20,7 @@ export enum StaticDetails_ProductCategory {
   CATEGORY_LUNCH = 'Almuerzo',
   CATEGORY_DINNER = 'Cena',
   CATEGORY_DESSERT = 'Postre',
-  CATEGORY_DRINK = 'Bebida'
+  CATEGORY_DRINK = 'Bebidas'
 }
 
 // enumeration for product search criteria
